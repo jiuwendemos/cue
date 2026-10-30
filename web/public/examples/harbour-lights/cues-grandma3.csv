@@ -1,0 +1,13 @@
+Cue,Name,Trigger,Fade,Delay,Command,Page,Executor,Note
+1,Doors / house,Time 0:00,2,0,House to half; stage warm,LX,1,Harbour Lights cue sheet v3
+2,Walk on,Time 0:20,2,0,Warm open at 40%,LX,1,Warm open
+3,Cold Harbour,Time 1:10,0,0,HARBOUR LOOP low in the mix,VID,1,vid-harbour
+4,Paper Tide,Time 4:30,2,0,Long way fan on the chorus,LX,1,Long way
+5,Bridge dip,Time 8:15,2,0,Beams to 20%; washes hold,LX,1,
+6,Haze,Time 9:10,0,0,Low haze for the mid set,SFX,1,
+7,Tide Lines,Time 12:40,0,0,TIDE LINES on the screen; clip not delivered,VID,1,vid-tide
+8,Playback stop,Time 14:00,0,0,Stop playback; the band plays the bridge,AUD,1,
+9,Encore,Time 18:30,2,0,House half; four beams,LX,1,safety
+10,House call,Time 22:00,2,0,House to full; work light,LX,1,
+11,Curfew,Time 23:00,4,0,House stays up; load-out begins,LX,1,
+12,Out,Time 25:00,2,0,Stage to black; practical off,LX,1,

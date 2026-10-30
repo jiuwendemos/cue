@@ -20,6 +20,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: "/", labelKey: "nav.now", icon: "target", roles: ["designer", "producer", "crew", "tour_manager", "admin"], end: true },
+  { to: "/tour", labelKey: "nav.tour", icon: "file", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
   { to: "/show", labelKey: "nav.show", icon: "stage", roles: ["designer", "producer", "crew"] },
   { to: "/cues", labelKey: "nav.cues", icon: "cue", roles: ["designer", "producer", "crew", "tour_manager"] },
   { to: "/budget", labelKey: "nav.budget", icon: "budget", roles: ["designer", "producer", "admin"] },
@@ -35,6 +36,7 @@ const TITLES: Record<string, string> = {
   "/cues": "Cue sheet — CUE",
   "/budget": "Rig and budget — CUE",
   "/readiness": "Tour readiness — CUE",
+  "/tour": "My tour - CUE",
   "/watch": "Show watch - CUE",
   "/manager": "Manager brief - CUE",
   "/agent": "Design agent — CUE",
@@ -53,7 +55,8 @@ const TITLES: Record<string, string> = {
 };
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { pack, toast, settings, unread, notifications, readNotification, readAllNotifications, reset, live } = useStore();
+  const store = useStore();
+  const { pack, toast, settings, unread, notifications, readNotification, readAllNotifications, reset, live } = store;
   const location = useLocation();
   const navigate = useNavigate();
   const ui = useUI();
@@ -72,8 +75,11 @@ export function Shell({ children }: { children: ReactNode }) {
 
   const skipIntro = new URLSearchParams(location.search).get("intro") === "0";
   useEffect(() => {
-    if (!ui.introSeen && !skipIntro) setGuideOpen(true);
-  }, [skipIntro, ui.introSeen]);
+    // The synthetic-show guide belongs to the demo. A workspace opens on the work,
+    // and a deep link that loads the worked example goes straight to it.
+    if (new URLSearchParams(location.search).get("example") === "1") return;
+    if (!ui.introSeen && !skipIntro && store.mode === "demo") setGuideOpen(true);
+  }, [location.search, skipIntro, store.mode, ui.introSeen]);
 
   useEffect(() => {
     let gPressed = false;
@@ -161,11 +167,18 @@ export function Shell({ children }: { children: ReactNode }) {
         <span className="topbar-spacer" />
 
         <div className="topbar-actions">
-          {ui.showDemoNotices && (
-            <button className="demo-pill" onClick={() => setGuideOpen(true)} title="This is a synthetic show. Click for the demo guide.">
-              <Icon name="eye" size={12} />
-              <span>synthetic show</span>
-            </button>
+          {store.mode === "workspace" ? (
+            <span className="demo-pill" title="Your own tour, saved in this browser">
+              <Icon name="file" size={12} />
+              <span>my data</span>
+            </span>
+          ) : (
+            ui.showDemoNotices && (
+              <button className="demo-pill" onClick={() => setGuideOpen(true)} title="This is a synthetic show. Click for the demo guide.">
+                <Icon name="eye" size={12} />
+                <span>synthetic show</span>
+              </button>
+            )
           )}
           <span className="site-pill" title={live ? "Connected to the on-site API" : "Deterministic offline pack"}>
             <span className={`dot ${live ? "live" : "warn"}`} />
@@ -258,7 +271,11 @@ export function Shell({ children }: { children: ReactNode }) {
         <footer className="app-foot">
           <span>
             <b>CUE</b> · {pack.project.tour}
-            {ui.showDemoNotices ? " · Synthetic show. No artist, venue or production company is real." : ""}
+            {store.mode === "workspace"
+              ? " · Your tour. Saved in this browser; export it from My tour."
+              : ui.showDemoNotices
+                ? " · Synthetic show. No artist, venue or production company is real."
+                : ""}
           </span>
           <span className="foot-links">
             <NavLink to="/settings">Settings</NavLink>

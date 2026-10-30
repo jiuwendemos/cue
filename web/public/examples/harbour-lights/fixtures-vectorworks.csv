@@ -1,0 +1,21 @@
+id,label,kind,truss,x,y,z,watts,weight_kg,beam_angle,universe,address,rental
+f-b01,Beam 1,beam,front,-5.4,1.6,6,800,38,8,1,1,180
+f-b02,Beam 2,beam,front,-4.2,1.6,6,800,38,8,1,2,180
+f-b03,Beam 3,beam,front,-3,1.6,6,800,38,8,1,3,180
+f-b04,Beam 4,beam,front,-1.8,1.6,6,800,38,8,1,4,180
+f-b05,Beam 5,beam,front,-0.6,1.6,6,800,38,8,1,5,180
+f-b06,Beam 6,beam,front,0.6,1.6,6,800,38,8,1,6,180
+f-b07,Beam 7,beam,front,1.8,1.6,6,800,38,8,1,7,180
+f-b08,Beam 8,beam,front,3,1.6,6,800,38,8,1,8,180
+f-b09,Beam 9,beam,front,4.2,1.6,6,800,38,8,1,9,180
+f-b10,Beam 10,beam,front,5.4,1.6,6,800,38,8,1,10,180
+f-b11,Beam 11,beam,mid,-2.5,4.2,5.4,800,38,8,1,11,180
+f-b12,Beam 12,beam,mid,2.5,4.2,5.4,800,38,8,1,12,180
+f-w01,Wash 1,wash,mid,-3,4.2,5.4,300,18,24,1,13,95
+f-w02,Wash 2,wash,mid,-1,4.2,5.4,300,18,24,1,14,95
+f-w03,Wash 3,wash,mid,1,4.2,5.4,300,18,24,1,15,95
+f-w04,Wash 4,wash,mid,3,4.2,5.4,300,18,24,1,16,95
+f-s01,Spot 1,spot,back,-3.5,6.5,4.8,1000,22,14,1,17,130
+f-s02,Spot 2,spot,back,3.5,6.5,4.8,1000,22,14,1,18,130
+f-l01,Bar 1,led_bar,back,-2,6.5,4.8,500,8,40,1,19,70
+f-l02,Bar 2,led_bar,back,2,6.5,4.8,500,8,40,1,20,70

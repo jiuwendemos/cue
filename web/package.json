@@ -10,7 +10,8 @@
     "lint": "tsc --noEmit --pretty false",
     "test": "node --test tests/*.test.mjs",
     "pack": "node scripts/export_pack.mjs",
-    "budget": "node scripts/check_bundle.mjs"
+    "budget": "node scripts/check_bundle.mjs",
+    "example": "node scripts/export_example.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",

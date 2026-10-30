@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { HashRouter, Link, Route, Routes, useLocation } from "react-router-dom";
-import { StoreProvider } from "./lib/store";
+import { StoreProvider, useStore } from "./lib/store";
 import { UIProvider } from "./lib/ui";
 import { Shell } from "./components/Shell";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -13,6 +13,9 @@ import Budget from "./pages/Budget";
 import Readiness from "./pages/Readiness";
 import Watch from "./pages/Watch";
 import Manager from "./pages/Manager";
+import MyTour from "./pages/MyTour";
+import WorkspaceHome from "./pages/WorkspaceHome";
+import { createExamplePack } from "./data/example";
 import Venues from "./pages/Venues";
 import Agent from "./pages/Agent";
 import Versions from "./pages/Versions";
@@ -33,6 +36,28 @@ function ScrollToTop() {
   return null;
 }
 
+/**
+ * Demo shortcut: any route with ?example=1 loads the Harbour Lights worked
+ * example once, if the browser has no workspace yet. Handy for a link in a
+ * brief or a slide.
+ */
+function ExampleLoader() {
+  const store = useStore();
+  const { search } = useLocation();
+  useEffect(() => {
+    if (new URLSearchParams(search).get("example") !== "1") return;
+    if (store.workspace) return;
+    store.startWorkspace(createExamplePack());
+  }, [search, store]);
+  return null;
+}
+
+/** The home page follows the data source: the demo poster, or your own tour. */
+function HomeSwitch() {
+  const { mode, workspace } = useStore();
+  return mode === "workspace" && workspace ? <WorkspaceHome /> : <Home />;
+}
+
 function NotFound() {
   return (
     <div className="empty" style={{ paddingTop: 90 }}>
@@ -51,9 +76,10 @@ function Routed() {
   }
   return (
     <Shell>
-      <ErrorBoundary>
+      <ExampleLoader />
+      <ErrorBoundary key={location.pathname}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomeSwitch />} />
           <Route path="/booth" element={<Booth />} />
           <Route path="/show" element={<Workspace />} />
           <Route path="/cues" element={<CueSheet />} />
@@ -61,6 +87,7 @@ function Routed() {
           <Route path="/readiness" element={<Readiness />} />
           <Route path="/watch" element={<Watch />} />
           <Route path="/manager" element={<Manager />} />
+          <Route path="/tour" element={<MyTour />} />
           <Route path="/venues" element={<Venues />} />
           <Route path="/agent" element={<Agent />} />
           <Route path="/versions" element={<Versions />} />

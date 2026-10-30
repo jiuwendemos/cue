@@ -7,6 +7,7 @@ import type {
   CueStatus,
   Look,
   Notification,
+  Pack,
   ReadinessSettings,
   ReadinessRisk,
   RiskState,
@@ -15,7 +16,9 @@ import type {
 import { checksFor, effectiveLook, rankSuggestions, riskOpen, riskStats, type RankedSuggestion } from "./engine";
 
 const STORAGE_KEY = "cue.demo.v1";
-const ANCHOR = PACK.project.anchor;
+
+/** Demo = the synthetic show. Workspace = the user's own tour. */
+export type DataMode = "demo" | "workspace";
 
 type CuePatch = Partial<Pick<Cue, "status" | "title" | "detail" | "at" | "fade" | "lookId" | "owner" | "videoId">>;
 
@@ -47,6 +50,8 @@ interface Persisted {
   budgetApproved: number | null;
   briefSeen: boolean;
   extraRisks: ReadinessRisk[];
+  mode: DataMode;
+  workspace: Pack | null;
 }
 
 const EMPTY: Persisted = {
@@ -70,6 +75,8 @@ const EMPTY: Persisted = {
   budgetApproved: null,
   briefSeen: false,
   extraRisks: [],
+  mode: "demo",
+  workspace: null,
 };
 
 function load(): Persisted {
@@ -81,6 +88,8 @@ function load(): Persisted {
       ...EMPTY,
       ...parsed,
       settings: { ...PACK.readiness, ...(parsed.settings ?? {}) },
+      mode: parsed.mode === "workspace" && parsed.workspace ? "workspace" : "demo",
+      workspace: parsed.workspace ?? null,
     };
   } catch {
     return EMPTY;
@@ -130,6 +139,13 @@ interface StoreValue {
   metrics: typeof PACK.metrics;
   budgetApproved: number;
   briefSeen: boolean;
+  mode: DataMode;
+  workspace: Pack | null;
+  startWorkspace: (next: Pack) => void;
+  setMode: (mode: DataMode) => void;
+  updateWorkspace: (fn: (draft: Pack) => void) => void;
+  deleteWorkspace: () => void;
+  importWorkspace: (next: Pack) => void;
   nextDateId: string;
   activeSuggestion: RankedSuggestion | undefined;
   acceptSuggestion: (id: string) => void;
@@ -181,6 +197,11 @@ function signatureFor(actor: string, at: string): string {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(() => load());
+  // The active show: the synthetic demo, or the user's own workspace.
+  const pack = useMemo<Pack>(
+    () => (state.mode === "workspace" && state.workspace ? state.workspace : PACK),
+    [state.mode, state.workspace],
+  );
   const [toast, setToast] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
   const [live, setLive] = useState(false);
@@ -383,7 +404,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const ranked = useMemo(() => {
-    const list = rankSuggestions(PACK, state.rejectedLooks);
+    const list = rankSuggestions(pack, state.rejectedLooks);
     return list.map((s) => {
       const isRejected = Boolean(s.lookId && state.rejectedLooks.includes(s.lookId));
       const isAccepted = state.acceptedSuggestionId === s.id;
@@ -392,42 +413,49 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         status: isRejected ? "rejected" : isAccepted ? "accepted" : s.status,
       } as RankedSuggestion;
     });
-  }, [state.acceptedSuggestionId, state.rejectedLooks]);
+  }, [pack, state.acceptedSuggestionId, state.rejectedLooks]);
 
   const activeLookId = useMemo(() => {
-    if (state.vote === "video") return "look-video-drop";
-    if (state.vote === "light") return "look-six-beam";
-    if (state.acceptedLookId) return state.acceptedLookId;
-    if (state.rejectedLooks.includes("look-aerial-12")) return "look-six-beam";
-    return "look-aerial-12";
-  }, [state.acceptedLookId, state.rejectedLooks, state.vote]);
+    const has = (id: string | null): id is string => Boolean(id && pack.looks.some((l) => l.id === id));
+    if (state.vote === "video" && has("look-video-drop")) return "look-video-drop";
+    if (state.vote === "light" && has("look-six-beam")) return "look-six-beam";
+    if (has(state.acceptedLookId)) return state.acceptedLookId;
+    if (state.rejectedLooks.includes("look-aerial-12") && has("look-six-beam")) return "look-six-beam";
+    if (has("look-aerial-12")) return "look-aerial-12";
+    return pack.looks[0]?.id ?? "";
+  }, [pack, state.acceptedLookId, state.rejectedLooks, state.vote]);
 
-  const activeLook = useMemo(() => PACK.looks.find((l) => l.id === activeLookId) ?? PACK.looks[4], [activeLookId]);
+  const activeLook = useMemo(
+    () => pack.looks.find((l) => l.id === activeLookId) ?? pack.looks[0] ?? PACK.looks[0],
+    [activeLookId, pack],
+  );
 
   const nextDateId = useMemo(() => {
-    const next = PACK.dates.find((d) => new Date(d.date).getTime() >= new Date(ANCHOR).getTime());
-    return next?.id ?? PACK.dates[0].id;
-  }, []);
+    const anchor = pack.project.anchor;
+    const next = pack.dates.find((d) => new Date(d.date).getTime() >= new Date(anchor).getTime());
+    return next?.id ?? pack.dates[0]?.id ?? "";
+  }, [pack]);
 
   const checks = useMemo(
-    () => checksFor(PACK, activeLook.id, PACK.project.venueId, nextDateId),
-    [activeLook.id, nextDateId],
+    () => checksFor(pack, activeLook.id, pack.project.venueId, nextDateId),
+    [activeLook.id, nextDateId, pack],
   );
 
   const cues = useMemo(
     () =>
-      PACK.cues.map((c) => {
+      pack.cues.map((c) => {
         const patch = state.cuePatches[c.id] ?? {};
         const signed = state.signedCues[c.id];
         const status: CueStatus = signed ? "released" : patch.status ?? c.status;
         return { ...c, ...patch, status };
       }),
-    [state.cuePatches, state.signedCues],
+    [pack, state.cuePatches, state.signedCues],
   );
 
   const risks = useMemo(
     () =>
-      [...PACK.risks, ...state.extraRisks].map((risk) => {
+      // extraRisks come from the on-site demo tenant; never mix them into a workspace.
+      [...pack.risks, ...(state.mode === "workspace" ? [] : state.extraRisks)].map((risk) => {
         const done = state.riskChecks[risk.id] ?? [];
         return {
           ...risk,
@@ -437,29 +465,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           dismissedReason: state.dismissalReasons[risk.id] ?? risk.dismissedReason,
         };
       }),
-    [state.dismissalReasons, state.extraRisks, state.riskChecks, state.riskOwners, state.riskStates],
+    [pack, state.dismissalReasons, state.extraRisks, state.mode, state.riskChecks, state.riskOwners, state.riskStates],
   );
 
   const openRisks = useMemo(() => risks.filter(riskOpen), [risks]);
   const riskCounts = useMemo(() => riskStats(risks), [risks]);
 
   const notifications = useMemo(
-    () => PACK.notifications.map((n) => ({ ...n, read: n.read || state.notificationsRead.includes(n.id) })),
-    [state.notificationsRead],
+    () => pack.notifications.map((n) => ({ ...n, read: n.read || state.notificationsRead.includes(n.id) })),
+    [pack, state.notificationsRead],
   );
   const unread = notifications.filter((n) => !n.read).length;
 
-  const versions = useMemo(() => [...PACK.versions, ...state.localVersions], [state.localVersions]);
-  const currentVersion = versions[versions.length - 1];
+  const versions = useMemo(() => [...pack.versions, ...state.localVersions], [pack, state.localVersions]);
+  // A brand-new workspace has no version yet. Every surface still needs one to
+  // read, so the working draft is always defined.
+  const currentVersion: ShowVersion =
+    versions[versions.length - 1] ?? {
+      id: pack.project.version,
+      label: `${pack.project.version} — working draft`,
+      at: pack.meta.generated,
+      author: pack.project.designer,
+      status: "draft",
+      note: "No version has been saved yet.",
+      changes: [],
+    };
 
-  const budgetApproved = state.budgetApproved ?? PACK.budget.approved;
+  const budgetApproved = state.budgetApproved ?? pack.budget.approved;
   const activeSuggestion = ranked.find((s) => s.status !== "rejected" && s.lookId === activeLook.id) ?? ranked.find((s) => s.status !== "rejected");
 
   const signOffName = state.settings.mode === "shadow" ? "Mara Voss" : "Mara Voss";
 
   const acceptSuggestion = useCallback(
     (id: string) => {
-      const suggestion = PACK.suggestions.find((s) => s.id === id);
+      const suggestion = pack.suggestions.find((s) => s.id === id);
       if (!suggestion) return;
       const lookId = suggestion.lookId ?? (id === "A-04" ? "look-video-drop" : null);
       setState((prev) => ({
@@ -478,12 +517,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       call(`agent/suggestions/${id}/accept`, { actor: "Mara Voss" });
       say(`${suggestion.name} accepted — the cue sheet will use it`);
     },
-    [call, pushAudit, say],
+    [call, pack, pushAudit, say],
   );
 
   const rejectSuggestion = useCallback(
     (id: string, reason: string) => {
-      const suggestion = PACK.suggestions.find((s) => s.id === id);
+      const suggestion = pack.suggestions.find((s) => s.id === id);
       if (!suggestion?.lookId) return;
       setState((prev) => ({
         ...prev,
@@ -504,14 +543,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       call(`agent/suggestions/${id}/reject`, { reason, actor: "Mara Voss" });
       say(`${suggestion.name} rejected — re-ranked to the safe look`);
     },
-    [call, pushAudit, say],
+    [call, pack, pushAudit, say],
   );
 
   const selectLook = useCallback(
     (id: string) => {
-      const look = PACK.looks.find((l) => l.id === id);
+      const look = pack.looks.find((l) => l.id === id);
       if (!look) return;
-      const suggestion = PACK.suggestions.find((s) => s.lookId === id);
+      const suggestion = pack.suggestions.find((s) => s.lookId === id);
       setState((prev) => ({
         ...prev,
         acceptedLookId: id,
@@ -521,14 +560,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Mara Voss", action: "look.selected", object: id, detail: `${look.name} set as the active look.`, sources: ["designer"] });
       say(`${look.name} is the active look`);
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const rejectLook = useCallback(
     (id: string, reason: string) => {
-      const look = PACK.looks.find((l) => l.id === id);
+      const look = pack.looks.find((l) => l.id === id);
       if (!look) return;
-      const suggestion = PACK.suggestions.find((s) => s.lookId === id);
+      const suggestion = pack.suggestions.find((s) => s.lookId === id);
       setState((prev) => ({
         ...prev,
         rejectedLooks: prev.rejectedLooks.includes(id) ? prev.rejectedLooks : [...prev.rejectedLooks, id],
@@ -539,7 +578,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Mara Voss", action: "look.rejected", object: id, detail: `Rejected ${look.name}: ${reason}`, sources: ["designer", "rig", "venue"] });
       say(`${look.name} rejected — the ranking was recomputed`);
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const clearDrop = useCallback(() => {
@@ -564,13 +603,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       say(choice === "light" ? "Light drop committed" : "Video drop committed — SIGNAL BARS still missing");
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const patchCue = useCallback(
     (id: string, patch: CuePatch) => {
-      const cue = PACK.cues.find((c) => c.id === id);
-      setState((prev) => ({ ...prev, cuePatches: { ...prev.cuePatches, [id]: { ...(prev.cuePatches[id] ?? {}), ...patch } } }));
+      const cue = pack.cues.find((c) => c.id === id);
+      setState((prev) => {
+        // In your own workspace the cue is the source of truth; the demo keeps
+        // edits as a patch so the seeded pack stays reproducible.
+        if (prev.mode === "workspace" && prev.workspace) {
+          return {
+            ...prev,
+            workspace: {
+              ...prev.workspace,
+              cues: prev.workspace.cues.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+            },
+          };
+        }
+        return { ...prev, cuePatches: { ...prev.cuePatches, [id]: { ...(prev.cuePatches[id] ?? {}), ...patch } } };
+      });
       pushAudit({
         actor: "Mara Voss",
         action: "cue.edited",
@@ -580,7 +632,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       say(`Cue ${id} saved`);
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const signCue = useCallback(
@@ -595,13 +647,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       call(`cues/${encodeURIComponent(id)}/sign`, { actor });
       say(`${id} signed off by ${actor}`);
     },
-    [call, pushAudit, say, signOffName],
+    [call, pack, pushAudit, say, signOffName],
   );
 
   const signSafetyCues = useCallback(() => {
     const at = new Date().toISOString();
     const actor = signOffName;
-    const safety = PACK.cues.filter((c) => c.safety);
+    const safety = pack.cues.filter((c) => c.safety);
     setState((prev) => {
       const signed = { ...prev.signedCues };
       for (const c of safety) {
@@ -639,7 +691,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Mara Voss", action: "risk.assigned", object: id, detail: `Assigned to ${owner}.`, sources: ["human"] });
       say(`${id} assigned to ${owner}`);
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const investigateRisk = useCallback(
@@ -688,7 +740,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Mara Voss", action: "risk.dismissed", object: id, detail: `Dismissed: ${reason}`, sources: ["human"] });
       say(`${id} dismissed with a reason`);
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const completeRiskCheck = useCallback(
@@ -703,7 +755,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Mara Voss", action: "risk.check", object: riskId, detail: `Completed check ${checkId}.`, sources: ["human"] });
       say("Check completed");
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const runReadinessCheck = useCallback(() => {
@@ -777,7 +829,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       call(`versions/${id}/approve`, { actor, note });
       say(`Version ${id} approved — ${approval.signature}`);
     },
-    [call, pushAudit, say],
+    [call, pack, pushAudit, say],
   );
 
   const createVersion = useCallback(
@@ -807,7 +859,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const setBudgetApproved = useCallback(
     (value: number) => {
-      setState((prev) => ({ ...prev, budgetApproved: Math.max(0, Math.round(value)) }));
+      const approved = Math.max(0, Math.round(value));
+      setState((prev) => {
+        if (prev.mode === "workspace" && prev.workspace) {
+          return { ...prev, workspace: { ...prev.workspace, budget: { ...prev.workspace.budget, approved } } };
+        }
+        return { ...prev, budgetApproved: approved };
+      });
       say(`Approved budget set to ${value.toLocaleString("en-IE")} EUR`);
     },
     [say],
@@ -819,7 +877,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Site Admin", action: "readiness.mode", object: "tour", detail: `Readiness mode set to ${mode}.`, sources: ["settings"] });
       say(mode === "shadow" ? "Shadow mode — risks stay internal" : "Live mode — risks can reach the production office");
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const patchSettings = useCallback(
@@ -840,7 +898,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushAudit({ actor: "Site Admin", action: on ? "readiness.stop" : "readiness.start", object: "tour", detail: reason, sources: ["settings"] });
       say(on ? "Readiness stopped. The show and the cue sheet are unaffected." : "Readiness resumed");
     },
-    [pushAudit, say],
+    [pack, pushAudit, say],
   );
 
   const readNotification = useCallback((id: string) => {
@@ -856,14 +914,94 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const markBriefSeen = useCallback(() => setState((prev) => ({ ...prev, briefSeen: true })), []);
 
+  const startWorkspace = useCallback(
+    (next: Pack) => {
+      setState((prev) => ({
+        ...EMPTY,
+        settings: { ...next.readiness },
+        mode: "workspace",
+        workspace: next,
+        briefSeen: prev.briefSeen,
+      }));
+      say("Your tour is ready — add venues, looks and cues in My tour");
+    },
+    [say],
+  );
+
+  const setMode = useCallback(
+    (mode: DataMode) => {
+      setState((prev) =>
+        prev.mode === mode
+          ? prev
+          : {
+              // Decisions belong to the show they were made on. Switching starts
+              // that show clean; the show data itself is untouched.
+              ...prev,
+              mode,
+              signedCues: {},
+              riskStates: {},
+              riskOwners: {},
+              riskChecks: {},
+              dismissalReasons: {},
+              versionApprovals: {},
+              notificationsRead: [],
+              extraRisks: [],
+              cuePatches: {},
+              rejectedLooks: [],
+              acceptedLookId: null,
+              acceptedSuggestionId: null,
+              rejectionReasons: {},
+              vote: null,
+            },
+      );
+      say(mode === "workspace" ? "Showing your tour" : "Showing the synthetic demo");
+    },
+    [say],
+  );
+
+  const updateWorkspace = useCallback((fn: (draft: Pack) => void) => {
+    setState((prev) => {
+      if (!prev.workspace) return prev;
+      const draft = JSON.parse(JSON.stringify(prev.workspace)) as Pack;
+      fn(draft);
+      // Keep the project pointing at a venue that still exists.
+      if (!draft.venues.some((v) => v.id === draft.project.venueId) && draft.venues[0]) {
+        draft.project.venueId = draft.venues[0].id;
+      }
+      draft.project.updatedAt = new Date().toISOString();
+      return { ...prev, workspace: draft };
+    });
+  }, []);
+
+  const deleteWorkspace = useCallback(() => {
+    setState((prev) => ({ ...prev, mode: "demo", workspace: null }));
+    say("Your tour was deleted. The synthetic demo is still here.");
+  }, [say]);
+
+  const importWorkspace = useCallback(
+    (next: Pack) => {
+      setState((prev) => ({ ...prev, mode: "workspace", workspace: next }));
+      say(`Imported ${next.project.title}`);
+    },
+    [say],
+  );
+
   const reset = useCallback(() => {
-    setState({ ...EMPTY, settings: { ...PACK.readiness }, extraRisks: [] });
-    say("Demo reset — the show is back to v5");
+    setState((prev) => ({
+      ...EMPTY,
+      settings: { ...(prev.workspace?.readiness ?? PACK.readiness) },
+      extraRisks: [],
+      mode: prev.mode,
+      workspace: prev.workspace,
+    }));
+    say("Reset — every decision is cleared; the show data stays");
   }, [say]);
 
   const value = useMemo<StoreValue>(
     () => ({
-      pack: PACK,
+      pack,
+      mode: state.mode,
+      workspace: state.workspace,
       loading: false,
       live,
       agentStatus,
@@ -885,10 +1023,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       unread,
       settings: state.settings,
       stopReasons: state.stopReasons,
-      audits: [...state.audits, ...PACK.audits].sort((a, b) => b.at.localeCompare(a.at)),
+      audits: [...state.audits, ...pack.audits].sort((a, b) => b.at.localeCompare(a.at)),
       versions,
       currentVersion,
-      metrics: PACK.metrics,
+      metrics: pack.metrics,
       budgetApproved,
       briefSeen: state.briefSeen,
       nextDateId,
@@ -922,11 +1060,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       readNotification,
       readAllNotifications,
       markBriefSeen,
+      startWorkspace,
+      setMode,
+      updateWorkspace,
+      deleteWorkspace,
+      importWorkspace,
       reset,
       toast,
       say,
     }),
     [
+      pack, state.mode, state.workspace, startWorkspace, setMode, updateWorkspace, deleteWorkspace, importWorkspace,
       live, agentStatus, signOffName, state.rejectedLooks, state.acceptedLookId, state.rejectionReasons, state.vote,
       ranked, activeLook, activeLookId, checks, cues, state.signedCues, risks, openRisks, riskCounts, notifications, unread,
       state.settings, state.stopReasons, state.audits, versions, currentVersion, budgetApproved, state.briefSeen, nextDateId,

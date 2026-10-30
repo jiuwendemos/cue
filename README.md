@@ -130,6 +130,29 @@ Full script: [manager demo](docs/manager-demo.md). Room runbook: [venue test](do
 Fallback for a failed projector or GPU: `/#/stage?fallback=1` (silent SVG path). Kiosk mode:
 `/#/stage?autoplay=1&loop=1`.
 
+### Your own tour, or the demo
+
+![My tour — the workspace home for your own data](docs/assets/my-tour.png)
+
+CUE opens on the synthetic show, but it is not the only source. **My tour** creates a blank workspace
+with real authoring:
+
+- edit the show, dates, **venues**, **looks**, **cues** and **budget**;
+- import a **show pack** (JSON), a **grandMA3 cue list** (CSV) or a **Vectorworks fixture schedule**
+  (CSV) — parsed in the browser, never uploaded;
+- export the whole tour as JSON;
+- switch between **the synthetic demo** and **your tour** in **Settings → Data source**. Neither is
+  deleted by switching.
+
+![My tour — venues, looks, dates and cues you can edit](docs/assets/my-tour-edit.png)
+
+A worked case ships with the repo: **Harbour Lights — *The Long Way Round***. Four rooms, 12 cues, 20
+fixtures, a €15,000 budget and four open risks you can analyse. Load it from My tour, or open
+[`/#/?example=1`](https://jiuwendemos.github.io/cue/#/?example=1).
+
+- [The worked example, and what to fill in](examples/harbour-lights/README.md)
+- [How your data is stored, imported and what it cannot do yet](docs/own-data.md)
+
 ---
 
 ## The trust beat
@@ -296,7 +319,7 @@ The full, item-by-item status is in [docs/roadmap.md](docs/roadmap.md). The shor
 - **2–3 — production and scale:** adapters and UI surfaces exist; live vendor integrations and a multi-city network are pilot work.
 
 **The next three tracks** — [make it proactive, make it true 2026, make it connected](docs/roadmap-next.md) — are
-a detailed plan with 510 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
+a detailed plan with 522 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
 demo and a production system.
 
 ---

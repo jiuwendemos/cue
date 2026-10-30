@@ -33,6 +33,41 @@ export default function Settings() {
 
       <div className="settings-grid">
         <div className="col gap16">
+          <Panel title="Data source" sub="The synthetic show, or your own tour. Both stay; switching never deletes the other.">
+            <div className="setting-row">
+              <span className="label">
+                Showing
+                <span className="note">
+                  {store.mode === "workspace" && store.workspace
+                    ? `${store.workspace.project.title} · your data, saved in this browser.`
+                    : "Nova Vale — Night Signal · the fixed synthetic pack."}
+                </span>
+              </span>
+              <Chip tone={store.mode === "workspace" ? "ok" : "info"}>{store.mode === "workspace" ? "my tour" : "synthetic demo"}</Chip>
+            </div>
+            <div className="row gap8 mt12 wrap">
+              <button className={`btn sm${store.mode === "demo" ? " primary" : ""}`} onClick={() => store.setMode("demo")}>
+                <Icon name="shows" size={12} /> Synthetic demo
+              </button>
+              <button
+                className={`btn sm${store.mode === "workspace" ? " primary" : ""}`}
+                onClick={() => store.setMode("workspace")}
+                disabled={!store.workspace}
+              >
+                <Icon name="file" size={12} /> My tour
+              </button>
+              <Link to="/tour" className="btn sm"><Icon name="plus" size={12} /> {store.workspace ? "Edit my tour" : "Start a blank tour"}</Link>
+              {store.workspace && (
+                <button className="btn sm danger" onClick={() => store.deleteWorkspace()}><Icon name="x" size={12} /> Delete my tour</button>
+              )}
+            </div>
+            <p className="xsmall soft mt12">
+              Your tour is stored in this browser and can be exported as JSON from My tour. Switching clears the open decisions
+              on the show you leave (signatures, risk states, votes); the show data itself stays. The on-site service stores
+              signatures, approvals and readiness actions in the tenant database; the demo needs no server at all.
+            </p>
+          </Panel>
+
           <Panel title="The room" sub="Three themes, designed together">
             <div className="theme-grid">
               {THEMES.map((t) => (

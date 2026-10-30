@@ -125,6 +125,7 @@ export default function About() {
         {[
           ["0A", "Stage piece", "Built. Deterministic 90-second show with sound, a physical 3D model, the trust beat, the room vote, a cue-sheet and budget consequence, print, and R reset under five seconds."],
           ["0C", "Manager brief", "Built. Buyer, 10-minute cut, proof table, local demo funnel, venue check and a silent fallback stage."],
+          ["0D", "My tour", "Built. A blank workspace beside the demo: authoring for shows, dates, venues, looks, cues and budget, with JSON and CSV imports."],
           ["0B", "Functional demo", "Built. Editable show, looks, video, blocking, cue sheet, budget, checks, offline pack."],
           ["1", "First pilot surface", "Built as software: venue profile, rights register, budget, cue export, approvals, audit. A real pilot still needs one production company."],
           ["4", "Tour readiness", "Built. Risk board, lifecycle, show-week brief, digests, dismissal taxonomy, kill switch, coverage and precision."],

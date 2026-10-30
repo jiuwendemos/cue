@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**510 checkboxes: 139 already in the demo, 371 to build.** The count is the point: this is the work,
+**522 checkboxes: 147 already in the demo, 375 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -686,6 +686,25 @@ The demo is the test. One buyer, one 90-second arc, one 10-minute cut, one proof
 - [ ] A manager can name the buyer and the ROI without prompting
 
 **Do not:** live console/DMX control, four buyers at once, “design tool”, or docs that say concept-only.
+
+---
+
+## Track E — Your own data (2026-10-30)
+
+The demo was the only source. Now there is a real workspace beside it.
+
+- [x] A data-source switch: synthetic demo / my tour, in Settings
+- [x] A blank workspace that creates a valid show (one venue, one look, one cue)
+- [x] Authoring: show, dates, venues, looks, cues and budget
+- [x] Import a show pack (JSON)
+- [x] Import a grandMA3 cue CSV and a Vectorworks fixture CSV in the browser
+- [x] Export the whole tour as JSON
+- [x] A worked example scenario with real upload files (Harbour Lights)
+- [x] Per-mode decisions; switching never deletes the show data
+- [ ] Server-side content API (Postgres) and multi-user editing
+- [ ] Asset upload (clips, posters, drawings)
+- [ ] Edit history and a diff per object
+- [ ] Role-scoped authoring (who may edit what)
 
 ---
 

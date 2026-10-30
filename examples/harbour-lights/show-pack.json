@@ -1,0 +1,1569 @@
+{
+  "meta": {
+    "generated": "2026-10-30T11:31:50.288Z",
+    "seed": 0,
+    "version": "v1",
+    "demoWindow": 0
+  },
+  "project": {
+    "id": "show-harbour",
+    "title": "The Long Way Round",
+    "artist": "Harbour Lights",
+    "tour": "Club tour 2026",
+    "leg": "europe",
+    "venueId": "v-kade",
+    "version": "v3",
+    "updatedAt": "2026-10-30T11:31:50.288Z",
+    "designer": "Ines Duarte",
+    "producer": "Tom Becker",
+    "tourManager": "Sana Okafor",
+    "productionCompany": "Northline Production",
+    "anchor": "2026-10-30",
+    "headline": "Four rooms, one missing clip, one licence that ends mid-tour."
+  },
+  "concept": {
+    "mood": "Cold water, warm people.",
+    "references": [
+      "Harbour loop",
+      "Paper sky"
+    ],
+    "narrative": "A club show that has to work in four very different rooms without losing the chorus.",
+    "statement": "One look carries the chorus; everything else is a room variant.",
+    "rules": [
+      "The chorus is the only moment with all beams.",
+      "Never aim at the front row.",
+      "If the room is small, cut beams before cutting cues."
+    ]
+  },
+  "setlist": [
+    {
+      "id": "song-1",
+      "title": "Cold Harbour",
+      "start": 0,
+      "end": 240,
+      "bpm": 96,
+      "key": "Am",
+      "energyStart": 0.2,
+      "energyEnd": 0.55,
+      "transition": "Straight in",
+      "note": "Opens on the water loop."
+    },
+    {
+      "id": "song-2",
+      "title": "Paper Tide",
+      "start": 240,
+      "end": 480,
+      "bpm": 104,
+      "key": "C",
+      "energyStart": 0.55,
+      "energyEnd": 0.7,
+      "transition": "No gap",
+      "note": ""
+    },
+    {
+      "id": "song-3",
+      "title": "The Long Way Round",
+      "start": 480,
+      "end": 780,
+      "bpm": 118,
+      "key": "D",
+      "energyStart": 0.7,
+      "energyEnd": 0.95,
+      "transition": "Drum fill",
+      "note": "The chorus is the show."
+    },
+    {
+      "id": "song-4",
+      "title": "Signal Fire",
+      "start": 780,
+      "end": 1020,
+      "bpm": 112,
+      "key": "Em",
+      "energyStart": 0.8,
+      "energyEnd": 0.6,
+      "transition": "Haze",
+      "note": ""
+    },
+    {
+      "id": "song-5",
+      "title": "Northline",
+      "start": 1020,
+      "end": 1260,
+      "bpm": 100,
+      "key": "G",
+      "energyStart": 0.5,
+      "energyEnd": 0.7,
+      "transition": "Straight in",
+      "note": ""
+    },
+    {
+      "id": "song-6",
+      "title": "Home Port",
+      "start": 1260,
+      "end": 1560,
+      "bpm": 92,
+      "key": "F",
+      "energyStart": 0.65,
+      "energyEnd": 0.3,
+      "transition": "Outro",
+      "note": "Encore if the room asks."
+    }
+  ],
+  "stage": {
+    "width": 12,
+    "depth": 8,
+    "trim": 7,
+    "screen": {
+      "x": 0,
+      "y": 6.2,
+      "w": 9,
+      "h": 4,
+      "z": 3.8,
+      "tilt": 0
+    },
+    "runway": {
+      "x": 0,
+      "y": 1,
+      "w": 1.6,
+      "d": 2.6
+    },
+    "entrances": [
+      {
+        "id": "stage-left",
+        "label": "Stage left",
+        "x": -5.5,
+        "y": 1
+      },
+      {
+        "id": "stage-right",
+        "label": "Stage right",
+        "x": 5.5,
+        "y": 1
+      }
+    ],
+    "seats": {
+      "rows": 12,
+      "perRow": 24,
+      "firstRowY": 1.6,
+      "gap": 0.9,
+      "rake": 0.1
+    },
+    "notes": ""
+  },
+  "rig": {
+    "trusses": [
+      {
+        "id": "front",
+        "name": "Front truss",
+        "y": 1.6,
+        "z": 6,
+        "length": 12,
+        "capacityKg": 600
+      },
+      {
+        "id": "mid",
+        "name": "Mid truss",
+        "y": 4.2,
+        "z": 5.4,
+        "length": 12,
+        "capacityKg": 650
+      },
+      {
+        "id": "back",
+        "name": "Back truss",
+        "y": 6.5,
+        "z": 4.8,
+        "length": 12,
+        "capacityKg": 450
+      }
+    ],
+    "fixtures": [
+      {
+        "id": "f-b01",
+        "label": "Beam 1",
+        "kind": "beam",
+        "truss": "front",
+        "x": -5.4,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 1,
+        "rental": 180
+      },
+      {
+        "id": "f-b02",
+        "label": "Beam 2",
+        "kind": "beam",
+        "truss": "front",
+        "x": -4.2,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 2,
+        "rental": 180
+      },
+      {
+        "id": "f-b03",
+        "label": "Beam 3",
+        "kind": "beam",
+        "truss": "front",
+        "x": -3,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 3,
+        "rental": 180
+      },
+      {
+        "id": "f-b04",
+        "label": "Beam 4",
+        "kind": "beam",
+        "truss": "front",
+        "x": -1.8,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 4,
+        "rental": 180
+      },
+      {
+        "id": "f-b05",
+        "label": "Beam 5",
+        "kind": "beam",
+        "truss": "front",
+        "x": -0.6,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 5,
+        "rental": 180
+      },
+      {
+        "id": "f-b06",
+        "label": "Beam 6",
+        "kind": "beam",
+        "truss": "front",
+        "x": 0.6,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 6,
+        "rental": 180
+      },
+      {
+        "id": "f-b07",
+        "label": "Beam 7",
+        "kind": "beam",
+        "truss": "front",
+        "x": 1.8,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 7,
+        "rental": 180
+      },
+      {
+        "id": "f-b08",
+        "label": "Beam 8",
+        "kind": "beam",
+        "truss": "front",
+        "x": 3,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Front beams",
+        "universe": 1,
+        "address": 8,
+        "rental": 180
+      },
+      {
+        "id": "f-b09",
+        "label": "Beam 9",
+        "kind": "beam",
+        "truss": "front",
+        "x": 4.2,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Mid beams",
+        "universe": 1,
+        "address": 9,
+        "rental": 180
+      },
+      {
+        "id": "f-b10",
+        "label": "Beam 10",
+        "kind": "beam",
+        "truss": "front",
+        "x": 5.4,
+        "y": 1.6,
+        "z": 6,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Mid beams",
+        "universe": 1,
+        "address": 10,
+        "rental": 180
+      },
+      {
+        "id": "f-b11",
+        "label": "Beam 11",
+        "kind": "beam",
+        "truss": "mid",
+        "x": -2.5,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Mid beams",
+        "universe": 1,
+        "address": 11,
+        "rental": 180
+      },
+      {
+        "id": "f-b12",
+        "label": "Beam 12",
+        "kind": "beam",
+        "truss": "mid",
+        "x": 2.5,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 800,
+        "weightKg": 38,
+        "beamAngle": 8,
+        "purpose": "Mid beams",
+        "universe": 1,
+        "address": 12,
+        "rental": 180
+      },
+      {
+        "id": "f-w1",
+        "label": "Wash 1",
+        "kind": "wash",
+        "truss": "mid",
+        "x": -3,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 300,
+        "weightKg": 18,
+        "beamAngle": 24,
+        "purpose": "Back wash",
+        "universe": 1,
+        "address": 13,
+        "rental": 95
+      },
+      {
+        "id": "f-w2",
+        "label": "Wash 2",
+        "kind": "wash",
+        "truss": "mid",
+        "x": -1,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 300,
+        "weightKg": 18,
+        "beamAngle": 24,
+        "purpose": "Back wash",
+        "universe": 1,
+        "address": 14,
+        "rental": 95
+      },
+      {
+        "id": "f-w3",
+        "label": "Wash 3",
+        "kind": "wash",
+        "truss": "mid",
+        "x": 1,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 300,
+        "weightKg": 18,
+        "beamAngle": 24,
+        "purpose": "Back wash",
+        "universe": 1,
+        "address": 15,
+        "rental": 95
+      },
+      {
+        "id": "f-w4",
+        "label": "Wash 4",
+        "kind": "wash",
+        "truss": "mid",
+        "x": 3,
+        "y": 4.2,
+        "z": 5.4,
+        "watts": 300,
+        "weightKg": 18,
+        "beamAngle": 24,
+        "purpose": "Back wash",
+        "universe": 1,
+        "address": 16,
+        "rental": 95
+      },
+      {
+        "id": "f-s1",
+        "label": "Spot 1",
+        "kind": "spot",
+        "truss": "back",
+        "x": -3.5,
+        "y": 6.5,
+        "z": 4.8,
+        "watts": 1000,
+        "weightKg": 22,
+        "beamAngle": 14,
+        "purpose": "Follow spot",
+        "universe": 1,
+        "address": 17,
+        "rental": 130
+      },
+      {
+        "id": "f-s2",
+        "label": "Spot 2",
+        "kind": "spot",
+        "truss": "back",
+        "x": 3.5,
+        "y": 6.5,
+        "z": 4.8,
+        "watts": 1000,
+        "weightKg": 22,
+        "beamAngle": 14,
+        "purpose": "Follow spot",
+        "universe": 1,
+        "address": 18,
+        "rental": 130
+      },
+      {
+        "id": "f-l1",
+        "label": "Bar 1",
+        "kind": "led_bar",
+        "truss": "back",
+        "x": -2,
+        "y": 6.5,
+        "z": 4.8,
+        "watts": 500,
+        "weightKg": 8,
+        "beamAngle": 40,
+        "purpose": "Side accent",
+        "universe": 1,
+        "address": 19,
+        "rental": 70
+      },
+      {
+        "id": "f-l2",
+        "label": "Bar 2",
+        "kind": "led_bar",
+        "truss": "back",
+        "x": 2,
+        "y": 6.5,
+        "z": 4.8,
+        "watts": 500,
+        "weightKg": 8,
+        "beamAngle": 40,
+        "purpose": "Side accent",
+        "universe": 1,
+        "address": 20,
+        "rental": 70
+      }
+    ],
+    "power": {
+      "amps": 63,
+      "phases": 3,
+      "volts": 230,
+      "kw": 32
+    },
+    "haze": "Low haze, 18%",
+    "notes": "House beams at Kade and Hangar. The Foundry has none."
+  },
+  "setPieces": [],
+  "looks": [
+    {
+      "id": "look-warm",
+      "name": "Warm open",
+      "code": "LX 01",
+      "description": "Six beams and the two washes, amber at 40%.",
+      "palette": [
+        "#ffb454",
+        "#f5f0e4"
+      ],
+      "energy": 0.35,
+      "impact": 58,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "opener"
+      ],
+      "fixtureIds": [
+        "f-b01",
+        "f-b02",
+        "f-b03",
+        "f-b04",
+        "f-w1",
+        "f-w2"
+      ],
+      "audienceAim": 0,
+      "mood": "warm",
+      "reasons": [],
+      "note": "The room should see the band before it sees the rig."
+    },
+    {
+      "id": "look-long",
+      "name": "Long way",
+      "code": "LX 02",
+      "description": "All twelve beams, a low fan from the mid truss.",
+      "palette": [
+        "#d7ff4f",
+        "#51e0d2"
+      ],
+      "energy": 0.82,
+      "impact": 86,
+      "costDelta": 1080,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "chorus"
+      ],
+      "fixtureIds": [
+        "f-b01",
+        "f-b02",
+        "f-b03",
+        "f-b04",
+        "f-b05",
+        "f-b06",
+        "f-b07",
+        "f-b08",
+        "f-b09",
+        "f-b10",
+        "f-b11",
+        "f-b12",
+        "f-w1",
+        "f-w2",
+        "f-w3",
+        "f-w4",
+        "f-s1",
+        "f-s2",
+        "f-l1",
+        "f-l2"
+      ],
+      "audienceAim": 0,
+      "mood": "wide",
+      "reasons": [],
+      "note": "The extra four beams are the 1,080 EUR question."
+    },
+    {
+      "id": "look-tide",
+      "name": "Tide",
+      "code": "VID 01",
+      "description": "TIDE LINES full-bleed on the screen, no beams.",
+      "palette": [
+        "#51e0d2",
+        "#0a0d0b"
+      ],
+      "energy": 0.5,
+      "impact": 78,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "video"
+      ],
+      "fixtureIds": [
+        "f-w3",
+        "f-w4"
+      ],
+      "audienceAim": 0,
+      "videoId": "vid-tide",
+      "videoTransition": "Cut on the downbeat",
+      "mood": "cold",
+      "reasons": [],
+      "note": "The clip is not delivered yet; MONOLITH is the fallback."
+    },
+    {
+      "id": "look-encore",
+      "name": "Encore",
+      "code": "LX 03",
+      "description": "House at half, four beams, one bar.",
+      "palette": [
+        "#f5f0e4",
+        "#ff6b62"
+      ],
+      "energy": 0.72,
+      "impact": 72,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "encore"
+      ],
+      "fixtureIds": [
+        "f-b01",
+        "f-b02",
+        "f-b11",
+        "f-b12",
+        "f-l1"
+      ],
+      "audienceAim": 0,
+      "mood": "bright",
+      "reasons": [],
+      "note": ""
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-harbour",
+      "name": "HARBOUR LOOP",
+      "clip": "harbour_loop_v3.mp4",
+      "mapping": "full",
+      "transition": "Cut",
+      "duration": 42,
+      "resolution": "1920×1080",
+      "status": "delivered",
+      "rightsId": "right-video",
+      "note": "Slow water over concrete.",
+      "palette": [
+        "#51e0d2"
+      ],
+      "cueComplexity": 2
+    },
+    {
+      "id": "vid-tide",
+      "name": "TIDE LINES",
+      "clip": "tide_lines_v2.mp4",
+      "mapping": "horizon",
+      "transition": "Cut on the downbeat",
+      "duration": 26,
+      "resolution": "1920×1080",
+      "status": "missing",
+      "rightsId": "right-video",
+      "note": "Not delivered. Blocks cue VID 2.",
+      "palette": [
+        "#51e0d2",
+        "#0a0d0b"
+      ],
+      "cueComplexity": 3
+    },
+    {
+      "id": "vid-paper",
+      "name": "PAPER SKY",
+      "clip": "paper_sky_v1.mp4",
+      "mapping": "split",
+      "transition": "Dissolve 2 s",
+      "duration": 18,
+      "resolution": "1920×1080",
+      "status": "delivered",
+      "rightsId": "right-video",
+      "note": "Paper textures, no faces.",
+      "palette": [
+        "#f5f0e4"
+      ],
+      "cueComplexity": 2
+    }
+  ],
+  "blocking": [],
+  "cues": [
+    {
+      "id": "LX 1",
+      "number": 1,
+      "at": 0,
+      "kind": "LX",
+      "title": "Doors / house",
+      "detail": "House to half, stage warm.",
+      "lookId": "look-warm",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 2",
+      "number": 2,
+      "at": 20,
+      "kind": "LX",
+      "title": "Walk on",
+      "detail": "Warm open at 40%.",
+      "lookId": "look-warm",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "VID 1",
+      "number": 3,
+      "at": 70,
+      "kind": "VID",
+      "title": "Cold Harbour",
+      "detail": "HARBOUR LOOP, low in the mix.",
+      "lookId": "look-warm",
+      "videoId": "vid-harbour",
+      "fade": 0,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 3",
+      "number": 4,
+      "at": 270,
+      "kind": "LX",
+      "title": "Paper Tide",
+      "detail": "Long way fan on the chorus.",
+      "lookId": "look-long",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 4",
+      "number": 5,
+      "at": 495,
+      "kind": "LX",
+      "title": "Bridge dip",
+      "detail": "Beams to 20%, washes hold.",
+      "lookId": "look-warm",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "SFX 1",
+      "number": 6,
+      "at": 550,
+      "kind": "SFX",
+      "title": "Haze",
+      "detail": "Low haze for the mid set.",
+      "fade": 0,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "VID 2",
+      "number": 7,
+      "at": 760,
+      "kind": "VID",
+      "title": "Tide Lines",
+      "detail": "TIDE LINES on the screen. Clip not delivered.",
+      "lookId": "look-tide",
+      "videoId": "vid-tide",
+      "fade": 0,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "AUD 1",
+      "number": 8,
+      "at": 840,
+      "kind": "AUD",
+      "title": "Playback stop",
+      "detail": "Stop the playback; the band plays the bridge.",
+      "fade": 0,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 5",
+      "number": 9,
+      "at": 1110,
+      "kind": "LX",
+      "title": "Encore",
+      "detail": "House half, four beams.",
+      "lookId": "look-encore",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": true,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 6",
+      "number": 10,
+      "at": 1320,
+      "kind": "LX",
+      "title": "House call",
+      "detail": "House to full. Work light.",
+      "lookId": "look-encore",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 7",
+      "number": 11,
+      "at": 1380,
+      "kind": "LX",
+      "title": "Curfew",
+      "detail": "House stays up. Load-out begins.",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    },
+    {
+      "id": "LX 8",
+      "number": 12,
+      "at": 1500,
+      "kind": "LX",
+      "title": "Out",
+      "detail": "Stage to black. Practical off.",
+      "fade": 2,
+      "duration": 4,
+      "owner": "Ines Duarte",
+      "status": "approved",
+      "safety": false,
+      "citation": "Harbour Lights cue sheet v3"
+    }
+  ],
+  "budget": {
+    "currency": "EUR",
+    "approved": 15000,
+    "contingencyPct": 0.08,
+    "lines": [
+      {
+        "id": "ex-rig",
+        "category": "rig",
+        "name": "Beams ×12, washes ×4, spots ×2",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 4800,
+        "note": "Includes cable and rigging."
+      },
+      {
+        "id": "ex-crew",
+        "category": "crew",
+        "name": "Crew ×5 × 2 days",
+        "qty": 10,
+        "unit": "crew-day",
+        "unitCost": 520,
+        "note": "LD, rigger, two techs, video op."
+      },
+      {
+        "id": "ex-transport",
+        "category": "transport",
+        "name": "Van and trailer",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 1800,
+        "note": "Four-city run."
+      },
+      {
+        "id": "ex-power",
+        "category": "power",
+        "name": "Distro and cable",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 650,
+        "note": ""
+      },
+      {
+        "id": "ex-content",
+        "category": "content",
+        "name": "PAPER SKY licence",
+        "qty": 1,
+        "unit": "licence",
+        "unitCost": 1200,
+        "note": "UK + EU."
+      },
+      {
+        "id": "ex-video",
+        "category": "video",
+        "name": "Playback operator",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 900,
+        "note": ""
+      },
+      {
+        "id": "ex-beams",
+        "category": "rig",
+        "name": "Extra beam package ×4",
+        "qty": 4,
+        "unit": "fixture-night",
+        "unitCost": 270,
+        "note": "The Long Way chorus.",
+        "optional": true,
+        "lookIds": [
+          "look-long"
+        ]
+      }
+    ],
+    "note": "Approved before the UK leg was added."
+  },
+  "rights": [
+    {
+      "id": "right-music",
+      "asset": "Harbour Lights — six original songs",
+      "kind": "music",
+      "owner": "Harbour Lights",
+      "licence": "Tour licence, EU + UK",
+      "territory": "EU + UK",
+      "from": "2026-01-01",
+      "to": "2027-06-30",
+      "status": "cleared",
+      "note": "Includes the live stream option.",
+      "source": "Publishing letter, 2026-08-14"
+    },
+    {
+      "id": "right-video",
+      "asset": "HARBOUR LOOP / TIDE LINES / PAPER SKY",
+      "kind": "video",
+      "owner": "Northline Production",
+      "licence": "Content licence, tour",
+      "territory": "EU + UK",
+      "from": "2026-06-01",
+      "to": "2026-11-15",
+      "status": "restricted",
+      "note": "Expires before Manchester and Glasgow.",
+      "source": "Content licence v1"
+    },
+    {
+      "id": "right-likeness",
+      "asset": "Band likeness, promotional",
+      "kind": "likeness",
+      "owner": "Harbour Lights",
+      "licence": "Rider §4",
+      "territory": "EU + UK",
+      "from": "2026-01-01",
+      "to": "2026-12-31",
+      "status": "cleared",
+      "note": "Broadcast needs a separate rider.",
+      "source": "Artist rider §4"
+    }
+  ],
+  "venues": [
+    {
+      "id": "v-kade",
+      "name": "Kade 12",
+      "city": "Amsterdam",
+      "country": "NL",
+      "address": "Kade 12",
+      "capacity": 450,
+      "stage": {
+        "width": 12,
+        "depth": 8,
+        "trim": 7
+      },
+      "rigCapacityKg": 600,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 32
+      },
+      "loadInHours": 5,
+      "changeoverHours": 2,
+      "curfew": "23:00",
+      "frontRow": {
+        "distance": 2.2,
+        "eyeHeight": 1.12
+      },
+      "notes": "Home room. Loading bay is 1.9 m wide.",
+      "lastVerified": "2026-09-12",
+      "verifiedBy": "S. Okafor",
+      "status": "verified"
+    },
+    {
+      "id": "v-hangar",
+      "name": "Hangar 7",
+      "city": "Rotterdam",
+      "country": "NL",
+      "address": "Havenstraat 7",
+      "capacity": 700,
+      "stage": {
+        "width": 12,
+        "depth": 8,
+        "trim": 7
+      },
+      "rigCapacityKg": 700,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 40
+      },
+      "loadInHours": 6,
+      "changeoverHours": 2,
+      "curfew": "23:30",
+      "frontRow": {
+        "distance": 2.6,
+        "eyeHeight": 1.15
+      },
+      "notes": "House rig is available; confirm the motors.",
+      "lastVerified": "2026-10-02",
+      "verifiedBy": "S. Okafor",
+      "status": "verified"
+    },
+    {
+      "id": "v-foundry",
+      "name": "The Foundry",
+      "city": "Manchester",
+      "country": "UK",
+      "address": "12 Cotton Row",
+      "capacity": 380,
+      "stage": {
+        "width": 9,
+        "depth": 6,
+        "trim": 6
+      },
+      "rigCapacityKg": 450,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 23
+      },
+      "loadInHours": 4,
+      "changeoverHours": 2,
+      "curfew": "23:00",
+      "frontRow": {
+        "distance": 1.8,
+        "eyeHeight": 1.1
+      },
+      "notes": "No house beams. One power drop at stage left.",
+      "lastVerified": "2025-11-20",
+      "verifiedBy": "A. Shah",
+      "status": "stale"
+    },
+    {
+      "id": "v-studio",
+      "name": "Studio 4",
+      "city": "Glasgow",
+      "country": "UK",
+      "address": "4 Clyde Lane",
+      "capacity": 300,
+      "stage": {
+        "width": 8,
+        "depth": 6,
+        "trim": 5.5
+      },
+      "rigCapacityKg": 400,
+      "power": {
+        "amps": 32,
+        "phases": 3,
+        "volts": 230,
+        "kw": 20
+      },
+      "loadInHours": 4,
+      "changeoverHours": 1,
+      "curfew": "22:30",
+      "frontRow": {
+        "distance": 1.6,
+        "eyeHeight": 1.1
+      },
+      "notes": "Low trim. The screen has to fly at 4.8 m.",
+      "lastVerified": "2026-01-15",
+      "verifiedBy": "A. Shah",
+      "status": "verified"
+    }
+  ],
+  "dates": [
+    {
+      "id": "d-ams",
+      "date": "2026-11-14",
+      "city": "Amsterdam",
+      "venueId": "v-kade",
+      "loadIn": "2026-11-14T14:00:00+01:00",
+      "show": "2026-11-14T20:30:00+01:00",
+      "curfew": "23:00",
+      "crewCall": "2026-11-14T16:00:00+01:00",
+      "status": "confirmed",
+      "leg": "europe",
+      "note": "Home room."
+    },
+    {
+      "id": "d-rtm",
+      "date": "2026-11-18",
+      "city": "Rotterdam",
+      "venueId": "v-hangar",
+      "loadIn": "2026-11-18T13:00:00+01:00",
+      "show": "2026-11-18T20:30:00+01:00",
+      "curfew": "23:30",
+      "crewCall": "2026-11-18T15:00:00+01:00",
+      "status": "confirmed",
+      "leg": "europe",
+      "note": ""
+    },
+    {
+      "id": "d-man",
+      "date": "2026-11-27",
+      "city": "Manchester",
+      "venueId": "v-foundry",
+      "loadIn": "2026-11-27T14:00:00+00:00",
+      "show": "2026-11-27T20:00:00+00:00",
+      "curfew": "23:00",
+      "crewCall": "2026-11-27T16:00:00+00:00",
+      "status": "at_risk",
+      "leg": "uk",
+      "note": "4 h load-in, smaller room."
+    },
+    {
+      "id": "d-gla",
+      "date": "2026-12-05",
+      "city": "Glasgow",
+      "venueId": "v-studio",
+      "loadIn": "2026-12-05T15:00:00+00:00",
+      "show": "2026-12-05T20:00:00+00:00",
+      "curfew": "22:30",
+      "crewCall": "2026-12-05T17:00:00+00:00",
+      "status": "at_risk",
+      "leg": "uk",
+      "note": "Low trim, 20 kW supply."
+    }
+  ],
+  "risks": [
+    {
+      "id": "R-EX-01",
+      "kind": "power",
+      "title": "Studio 4 supplies 20 kW; the design draws 24.3 kW",
+      "detail": "Glasgow has a 32 A three-phase supply. The full beam look is 24.3 kW. The landing look draws 14.6 kW.",
+      "severity": "critical",
+      "state": "new",
+      "owner": "Sana Okafor",
+      "role": "Tour manager",
+      "dateId": "d-gla",
+      "venueId": "v-studio",
+      "due": "2026-11-24T18:00:00+00:00",
+      "slaHours": 24,
+      "confidence": 0.96,
+      "whyNow": "The Glasgow advance is signed and the design has not changed.",
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Ask the venue for the breaker schedule",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Drop four beams for Glasgow",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Attach the meter reading",
+          "done": false
+        }
+      ],
+      "fix": {
+        "label": "Use the warm look in Glasgow",
+        "effort": "1 h",
+        "cost": 0,
+        "owner": "Ines Duarte"
+      },
+      "evidence": [
+        {
+          "id": "cit-ex-power",
+          "label": "20 kW supply vs 24.3 kW design",
+          "source": "Venue profile — Studio 4",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-ex-rig",
+          "label": "12 × 1,600 W beams",
+          "source": "Rig schedule v2",
+          "kind": "rig"
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T09:00:00+00:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Power check failed for Glasgow."
+        }
+      ],
+      "estimate": "The breaker trips on the first chorus.",
+      "groupKey": "venue:power:v-studio",
+      "provenance": "Pinned to show v3 · rig schedule v2 · venue profile 2026-01-15"
+    },
+    {
+      "id": "R-EX-02",
+      "kind": "asset",
+      "title": "TIDE LINES v2 is not delivered",
+      "detail": "Cue VID 2 points at tide_lines_v2.mp4, which is not in the asset register. The Manchester and Glasgow shows both use it.",
+      "severity": "high",
+      "state": "investigating",
+      "owner": "Tom Becker",
+      "role": "Producer",
+      "dateId": "d-man",
+      "venueId": "v-foundry",
+      "due": "2026-11-20T18:00:00+00:00",
+      "slaHours": 48,
+      "confidence": 0.98,
+      "whyNow": "The clip was due 2026-11-01 and the first show that uses it is 2026-11-27.",
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Confirm the delivery date in writing",
+          "done": true
+        },
+        {
+          "id": "c2",
+          "label": "Prepare the PAPER SKY fallback",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Rehearse the fallback cue",
+          "done": false
+        }
+      ],
+      "fix": {
+        "label": "Deliver TIDE LINES v2 or point VID 2 at PAPER SKY",
+        "effort": "3 h",
+        "cost": 0,
+        "owner": "Tom Becker"
+      },
+      "evidence": [
+        {
+          "id": "cit-ex-asset",
+          "label": "tide_lines_v2.mp4 missing",
+          "source": "Asset register",
+          "kind": "asset"
+        },
+        {
+          "id": "cit-ex-cue",
+          "label": "Cue VID 2 references TIDE LINES",
+          "source": "Cue sheet v3",
+          "kind": "cue"
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T09:00:00+00:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Cue/asset drift detected."
+        }
+      ],
+      "estimate": "One cue is not playable; the fallback is already licensed.",
+      "groupKey": "tour:asset",
+      "provenance": "Pinned to show v3 · asset register · cue sheet v3"
+    },
+    {
+      "id": "R-EX-03",
+      "kind": "rights",
+      "title": "Video rights expire before Manchester",
+      "detail": "The content licence ends 2026-11-15. Manchester is 2026-11-27 and Glasgow is 2026-12-05.",
+      "severity": "critical",
+      "state": "assigned",
+      "owner": "Tom Becker",
+      "role": "Producer",
+      "dateId": "d-man",
+      "venueId": "v-foundry",
+      "due": "2026-11-18T18:00:00+00:00",
+      "slaHours": 24,
+      "confidence": 0.99,
+      "whyNow": "The licence window closes twelve days before the first affected show.",
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Request a written extension",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Ask for the UK-only rate",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Update the cue sheet with the fallback",
+          "done": false
+        }
+      ],
+      "fix": {
+        "label": "Extend the licence or drop video for the UK leg",
+        "effort": "1 day",
+        "cost": 0,
+        "owner": "Tom Becker"
+      },
+      "evidence": [
+        {
+          "id": "cit-ex-rights",
+          "label": "Licence expires 2026-11-15",
+          "source": "Content licence v1",
+          "kind": "rights"
+        },
+        {
+          "id": "cit-ex-dates",
+          "label": "Manchester 11-27 · Glasgow 12-05",
+          "source": "Tour calendar",
+          "kind": "schedule"
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T09:00:00+00:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Rights window ends mid-tour."
+        }
+      ],
+      "estimate": "Two shows would use content outside the licence.",
+      "groupKey": "tour:rights",
+      "provenance": "Pinned to show v3 · content licence v1 · tour calendar"
+    },
+    {
+      "id": "R-EX-04",
+      "kind": "venue",
+      "title": "Two rooms are smaller than the design",
+      "detail": "The Foundry is 9 × 6 m with a 6 m trim; Studio 4 is 8 × 6 m with 5.5 m. The design is 12 × 8 m with a 7 m trim.",
+      "severity": "high",
+      "state": "new",
+      "owner": "Sana Okafor",
+      "role": "Tour manager",
+      "dateId": "d-man",
+      "venueId": "v-foundry",
+      "due": "2026-11-22T18:00:00+00:00",
+      "slaHours": 48,
+      "confidence": 0.92,
+      "whyNow": "The UK leg is confirmed and both rooms need a variant.",
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Cut a UK variant",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Confirm the screen trim",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Re-check the front row",
+          "done": false
+        }
+      ],
+      "fix": {
+        "label": "Create the UK variant from the show",
+        "effort": "3 h",
+        "cost": 0,
+        "owner": "Ines Duarte"
+      },
+      "evidence": [
+        {
+          "id": "cit-ex-stage",
+          "label": "9 × 6 m vs design 12 × 8 m",
+          "source": "Venue profile — The Foundry",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-ex-trim",
+          "label": "5.5 m trim vs design 7 m",
+          "source": "Venue profile — Studio 4",
+          "kind": "venue"
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T09:00:00+00:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Venue fit failed for the UK leg."
+        }
+      ],
+      "estimate": "The screen and the runway do not fit without a variant.",
+      "groupKey": "tour:venue-variant",
+      "provenance": "Pinned to show v3 · venue profiles"
+    }
+  ],
+  "versions": [],
+  "suggestions": [],
+  "agentTrace": [],
+  "audits": [],
+  "notifications": [
+    {
+      "id": "nt-ex-1",
+      "at": "2026-10-30T09:05:00+00:00",
+      "kind": "risk",
+      "severity": "critical",
+      "title": "Studio 4 cannot power the full look",
+      "detail": "20 kW supply vs 24.3 kW design.",
+      "riskId": "R-EX-01",
+      "read": false,
+      "channel": "in_app"
+    },
+    {
+      "id": "nt-ex-2",
+      "at": "2026-10-30T09:05:00+00:00",
+      "kind": "rights",
+      "severity": "critical",
+      "title": "Video rights end before Manchester",
+      "detail": "The licence ends 2026-11-15.",
+      "riskId": "R-EX-03",
+      "read": false,
+      "channel": "in_app"
+    }
+  ],
+  "metrics": {
+    "timeToFirstLook": 240,
+    "timeToCueSheet": 45,
+    "timeToApprove": 90,
+    "previzIterations": 5,
+    "baselineIterations": 11,
+    "cueChanges": 6,
+    "rigCostAvoided": 1080,
+    "rehearsalHoursSaved": 3,
+    "precision": 0.86,
+    "actionableRate": 0.5,
+    "risksPerWeek": 3,
+    "approvalOnTime": 0.88,
+    "weekly": [
+      {
+        "week": "W40",
+        "iterations": 3,
+        "cueChanges": 3,
+        "risks": 1,
+        "cost": 13720
+      },
+      {
+        "week": "W41",
+        "iterations": 4,
+        "cueChanges": 4,
+        "risks": 2,
+        "cost": 14800
+      },
+      {
+        "week": "W42",
+        "iterations": 4,
+        "cueChanges": 5,
+        "risks": 3,
+        "cost": 15000
+      },
+      {
+        "week": "W43",
+        "iterations": 5,
+        "cueChanges": 6,
+        "risks": 4,
+        "cost": 15714
+      }
+    ]
+  },
+  "provenance": {
+    "track": "Six original songs by Harbour Lights",
+    "trackLicence": "Tour licence, EU + UK, to 2027-06-30",
+    "assets": "HARBOUR LOOP and PAPER SKY delivered; TIDE LINES v2 missing.",
+    "model": "CUE",
+    "modelVersion": "workspace",
+    "inference": "Local browser only; the on-site runtime is optional",
+    "dataStay": "This browser (localStorage). On-site, signatures and approvals go to the tenant database.",
+    "createdAt": "2026-10-30T09:00:00+00:00",
+    "note": "A worked example built for the repo. Harbour Lights, Northline and the rooms are invented. The arithmetic and the readiness model are real."
+  },
+  "integrations": [],
+  "users": [
+    {
+      "id": "u-ines",
+      "name": "Ines Duarte",
+      "initials": "ID",
+      "role": "designer",
+      "venueIds": [
+        "v-kade"
+      ],
+      "note": ""
+    },
+    {
+      "id": "u-tom",
+      "name": "Tom Becker",
+      "initials": "TB",
+      "role": "producer",
+      "venueIds": [],
+      "note": ""
+    },
+    {
+      "id": "u-sana",
+      "name": "Sana Okafor",
+      "initials": "SO",
+      "role": "tour_manager",
+      "venueIds": [
+        "v-kade",
+        "v-hangar"
+      ],
+      "note": ""
+    }
+  ],
+  "billing": {
+    "plan": "workspace",
+    "shows": 4,
+    "seats": 3,
+    "perShow": 0,
+    "perSeatMonth": 0,
+    "mrr": 0,
+    "nextInvoice": "",
+    "setupFee": 0,
+    "note": ""
+  },
+  "readiness": {
+    "mode": "shadow",
+    "stopSwitch": false,
+    "quietHours": "22:00-06:00",
+    "digest": "daily",
+    "maxRisksPerProducerWeek": 20,
+    "channels": [
+      "in_app"
+    ],
+    "coverageFloor": 0.9,
+    "stopReasons": []
+  }
+}

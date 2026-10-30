@@ -104,9 +104,9 @@ export function DemoGuide({
         <div className="demo-foot">
           <Chip tone="accent"><Icon name="eye" size={11} /> {ui.locale === "zh" ? "合成演出" : "synthetic show"}</Chip>
           <span className="small muted">
-            You can hide the synthetic-show labels in <b>Settings → Interface</b>. The data stays synthetic;
-            only the notices go quiet.
+            Want a blank workspace instead? Your own data is one click away; the synthetic show stays in Settings.
           </span>
+          <Link to="/tour" className="btn sm" onClick={close}><Icon name="file" size={11} /> Start my own tour</Link>
           <Link to="/glossary" className="btn sm ghost" onClick={close}>Glossary</Link>
           {onOpenSettings && <button className="btn sm ghost" onClick={() => { close(); onOpenSettings(); }}>Open settings</button>}
         </div>

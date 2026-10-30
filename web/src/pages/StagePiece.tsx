@@ -8,6 +8,7 @@ import { track } from "../lib/telemetry";
 import { StageCanvas } from "../components/StageCanvas";
 import { Timeline } from "../components/Timeline";
 import { Icon } from "../components/Icon";
+import { Panel } from "../components/UI";
 import type { Look, Pack } from "../types";
 
 const DROP_LOOKS = ["look-aerial-12", "look-six-beam", "look-video-drop"];
@@ -27,7 +28,33 @@ function phaseFor(t: number): Phase {
   return "reveal";
 }
 
+/**
+ * The 90-second piece is the synthetic demo. In a blank workspace it explains
+ * itself and offers the switch instead of pretending the story is yours.
+ */
 export default function StagePiece() {
+  const store = useStore();
+  if (store.mode === "workspace") {
+    return (
+      <div className="tour-start">
+        <Panel title="The 90-second show is the synthetic demo" sub="Your workspace has its own cue sheet; this story belongs to Nova Vale.">
+          <p className="small muted">
+            The piece is a fixed, rehearsed demo: one lamp, one unsafe AI proposal, one human rejection, one room vote.
+            Your tour keeps its own data. Switch to the demo to play it, or go back to your show.
+          </p>
+          <div className="row gap8 mt16 wrap">
+            <button className="btn primary" onClick={() => store.setMode("demo")}><Icon name="play" size={13} /> Play the synthetic demo</button>
+            <Link to="/tour" className="btn"><Icon name="file" size={13} /> My tour</Link>
+            <Link to="/show" className="btn"><Icon name="stage" size={13} /> Open the studio</Link>
+          </div>
+        </Panel>
+      </div>
+    );
+  }
+  return <StagePieceInner />;
+}
+
+function StagePieceInner() {
   const navigate = useNavigate();
   const store = useStore();
   const ui = useUI();
