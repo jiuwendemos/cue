@@ -246,6 +246,7 @@ export function Stage3D({
       cancelAnimationFrame(frame);
       observer.disconnect();
       controls.dispose();
+      screenTexture.dispose();
       scene.traverse((object) => {
         if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
           object.geometry.dispose();
