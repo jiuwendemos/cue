@@ -61,7 +61,9 @@ The on-site service now ships:
   when a configured backend is unavailable.
 
 The public demo still answers locally and makes no external call. Configure the environment to point
-any of these at a real service. See [production wiring](docs/production-wiring.md).
+any of these at a real service. See [production wiring](docs/production-wiring.md) and
+[the integration status table](docs/integrations.md) — every service, why it is needed, and whether it
+is verified, built-but-unconfigured, file-exchange or not built.
 
 ### The OpenJiuwen agent
 

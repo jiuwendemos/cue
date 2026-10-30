@@ -142,6 +142,13 @@ Against `openjiuwen 0.1.19` and a live `deepseek-v4-pro` endpoint: one cited ans
 warm-up, 1-3 tool reads, 10-12 citations. `pytest -m live` runs the same check when
 `CUE_LIVE_AGENT=1` and `CUE_ENV_FILE` are set.
 
+## Integration status
+
+The full table — service, why CUE needs it, what the app does, and what is verified — is in
+[integrations.md](integrations.md). Short version: the OpenJiuwen runtime is verified; delivery
+adapters, DAM, exports and imports are built and tested; OIDC, Postgres/object storage, cloud DAM,
+calendar/finance sync and vendor-certified console/previz exchange are not built.
+
 ## Production gate
 
 - [x] Agent status and ask endpoint.

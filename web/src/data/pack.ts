@@ -20,6 +20,7 @@ import type {
   Venue,
   VideoLook,
 } from "../types";
+import { INTEGRATIONS } from "./integrations";
 
 /**
  * The CUE demo show. Every value is synthetic and generated for this demo.
@@ -776,21 +777,7 @@ export const PACK: Pack = {
     createdAt: "2026-10-30T02:00:00+01:00",
     note: "Every AI proposal is labelled. The designer authors the show; the system proposes and checks.",
   },
-  integrations: [
-    { id: "depence", name: "Depence²", protocol: "Previz exchange", kind: "previz", status: "simulated", detail: "Stage, rig and look import/export. Reference adapter; no live licence attached.", direction: "both" },
-    { id: "capture", name: "Capture", protocol: "Previz exchange", kind: "previz", status: "available", detail: "Mapping and look export.", direction: "export" },
-    { id: "wysiwyg", name: "WYSIWYG", protocol: "Previz exchange", kind: "previz", status: "available", detail: "Rig and patch import.", direction: "import" },
-    { id: "vectorworks", name: "Vectorworks Spotlight", protocol: "VWX / CSV", kind: "previz", status: "available", detail: "Drafting reference and fixture schedule.", direction: "import" },
-    { id: "grandma3", name: "grandMA3", protocol: "MVR / XML", kind: "console", status: "simulated", detail: "Cue and patch export. Reference adapter; no console attached.", direction: "export" },
-    { id: "disguise", name: "disguise", protocol: "Media server", kind: "video", status: "available", detail: "Screen mapping and clip list.", direction: "both" },
-    { id: "resolume", name: "Resolume", protocol: "Arena / OSC", kind: "video", status: "simulated", detail: "Clip and layer export. No live control.", direction: "export" },
-    { id: "notch", name: "Notch", protocol: "Block export", kind: "video", status: "available", detail: "Content block handoff.", direction: "import" },
-    { id: "dam", name: "Dropbox / DAM", protocol: "Asset links", kind: "dam", status: "connected", detail: "Clip register with freshness checks. Connected in the demo.", direction: "import" },
-    { id: "calendar", name: "Google Calendar", protocol: "Calendar sync", kind: "calendar", status: "connected", detail: "Tour dates, load-in and rehearsal calls.", direction: "import" },
-    { id: "xero", name: "Xero", protocol: "Budget export", kind: "finance", status: "available", detail: "Purchase orders and show cost codes.", direction: "export" },
-    { id: "slack", name: "Slack", protocol: "Webhook + HMAC", kind: "chat", status: "connected", detail: "Risk digest and acknowledge actions.", direction: "both" },
-    { id: "teams", name: "Microsoft Teams", protocol: "Webhook", kind: "chat", status: "available", detail: "Show-week brief to the production channel.", direction: "export" },
-  ],
+  integrations: INTEGRATIONS,
   users: [
     { id: "u-mara", name: "Mara Voss", initials: "MV", role: "designer", venueIds: ["v-halcyon"], note: "Author of the show. Owns the looks and the cue sheet." },
     { id: "u-jonas", name: "Jonas Reed", initials: "JR", role: "producer", venueIds: [], note: "Budget, approvals and rights. Signs the show version." },

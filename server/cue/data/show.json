@@ -3896,7 +3896,7 @@
       "protocol": "Previz exchange",
       "kind": "previz",
       "status": "simulated",
-      "detail": "Stage, rig and look import/export. Reference adapter; no live licence attached.",
+      "detail": "Stage, rig and look exchange. No adapter attached; MVR is the only file path.",
       "direction": "both"
     },
     {
@@ -3904,8 +3904,8 @@
       "name": "Capture",
       "protocol": "Previz exchange",
       "kind": "previz",
-      "status": "available",
-      "detail": "Mapping and look export.",
+      "status": "simulated",
+      "detail": "Mapping and look exchange. No adapter attached.",
       "direction": "export"
     },
     {
@@ -3913,8 +3913,8 @@
       "name": "WYSIWYG",
       "protocol": "Previz exchange",
       "kind": "previz",
-      "status": "available",
-      "detail": "Rig and patch import.",
+      "status": "simulated",
+      "detail": "Rig and patch exchange. No adapter attached.",
       "direction": "import"
     },
     {
@@ -3923,25 +3923,25 @@
       "protocol": "VWX / CSV",
       "kind": "previz",
       "status": "available",
-      "detail": "Drafting reference and fixture schedule.",
-      "direction": "import"
+      "detail": "Fixture CSV import and export. DWG/VWX exchange is not attached.",
+      "direction": "both"
     },
     {
       "id": "grandma3",
       "name": "grandMA3",
       "protocol": "MVR / XML",
       "kind": "console",
-      "status": "simulated",
-      "detail": "Cue and patch export. Reference adapter; no console attached.",
-      "direction": "export"
+      "status": "available",
+      "detail": "Cue CSV/XML export and CSV import. Not vendor-certified.",
+      "direction": "both"
     },
     {
       "id": "disguise",
       "name": "disguise",
       "protocol": "Media server",
       "kind": "video",
-      "status": "available",
-      "detail": "Screen mapping and clip list.",
+      "status": "simulated",
+      "detail": "Screen mapping and clip list. No adapter attached.",
       "direction": "both"
     },
     {
@@ -3949,8 +3949,8 @@
       "name": "Resolume",
       "protocol": "Arena / OSC",
       "kind": "video",
-      "status": "simulated",
-      "detail": "Clip and layer export. No live control.",
+      "status": "available",
+      "detail": "Clip and layer CSV export. No live control.",
       "direction": "export"
     },
     {
@@ -3958,8 +3958,8 @@
       "name": "Notch",
       "protocol": "Block export",
       "kind": "video",
-      "status": "available",
-      "detail": "Content block handoff.",
+      "status": "simulated",
+      "detail": "Content block handoff. No adapter attached.",
       "direction": "import"
     },
     {
@@ -3967,8 +3967,8 @@
       "name": "Dropbox / DAM",
       "protocol": "Asset links",
       "kind": "dam",
-      "status": "connected",
-      "detail": "Clip register with freshness checks. Connected in the demo.",
+      "status": "simulated",
+      "detail": "Local folder checksum scan only. No cloud DAM attached.",
       "direction": "import"
     },
     {
@@ -3976,9 +3976,9 @@
       "name": "Google Calendar",
       "protocol": "Calendar sync",
       "kind": "calendar",
-      "status": "connected",
-      "detail": "Tour dates, load-in and rehearsal calls.",
-      "direction": "import"
+      "status": "available",
+      "detail": "iCalendar export of the tour. No calendar sync attached.",
+      "direction": "export"
     },
     {
       "id": "xero",
@@ -3986,7 +3986,7 @@
       "protocol": "Budget export",
       "kind": "finance",
       "status": "available",
-      "detail": "Purchase orders and show cost codes.",
+      "detail": "Budget CSV export. No Xero API attached.",
       "direction": "export"
     },
     {
@@ -3994,8 +3994,8 @@
       "name": "Slack",
       "protocol": "Webhook + HMAC",
       "kind": "chat",
-      "status": "connected",
-      "detail": "Risk digest and acknowledge actions.",
+      "status": "simulated",
+      "detail": "Webhook delivery adapter. No webhook configured.",
       "direction": "both"
     },
     {
@@ -4003,8 +4003,8 @@
       "name": "Microsoft Teams",
       "protocol": "Webhook",
       "kind": "chat",
-      "status": "available",
-      "detail": "Show-week brief to the production channel.",
+      "status": "simulated",
+      "detail": "Webhook delivery adapter. No webhook configured.",
       "direction": "export"
     }
   ],

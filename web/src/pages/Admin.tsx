@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
+import { INTEGRATIONS } from "../data/integrations";
 import { useUI } from "../lib/ui";
 import { fmtDateTime, fmtMoney } from "../lib/engine";
 import { AuditList, Chip, Meter, PageHead, Panel, Stat, Toggle } from "../components/UI";
@@ -25,7 +26,7 @@ export default function Admin() {
   const [signed, setSigned] = useState(true);
   const [backup, setBackup] = useState("");
 
-  const connected = pack.integrations.filter((i) => i.status === "connected" || i.status === "simulated").length;
+  const connected = INTEGRATIONS.filter((i) => i.status === "connected" || i.status === "simulated").length;
 
   return (
     <div>
@@ -44,7 +45,7 @@ export default function Admin() {
       <div className="stat-rail mb24">
         <Stat label="Tier" value={pack.billing.plan.split(" · ")[1] ?? "tour"} foot={`${pack.billing.shows} shows · ${pack.billing.seats} seats`} />
         <Stat label="MRR" value={fmtMoney(pack.billing.mrr)} foot={`next invoice ${pack.billing.nextInvoice}`} />
-        <Stat label="Integrations" value={connected} unit={`/ ${pack.integrations.length}`} foot="connected or simulated" />
+        <Stat label="Integrations" value={connected} unit={`/ ${INTEGRATIONS.length}`} foot="connected or simulated" />
         <Stat label="Readiness mode" value={store.settings.mode} foot={store.settings.stopSwitch ? "stopped" : "running"} tone={store.settings.stopSwitch ? "bad" : "accent"} />
       </div>
 
@@ -52,7 +53,7 @@ export default function Admin() {
         <div className="col gap16">
           <Panel title="Integrations" sub="CUE exchanges plans. It does not control the show." flush>
             <div style={{ padding: 14 }}>
-              {pack.integrations.map((i) => (
+              {INTEGRATIONS.map((i) => (
                 <div className="integration-row" key={i.id}>
                   <span>
                     <b>{i.name}</b>
