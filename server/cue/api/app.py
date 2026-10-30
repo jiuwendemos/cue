@@ -19,7 +19,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from .. import config
@@ -773,6 +773,51 @@ def create_app(db_path: str | None = None) -> FastAPI:
     @app.get("/api/export/bundle")
     def export_bundle(request: Request) -> dict[str, Any]:
         return exporters.export_bundle(pack_of(request))
+
+    @app.post("/api/admin/backup")
+    def admin_backup(request: Request) -> dict[str, Any]:
+        store = state(request).store
+        target = config.BACKUP_DIR / f"cue-{datetime.now().strftime('%Y%m%d-%H%M%S')}.sqlite3"
+        result = store.backup(target)
+        store.audit(tenant(), "Site Admin", "backup.created", "store", f"Backup written to {target}.", ["ops"])
+        return result
+
+    @app.get("/api/admin/backups")
+    def admin_backups() -> dict[str, Any]:
+        folder = config.BACKUP_DIR
+        items = []
+        if folder.exists():
+            for path in sorted(folder.glob("*.sqlite3"), key=lambda p: p.stat().st_mtime, reverse=True)[:20]:
+                items.append({"name": path.name, "bytes": path.stat().st_size, "at": datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat()})
+        return {"backups": items, "folder": str(folder)}
+
+    @app.get("/api/metrics", response_class=PlainTextResponse)
+    def metrics(request: Request) -> str:
+        pack = pack_of(request)
+        store = state(request).store
+        risks = merged_risks(pack, store, tenant())
+        scans = store.scan_runs(tenant(), limit=1)
+        counts = store.counts(tenant())
+        lag = 0
+        if scans:
+            try:
+                lag = max(0, int((datetime.now().astimezone() - datetime.fromisoformat(scans[0]["at"])).total_seconds()))
+            except ValueError:
+                lag = 0
+        lines = [
+            "# HELP cue_risks_open Open readiness risks for the tenant.",
+            "# TYPE cue_risks_open gauge",
+            f'cue_risks_open{{tenant="{tenant()}"}} {len([r for r in risks if risk_open(r)])}',
+            f'cue_cues_total{{tenant="{tenant()}"}} {len(pack["cues"])}',
+            f'cue_cues_signed{{tenant="{tenant()}"}} {counts["signatures"]}',
+            f'cue_versions_approved{{tenant="{tenant()}"}} {counts["approvals"]}',
+            f'cue_scans_total{{tenant="{tenant()}"}} {len(store.scan_runs(tenant(), limit=1000))}',
+            f'cue_scan_lag_seconds{{tenant="{tenant()}"}} {lag}',
+            f'cue_agent_configured{{tenant="{tenant()}"}} {1 if state(request).agent.status().configured else 0}',
+            f'cue_npu_ready{{tenant="{tenant()}"}} {1 if config.NPU_ENDPOINT else 0}',
+            "",
+        ]
+        return "\n".join(lines)
 
     @app.get("/mcp")
     def mcp_info() -> dict[str, Any]:

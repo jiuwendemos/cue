@@ -131,6 +131,20 @@ def test_remote_agent_adapter() -> None:
         thread.join(timeout=2)
 
 
+def test_backup_and_metrics(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(config, "BACKUP_DIR", tmp_path)
+    with TestClient(create_app(":memory:")) as client:
+        backup = client.post("/api/admin/backup").json()
+        assert Path(backup["path"]).exists()
+        assert backup["bytes"] > 0
+        listed = client.get("/api/admin/backups").json()["backups"]
+        assert listed
+        metrics = client.get("/api/metrics")
+        assert metrics.status_code == 200
+        assert "cue_risks_open" in metrics.text
+        assert "cue_cues_total" in metrics.text
+
+
 def test_remote_agent_failure_is_explicit() -> None:
     old = config.AGENT_ENDPOINT
     try:

@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**477 checkboxes: 114 already in the demo, 363 to build.** The count is the point: this is the work,
+**479 checkboxes: 116 already in the demo, 363 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -433,9 +433,11 @@ the rest. Never live control.
 - [ ] **P0** Migrations with rollback
 - [ ] **P0** Object storage for assets, exports and evidence
 - [ ] **P0** Job queue and scheduler
+- [x] **P0** On-demand SQLite backup endpoint and backup listing
 - [ ] **P0** Backup and restore drill
 - [ ] **P0** Disaster-recovery runbook
-- [ ] **P0** Metrics, logs and traces
+- [x] **P0** Prometheus-style `/api/metrics` for risks, cues, scans, lag, agent and NPU
+- [ ] **P0** Metrics, logs and traces (full)
 - [ ] **P0** Alerting on render, export and agent errors
 - [ ] **P0** Retention and deletion jobs
 - [ ] **P0** Cost observability per tenant

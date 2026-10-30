@@ -105,3 +105,12 @@ curl -s http://127.0.0.1:8000/api/render/status | jq
 
 `/api/ready` returns 503 when `CUE_STRICT_INTEGRATIONS=1` and the agent or a live connector is missing.
 That is the intended failure: no silent ready.
+
+```bash
+# Prometheus-style counters
+curl -s http://127.0.0.1:8000/api/metrics
+
+# On-demand SQLite backup (writes to CUE_BACKUP_DIR)
+curl -s -X POST http://127.0.0.1:8000/api/admin/backup | jq
+curl -s http://127.0.0.1:8000/api/admin/backups | jq
+```

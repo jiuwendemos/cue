@@ -432,6 +432,17 @@ class Store:
             self._conn.commit()
         return settings
 
+    def backup(self, destination: str | Path) -> dict[str, Any]:
+        target_path = Path(destination)
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._lock:
+            target = sqlite3.connect(str(target_path))
+            try:
+                self._conn.backup(target)
+            finally:
+                target.close()
+        return {"path": str(target_path), "bytes": target_path.stat().st_size, "at": now_iso()}
+
     def reset(self, tenant: str) -> None:
         with self._lock:
             for table in (

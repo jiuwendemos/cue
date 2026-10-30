@@ -23,6 +23,7 @@ export default function Admin() {
   const [strict, setStrict] = useState(true);
   const [local, setLocal] = useState(true);
   const [signed, setSigned] = useState(true);
+  const [backup, setBackup] = useState("");
 
   const connected = pack.integrations.filter((i) => i.status === "connected" || i.status === "simulated").length;
 
@@ -89,6 +90,35 @@ export default function Admin() {
                 <p>These exports are served by the on-site API. The public demo exports the cue sheet locally as CSV, HTML and JSON.</p>
                 <p className="xsmall soft">Start the server and open this page on <span className="mono">127.0.0.1:8000</span> to see the live links and the MCP endpoint.</p>
               </div>
+            )}
+          </Panel>
+
+          <Panel title="Backup, retention and metrics" sub="The pilot path is a file copy; production uses PITR and a tested drill.">
+            {store.live ? (
+              <div className="col gap8">
+                <div className="row gap6 wrap">
+                  <button
+                    className="btn sm"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(new URL("api/admin/backup", document.baseURI).toString(), { method: "POST" });
+                        const data = (await response.json()) as { path?: string; bytes?: number };
+                        setBackup(data.path ?? "");
+                        store.say(`Backup created${data.bytes ? ` — ${Math.round(data.bytes / 1024)} kB` : ""}`);
+                      } catch {
+                        store.say("The backup could not be created.");
+                      }
+                    }}
+                  >
+                    <Icon name="download" size={11} /> Create backup
+                  </button>
+                  <a className="btn sm" href={new URL("api/metrics", document.baseURI).toString()} target="_blank" rel="noreferrer"><Icon name="chart" size={11} /> Metrics</a>
+                </div>
+                {backup && <span className="xsmall mono soft">{backup}</span>}
+                <p className="xsmall soft">Retention: per tour and per asset. Deletion is a recorded action. The public demo keeps nothing.</p>
+              </div>
+            ) : (
+              <p className="small muted">Backup and metrics are on-site operations. The public demo keeps all state in your browser and never sends it anywhere.</p>
             )}
           </Panel>
 
