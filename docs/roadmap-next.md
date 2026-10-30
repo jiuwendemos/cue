@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**479 checkboxes: 118 already in the demo, 361 to build.** The count is the point: this is the work,
+**479 checkboxes: 119 already in the demo, 360 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -326,7 +326,7 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 
 - [ ] **P0** Route-level code splitting that works in this environment
 - [x] **P0** On-demand WebGL chunk: the 3D previz is not in the first load
-- [ ] **P0** Bundle budget in CI
+- [x] **P0** Bundle budget in CI
 - [ ] **P0** LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1
 - [ ] **P0** 3D frame time ≤ 16 ms
 - [ ] **P0** Virtualized cue and asset lists at 10k items
