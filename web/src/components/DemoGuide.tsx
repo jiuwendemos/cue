@@ -93,6 +93,11 @@ export function DemoGuide({
               <span><b>Play the 90 seconds.</b> One lamp, one unsafe proposal, one human decision.</span>
               <Icon name="arrow" size={13} />
             </Link>
+            <Link to="/manager" className="demo-step" onClick={close}>
+              <span className="n">05</span>
+              <span><b>Open the manager brief.</b> The 10-minute cut, the proof, the funnel and the venue check.</span>
+              <Icon name="arrow" size={13} />
+            </Link>
           </div>
         </div>
 
