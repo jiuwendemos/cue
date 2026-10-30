@@ -12,7 +12,7 @@ the original size estimate.
 and 90-day-pilot gates. The software path for each is documented; see “What remains, and why” at the end.
 
 **The next three tracks** — make it proactive, make it true 2026, make it connected — are a separate,
-much longer plan with 479 checkboxes: [roadmap-next.md](roadmap-next.md).
+much longer plan with 483 checkboxes: [roadmap-next.md](roadmap-next.md).
 
 Live: <https://jiuwendemos.github.io/cue/> · Source: this repository · Tests: `server/tests`, `web` build.
 

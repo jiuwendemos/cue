@@ -16,6 +16,7 @@ DB_PATH = Path(os.getenv("CUE_DB", str(ROOT / "cue-data" / "cue.sqlite3")))
 WEB_DIST = Path(os.getenv("CUE_WEB_DIST", str(ROOT / "web" / "dist")))
 RUNTIME_DIR = Path(os.getenv("CUE_RUNTIME", str(ROOT / "cue-data" / "runtime")))
 BACKUP_DIR = Path(os.getenv("CUE_BACKUP_DIR", str(ROOT / "cue-data" / "backups")))
+ASSET_DIR = os.getenv("CUE_ASSET_DIR", "")
 
 MODEL_VERSION = os.getenv("CUE_MODEL_VERSION", "cue-looksmith-1.4.0")
 DEFAULT_TENANT = os.getenv("CUE_DEFAULT_TENANT", "halcyon")

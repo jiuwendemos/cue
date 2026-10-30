@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**479 checkboxes: 119 already in the demo, 360 to build.** The count is the point: this is the work,
+**483 checkboxes: 126 already in the demo, 357 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -333,7 +333,7 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 - [x] **P0** Local fonts, no CDN, no external call
 - [x] **P0** Offline cold start
 - [ ] **P1** Lighthouse CI and a performance regression gate
-- [ ] **P1** Load test 500 tours / 5,000 shows / 100 producers
+- [x] **P1** Load test 500 tours / 5,000 shows / 100 producers (synthetic engine harness)
 - [ ] **P2** Per-tenant cost and render budgets
 
 ## B9 · Content, voice and i18n
@@ -434,14 +434,14 @@ the rest. Never live control.
 - [ ] **P0** Object storage for assets, exports and evidence
 - [ ] **P0** Job queue and scheduler
 - [x] **P0** On-demand SQLite backup endpoint and backup listing
-- [ ] **P0** Backup and restore drill
+- [x] **P0** Backup and restore drill (CI test)
 - [ ] **P0** Disaster-recovery runbook
 - [x] **P0** Prometheus-style `/api/metrics` for risks, cues, scans, lag, agent and NPU
 - [ ] **P0** Metrics, logs and traces (full)
 - [ ] **P0** Alerting on render, export and agent errors
 - [ ] **P0** Retention and deletion jobs
 - [ ] **P0** Cost observability per tenant
-- [ ] **P0** Load test 500 tours / 5,000 shows / 100 producers
+- [x] **P0** Load test 500 tours / 5,000 shows / 100 producers (synthetic engine harness)
 - [ ] **P1** Read replica and failover
 - [ ] **P1** Point-in-time recovery drill
 - [ ] **P2** Multi-region active/passive
@@ -449,6 +449,7 @@ the rest. Never live control.
 ## C4 · Previz and CAD
 
 - [x] **P0** Vectorworks fixture schedule CSV export
+- [x] **P0** Vectorworks fixture CSV import preview
 - [ ] **P0** Vectorworks Spotlight import
 - [ ] **P0** Vectorworks Spotlight export
 - [ ] **P0** WYSIWYG exchange
@@ -465,6 +466,7 @@ the rest. Never live control.
 
 ## C5 · Console and video
 
+- [x] **P0** grandMA3 cue CSV import preview
 - [ ] **P0** grandMA3 cue import
 - [x] **P0** grandMA3 cue export
 - [x] **P0** Resolume clip/layer export
@@ -479,6 +481,8 @@ the rest. Never live control.
 - [ ] **P2** Vendor certification
 
 ## C6 · Content and DAM
+
+- [x] **P0** Local folder DAM connector with checksum and freshness
 
 - [ ] **P0** Dropbox
 - [ ] **P0** Google Drive
@@ -571,7 +575,8 @@ the rest. Never live control.
 - [ ] **P0** Data-rights annex signed
 - [ ] **P0** Incident response and notification
 - [ ] **P0** DR drill with the production office
-- [ ] **P0** Audit export for the customer
+- [x] **P0** Audit CSV export
+- [ ] **P0** Audit export for the customer (venue format)
 - [ ] **P1** SOC 2 readiness (if the market needs it)
 - [ ] **P2** ISO 27001 readiness
 

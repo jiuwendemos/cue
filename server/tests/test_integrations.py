@@ -131,6 +131,45 @@ def test_remote_agent_adapter() -> None:
         thread.join(timeout=2)
 
 
+def test_import_previews_dam_scan_and_audit_csv(tmp_path, monkeypatch) -> None:
+    asset_dir = tmp_path / "dam"
+    asset_dir.mkdir()
+    (asset_dir / "rain_loop_v3.mp4").write_bytes(b"demo clip")
+    monkeypatch.setattr(config, "ASSET_DIR", str(asset_dir))
+    with TestClient(create_app(":memory:")) as client:
+        vw = client.post(
+            "/api/import/vectorworks",
+            files={"file": ("fixtures.csv", "id,label,kind,truss,x,y,z,watts,weight_kg\nB1,Beam 1,beam,front,-7.5,1.4,8,1600,42\n", "text/csv")},
+        )
+        assert vw.status_code == 200
+        assert vw.json()["count"] == 1
+        gm = client.post(
+            "/api/import/grandma3",
+            files={"file": ("cues.csv", "Cue,Name,Trigger,Fade,Command,Page,Note\n1,Blackout,Time 0:00,2,--,,opening\n", "text/csv")},
+        )
+        assert gm.status_code == 200
+        assert gm.json()["count"] == 1
+        dam = client.get("/api/dam/scan").json()
+        assert dam["status"] in {"ok", "missing"}
+        assert dam["found"][0]["checksum"]
+        audit = client.get("/api/audits.csv")
+        assert audit.status_code == 200
+        assert "import.vectorworks" in audit.text
+
+
+def test_backup_restore_drill(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(config, "BACKUP_DIR", tmp_path)
+    with TestClient(create_app(":memory:")) as client:
+        client.post("/api/cues/LX%207/sign", json={"actor": "Mara Voss"})
+        backup = client.post("/api/admin/backup").json()
+        restored = Store(backup["path"])
+        try:
+            assert restored.cue_signatures("halcyon")
+            assert restored.audits("halcyon")
+        finally:
+            restored.close()
+
+
 def test_backup_and_metrics(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(config, "BACKUP_DIR", tmp_path)
     with TestClient(create_app(":memory:")) as client:

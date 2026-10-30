@@ -143,6 +143,58 @@ def mvr_zip(pack: dict[str, Any]) -> bytes:
     return buf.getvalue()
 
 
+def parse_vectorworks_csv(text: str) -> list[dict[str, Any]]:
+    reader = csv.DictReader(io.StringIO(text))
+    required = {"id", "label", "kind", "truss"}
+    rows = []
+    for row in reader:
+        if not required.issubset({key.strip() for key in row if key}):
+            continue
+        rows.append(
+            {
+                "id": row.get("id", "").strip(),
+                "label": row.get("label", "").strip(),
+                "kind": row.get("kind", "").strip(),
+                "truss": row.get("truss", "").strip(),
+                "x": _float(row.get("x")),
+                "y": _float(row.get("y")),
+                "z": _float(row.get("z")),
+                "watts": _float(row.get("watts")),
+                "weight_kg": _float(row.get("weight_kg")),
+                "universe": _float(row.get("universe")),
+                "address": _float(row.get("address")),
+            }
+        )
+    return rows
+
+
+def parse_grandma3_csv(text: str) -> list[dict[str, Any]]:
+    reader = csv.DictReader(io.StringIO(text))
+    rows = []
+    for row in reader:
+        if not row.get("Cue"):
+            continue
+        rows.append(
+            {
+                "cue": _float(row.get("Cue")),
+                "name": row.get("Name", "").strip(),
+                "trigger": row.get("Trigger", "").strip(),
+                "fade": _float(row.get("Fade")),
+                "command": row.get("Command", "").strip(),
+                "page": row.get("Page", "").strip(),
+                "note": row.get("Note", "").strip(),
+            }
+        )
+    return rows
+
+
+def _float(value: Any) -> float:
+    try:
+        return float(str(value).strip())
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def export_bundle(pack: dict[str, Any]) -> dict[str, Any]:
     return {
         "show": pack["project"],

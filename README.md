@@ -241,7 +241,7 @@ The full, item-by-item status is in [docs/roadmap.md](docs/roadmap.md). The shor
 - **2–3 — production and scale:** adapters and UI surfaces exist; live vendor integrations and a multi-city network are pilot work.
 
 **The next three tracks** — [make it proactive, make it true 2026, make it connected](docs/roadmap-next.md) — are
-a detailed plan with 479 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
+a detailed plan with 483 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
 demo and a production system.
 
 ---

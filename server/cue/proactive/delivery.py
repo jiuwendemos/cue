@@ -11,6 +11,7 @@ import hashlib
 import hmac
 import json
 import smtplib
+import time
 from email.message import EmailMessage
 from typing import Any
 from urllib import request
@@ -20,11 +21,19 @@ from ..store.db import Store
 from .signing import signed_link
 
 
-def _post_json(url: str, payload: dict[str, Any], headers: dict[str, str] | None = None, timeout: int = 8) -> tuple[str, int]:
+def _post_json(url: str, payload: dict[str, Any], headers: dict[str, str] | None = None, timeout: int = 8, attempts: int = 3) -> tuple[str, int]:
     body = json.dumps(payload).encode("utf-8")
-    req = request.Request(url, data=body, method="POST", headers={"Content-Type": "application/json", **(headers or {})})
-    with request.urlopen(req, timeout=timeout) as response:
-        return response.read().decode("utf-8", "replace"), int(response.status)
+    last: Exception | None = None
+    for attempt in range(attempts):
+        req = request.Request(url, data=body, method="POST", headers={"Content-Type": "application/json", **(headers or {})})
+        try:
+            with request.urlopen(req, timeout=timeout) as response:
+                return response.read().decode("utf-8", "replace"), int(response.status)
+        except Exception as exc:  # noqa: BLE001 - retry only; the caller records the error
+            last = exc
+            if attempt < attempts - 1:
+                time.sleep(0.15 * (attempt + 1))
+    raise last or RuntimeError("delivery failed")
 
 
 def deliver(store: Store, tenant: str, notification: dict[str, Any], settings: dict[str, Any]) -> list[dict[str, Any]]:

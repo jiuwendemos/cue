@@ -9,15 +9,17 @@ web app. No live control, no DMX, no automatic cue release.
 from __future__ import annotations
 
 import asyncio
+import csv
+import io
 import json
 import os
 from contextlib import asynccontextmanager
 from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -40,7 +42,7 @@ from ..engine.show import (
     risk_open,
     risk_stats,
 )
-from ..integrations import exporters
+from ..integrations import dam, exporters
 from ..mcp import server as mcp_server
 from ..models import ApproveVersionRequest, AskRequest, RenderSettings, RiskActionRequest, SignCueRequest, now_iso
 from ..proactive import scanner
@@ -773,6 +775,35 @@ def create_app(db_path: str | None = None) -> FastAPI:
     @app.get("/api/export/bundle")
     def export_bundle(request: Request) -> dict[str, Any]:
         return exporters.export_bundle(pack_of(request))
+
+    @app.post("/api/import/vectorworks")
+    async def import_vectorworks(request: Request, file: Annotated[UploadFile, File()]) -> dict[str, Any]:
+        text = (await file.read()).decode("utf-8", "replace")
+        rows = exporters.parse_vectorworks_csv(text)
+        state(request).store.audit(tenant(), "Mara Voss", "import.vectorworks", "rig", f"Parsed {len(rows)} fixture rows from {file.filename}.", ["integration"])
+        return {"filename": file.filename, "fixtures": rows, "count": len(rows), "note": "Preview only. The rig is not mutated without a designer approval."}
+
+    @app.post("/api/import/grandma3")
+    async def import_grandma3(request: Request, file: Annotated[UploadFile, File()]) -> dict[str, Any]:
+        text = (await file.read()).decode("utf-8", "replace")
+        rows = exporters.parse_grandma3_csv(text)
+        state(request).store.audit(tenant(), "Mara Voss", "import.grandma3", "cue-sheet", f"Parsed {len(rows)} cue rows from {file.filename}.", ["integration"])
+        return {"filename": file.filename, "cues": rows, "count": len(rows), "note": "Preview only. Cue changes require a human review and a new version."}
+
+    @app.get("/api/dam/scan")
+    def dam_scan(request: Request) -> dict[str, Any]:
+        expected = [video["clip"] for video in pack_of(request)["videos"]]
+        return dam.scan(config.ASSET_DIR, expected)
+
+    @app.get("/api/audits.csv")
+    def audits_csv(request: Request) -> Response:
+        data = audits(request, limit=1000)["events"]
+        buf = io.StringIO()
+        writer = csv.writer(buf)
+        writer.writerow(["id", "at", "actor", "action", "object", "detail", "model_version", "sources"])
+        for event in data:
+            writer.writerow([event["id"], event["at"], event["actor"], event["action"], event["object"], event["detail"], event["modelVersion"], "|".join(event.get("sources", []))])
+        return Response(buf.getvalue(), media_type="text/csv", headers={"Content-Disposition": 'attachment; filename="cue-audit.csv"'})
 
     @app.post("/api/admin/backup")
     def admin_backup(request: Request) -> dict[str, Any]:
