@@ -1,0 +1,4093 @@
+{
+  "meta": {
+    "generated": "2026-10-30T02:00:00+01:00",
+    "seed": 20261030,
+    "version": "1.0.0",
+    "demoWindow": 24
+  },
+  "project": {
+    "id": "show-ns-001",
+    "title": "NIGHT SIGNAL",
+    "artist": "Nova Vale",
+    "tour": "Night Signal — European Tour 2026",
+    "leg": "Home + EU + UK",
+    "venueId": "v-halcyon",
+    "version": "v5",
+    "updatedAt": "2026-10-30T02:00:00+01:00",
+    "designer": "Mara Voss",
+    "producer": "Jonas Reed",
+    "tourManager": "Priya Nair",
+    "productionCompany": "Halcyon Productions",
+    "anchor": "2026-10-30T12:00:00+01:00",
+    "headline": "One lamp. One horizon. One hit."
+  },
+  "concept": {
+    "mood": "A signal arriving from somewhere cold",
+    "references": [
+      "Turrell's light rooms",
+      "Kraftwerk's reduced geometry",
+      "a lighthouse in fog",
+      "the first 8 bars of a club before the room fills"
+    ],
+    "narrative": "The show is a transmission. It starts with one lamp and a hum, builds a silhouette out of side light, and answers the drop with a single horizon. Nothing is decorative: every look is either a signal, a silhouette or a cut to black.",
+    "statement": "The show is designed before the lights go down.",
+    "rules": [
+      "One silhouette, one horizon, one hit. A look may repeat; a gesture may not.",
+      "No fixture points below the front-row eyeline. The audience is never the target.",
+      "The drop is the only white frame in the show.",
+      "If the rig cannot carry the idea, the idea changes — not the safety case."
+    ]
+  },
+  "setlist": [
+    {
+      "id": "song-1",
+      "title": "Static Bloom",
+      "start": 0,
+      "end": 125,
+      "bpm": 96,
+      "key": "F# minor",
+      "energyStart": 0.3,
+      "energyEnd": 0.55,
+      "transition": "8s crossfade into Night Signal",
+      "note": "Cold open. The lamp holds for 26 seconds."
+    },
+    {
+      "id": "song-2",
+      "title": "Night Signal",
+      "start": 125,
+      "end": 305,
+      "bpm": 124,
+      "key": "D minor",
+      "energyStart": 0.55,
+      "energyEnd": 0.96,
+      "transition": "12s decay into Afterglow",
+      "note": "Drop at 3:45. The show turns here."
+    },
+    {
+      "id": "song-3",
+      "title": "Afterglow",
+      "start": 305,
+      "end": 440,
+      "bpm": 88,
+      "key": "A major",
+      "energyStart": 0.62,
+      "energyEnd": 0.28,
+      "transition": "house lights at 6:00",
+      "note": "No new cue after the drop. Let the room breathe."
+    }
+  ],
+  "stage": {
+    "width": 18,
+    "depth": 12,
+    "trim": 9,
+    "screen": {
+      "x": 0,
+      "y": 11.55,
+      "w": 12,
+      "h": 5,
+      "z": 1.4,
+      "tilt": 4
+    },
+    "runway": {
+      "x": 0,
+      "y": 1.9,
+      "w": 2,
+      "d": 3.2
+    },
+    "entrances": [
+      {
+        "id": "sl",
+        "label": "Stage left",
+        "x": -8.1,
+        "y": 2.2
+      },
+      {
+        "id": "sr",
+        "label": "Stage right",
+        "x": 8.1,
+        "y": 2.2
+      },
+      {
+        "id": "up",
+        "label": "Upstage",
+        "x": 0,
+        "y": 10.9
+      }
+    ],
+    "seats": {
+      "rows": 9,
+      "perRow": 22,
+      "firstRowY": -3,
+      "gap": 0.85,
+      "rake": 0.12
+    },
+    "notes": "End-on stage. Screen upstage centre. Runway is a raised 200 mm platform, not into the audience."
+  },
+  "rig": {
+    "trusses": [
+      {
+        "id": "front",
+        "name": "Front truss",
+        "y": 1.5,
+        "z": 8,
+        "length": 16,
+        "capacityKg": 520
+      },
+      {
+        "id": "mid",
+        "name": "Mid truss",
+        "y": 5,
+        "z": 7.4,
+        "length": 14,
+        "capacityKg": 900
+      },
+      {
+        "id": "back",
+        "name": "Back truss",
+        "y": 9,
+        "z": 6.4,
+        "length": 14,
+        "capacityKg": 700
+      },
+      {
+        "id": "foh",
+        "name": "FOH follow",
+        "y": -7,
+        "z": 6,
+        "length": 8,
+        "capacityKg": 0
+      },
+      {
+        "id": "deck",
+        "name": "Deck",
+        "y": 6.8,
+        "z": 0,
+        "length": 2,
+        "capacityKg": 0
+      }
+    ],
+    "fixtures": [
+      {
+        "id": "B1",
+        "label": "Beam 1",
+        "kind": "beam",
+        "truss": "front",
+        "x": -7.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 1,
+        "rental": 210
+      },
+      {
+        "id": "B2",
+        "label": "Beam 2",
+        "kind": "beam",
+        "truss": "front",
+        "x": -4.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 21,
+        "rental": 210
+      },
+      {
+        "id": "B3",
+        "label": "Beam 3",
+        "kind": "beam",
+        "truss": "front",
+        "x": -1.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 41,
+        "rental": 210
+      },
+      {
+        "id": "B4",
+        "label": "Beam 4",
+        "kind": "beam",
+        "truss": "front",
+        "x": 1.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 61,
+        "rental": 210
+      },
+      {
+        "id": "B5",
+        "label": "Beam 5",
+        "kind": "beam",
+        "truss": "front",
+        "x": 4.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 81,
+        "rental": 210
+      },
+      {
+        "id": "B6",
+        "label": "Beam 6",
+        "kind": "beam",
+        "truss": "front",
+        "x": 7.5,
+        "y": 1.4,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 5,
+        "purpose": "front aerial",
+        "universe": 1,
+        "address": 101,
+        "rental": 210
+      },
+      {
+        "id": "X1",
+        "label": "Beam 7",
+        "kind": "beam",
+        "truss": "front",
+        "x": -6.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 121,
+        "rental": 210
+      },
+      {
+        "id": "X2",
+        "label": "Beam 8",
+        "kind": "beam",
+        "truss": "front",
+        "x": -3.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 141,
+        "rental": 210
+      },
+      {
+        "id": "X3",
+        "label": "Beam 9",
+        "kind": "beam",
+        "truss": "front",
+        "x": -0.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 161,
+        "rental": 210
+      },
+      {
+        "id": "X4",
+        "label": "Beam 10",
+        "kind": "beam",
+        "truss": "front",
+        "x": 0.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 181,
+        "rental": 210
+      },
+      {
+        "id": "X5",
+        "label": "Beam 11",
+        "kind": "beam",
+        "truss": "front",
+        "x": 3.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 201,
+        "rental": 210
+      },
+      {
+        "id": "X6",
+        "label": "Beam 12",
+        "kind": "beam",
+        "truss": "front",
+        "x": 6.75,
+        "y": 1.8,
+        "z": 8,
+        "watts": 1600,
+        "weightKg": 42,
+        "beamAngle": 4,
+        "purpose": "AERIAL add-on",
+        "universe": 1,
+        "address": 221,
+        "rental": 210
+      },
+      {
+        "id": "W1",
+        "label": "Wash 1",
+        "kind": "wash",
+        "truss": "mid",
+        "x": -6,
+        "y": 5,
+        "z": 7.4,
+        "watts": 700,
+        "weightKg": 22,
+        "beamAngle": 32,
+        "purpose": "stage wash",
+        "universe": 2,
+        "address": 1,
+        "rental": 95
+      },
+      {
+        "id": "W2",
+        "label": "Wash 2",
+        "kind": "wash",
+        "truss": "mid",
+        "x": -2,
+        "y": 5,
+        "z": 7.4,
+        "watts": 700,
+        "weightKg": 22,
+        "beamAngle": 32,
+        "purpose": "stage wash",
+        "universe": 2,
+        "address": 21,
+        "rental": 95
+      },
+      {
+        "id": "W3",
+        "label": "Wash 3",
+        "kind": "wash",
+        "truss": "mid",
+        "x": 2,
+        "y": 5,
+        "z": 7.4,
+        "watts": 700,
+        "weightKg": 22,
+        "beamAngle": 32,
+        "purpose": "stage wash",
+        "universe": 2,
+        "address": 41,
+        "rental": 95
+      },
+      {
+        "id": "W4",
+        "label": "Wash 4",
+        "kind": "wash",
+        "truss": "mid",
+        "x": 6,
+        "y": 5,
+        "z": 7.4,
+        "watts": 700,
+        "weightKg": 22,
+        "beamAngle": 32,
+        "purpose": "stage wash",
+        "universe": 2,
+        "address": 61,
+        "rental": 95
+      },
+      {
+        "id": "S1",
+        "label": "Spot 1",
+        "kind": "spot",
+        "truss": "back",
+        "x": -6,
+        "y": 9,
+        "z": 6.4,
+        "watts": 950,
+        "weightKg": 30,
+        "beamAngle": 14,
+        "purpose": "back special",
+        "universe": 3,
+        "address": 1,
+        "rental": 130
+      },
+      {
+        "id": "S2",
+        "label": "Spot 2",
+        "kind": "spot",
+        "truss": "back",
+        "x": -2,
+        "y": 9,
+        "z": 6.4,
+        "watts": 950,
+        "weightKg": 30,
+        "beamAngle": 14,
+        "purpose": "back special",
+        "universe": 3,
+        "address": 21,
+        "rental": 130
+      },
+      {
+        "id": "S3",
+        "label": "Spot 3",
+        "kind": "spot",
+        "truss": "back",
+        "x": 2,
+        "y": 9,
+        "z": 6.4,
+        "watts": 950,
+        "weightKg": 30,
+        "beamAngle": 14,
+        "purpose": "back special",
+        "universe": 3,
+        "address": 41,
+        "rental": 130
+      },
+      {
+        "id": "S4",
+        "label": "Spot 4",
+        "kind": "spot",
+        "truss": "back",
+        "x": 6,
+        "y": 9,
+        "z": 6.4,
+        "watts": 950,
+        "weightKg": 30,
+        "beamAngle": 14,
+        "purpose": "back special",
+        "universe": 3,
+        "address": 61,
+        "rental": 130
+      },
+      {
+        "id": "L1",
+        "label": "LED bar L",
+        "kind": "led_bar",
+        "truss": "back",
+        "x": -8,
+        "y": 9,
+        "z": 6.6,
+        "watts": 450,
+        "weightKg": 14,
+        "beamAngle": 60,
+        "purpose": "side accent",
+        "universe": 4,
+        "address": 401,
+        "rental": 70
+      },
+      {
+        "id": "L2",
+        "label": "LED bar R",
+        "kind": "led_bar",
+        "truss": "back",
+        "x": 8,
+        "y": 9,
+        "z": 6.6,
+        "watts": 450,
+        "weightKg": 14,
+        "beamAngle": 60,
+        "purpose": "side accent",
+        "universe": 4,
+        "address": 431,
+        "rental": 70
+      },
+      {
+        "id": "T1",
+        "label": "Strobe",
+        "kind": "strobe",
+        "truss": "mid",
+        "x": 0,
+        "y": 5,
+        "z": 7.6,
+        "watts": 1200,
+        "weightKg": 18,
+        "beamAngle": 80,
+        "purpose": "hit",
+        "universe": 4,
+        "address": 501,
+        "rental": 45
+      },
+      {
+        "id": "F1",
+        "label": "Follow L",
+        "kind": "follow",
+        "truss": "foh",
+        "x": -3,
+        "y": -7,
+        "z": 6,
+        "watts": 1200,
+        "weightKg": 0,
+        "beamAngle": 8,
+        "purpose": "artist follow",
+        "universe": 5,
+        "address": 1,
+        "rental": 250
+      },
+      {
+        "id": "F2",
+        "label": "Follow R",
+        "kind": "follow",
+        "truss": "foh",
+        "x": 3,
+        "y": -7,
+        "z": 6,
+        "watts": 1200,
+        "weightKg": 0,
+        "beamAngle": 8,
+        "purpose": "artist follow",
+        "universe": 5,
+        "address": 21,
+        "rental": 250
+      },
+      {
+        "id": "P1",
+        "label": "Practical",
+        "kind": "lamp",
+        "truss": "deck",
+        "x": 5.6,
+        "y": 6.8,
+        "z": 1.95,
+        "watts": 300,
+        "weightKg": 0,
+        "beamAngle": 45,
+        "purpose": "cold open practical",
+        "universe": 6,
+        "address": 1,
+        "rental": 0
+      }
+    ],
+    "power": {
+      "amps": 63,
+      "phases": 3,
+      "volts": 230,
+      "kw": 43.5
+    },
+    "haze": "Hazer at 30% for the build, 65% for the drop. House extract on.",
+    "notes": "Base rig: 6 front beams, 4 wash, 4 spot, 2 bars, 1 strobe, 2 follow spots, 1 practical. The AERIAL 12 add-on adds six beams."
+  },
+  "setPieces": [
+    {
+      "id": "sp-screen",
+      "name": "LED screen 12×5",
+      "kind": "screen",
+      "x": 0,
+      "y": 11.55,
+      "z": 1.4,
+      "w": 12,
+      "d": 0.35,
+      "h": 5,
+      "color": "#151a1f",
+      "note": "Absen 3.9 mm, 1,200 nits. Flown from the back truss."
+    },
+    {
+      "id": "sp-drum",
+      "name": "Drum riser",
+      "kind": "riser",
+      "x": 0,
+      "y": 7.4,
+      "z": 0,
+      "w": 4,
+      "d": 3,
+      "h": 1.2,
+      "color": "#232820",
+      "note": "1.2 m riser. Blocks the upstage crossover if pushed downstage."
+    },
+    {
+      "id": "sp-booth",
+      "name": "DJ booth",
+      "kind": "booth",
+      "x": 0,
+      "y": 4.9,
+      "z": 0,
+      "w": 5,
+      "d": 1.2,
+      "h": 1.1,
+      "color": "#1b2028",
+      "note": "Sits on the runway; artist can stand on it at the drop."
+    },
+    {
+      "id": "sp-runway",
+      "name": "Runway",
+      "kind": "runway",
+      "x": 0,
+      "y": 1.9,
+      "z": 0,
+      "w": 2,
+      "d": 3.2,
+      "h": 0.2,
+      "color": "#20251d",
+      "note": "Raised platform, 200 mm."
+    },
+    {
+      "id": "sp-tower-l",
+      "name": "Scaffold L",
+      "kind": "scaffold",
+      "x": -7.6,
+      "y": 9.4,
+      "z": 0,
+      "w": 1.4,
+      "d": 1.4,
+      "h": 5.2,
+      "color": "#181b17",
+      "note": "Dancer tower. Structural load 180 kg."
+    },
+    {
+      "id": "sp-tower-r",
+      "name": "Scaffold R",
+      "kind": "scaffold",
+      "x": 7.6,
+      "y": 9.4,
+      "z": 0,
+      "w": 1.4,
+      "d": 1.4,
+      "h": 5.2,
+      "color": "#181b17",
+      "note": "Dancer tower. Structural load 180 kg."
+    },
+    {
+      "id": "sp-monolith-l",
+      "name": "Monolith L",
+      "kind": "prop",
+      "x": -3.2,
+      "y": 9.5,
+      "z": 0,
+      "w": 0.7,
+      "d": 0.7,
+      "h": 3.2,
+      "color": "#20241f",
+      "note": "Matte black slab, 90 kg. Does not fly."
+    },
+    {
+      "id": "sp-monolith-r",
+      "name": "Monolith R",
+      "kind": "prop",
+      "x": 3.2,
+      "y": 9.5,
+      "z": 0,
+      "w": 0.7,
+      "d": 0.7,
+      "h": 3.2,
+      "color": "#20241f",
+      "note": "Matte black slab, 90 kg."
+    },
+    {
+      "id": "sp-lamp",
+      "name": "Practical lamp",
+      "kind": "lamp",
+      "x": 5.6,
+      "y": 6.8,
+      "z": 0,
+      "w": 0.5,
+      "d": 0.5,
+      "h": 1.95,
+      "color": "#2c2a22",
+      "note": "One warm bulb. The first light of the show."
+    }
+  ],
+  "looks": [
+    {
+      "id": "look-blackout",
+      "name": "BLACKOUT",
+      "code": "LX 0",
+      "description": "Stage dark. House at half.",
+      "palette": [
+        "#050607"
+      ],
+      "energy": 0,
+      "impact": 0,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "state"
+      ],
+      "fixtureIds": [],
+      "audienceAim": 0,
+      "mood": "silence",
+      "reasons": [],
+      "note": "The show begins in the dark.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:40:00+02:00"
+    },
+    {
+      "id": "look-one-lamp",
+      "name": "ONE LAMP",
+      "code": "LX 1",
+      "description": "A single practical at stage right. Everything else black.",
+      "palette": [
+        "#ffb454",
+        "#1a1206"
+      ],
+      "energy": 0.12,
+      "impact": 38,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "cold open",
+        "practical"
+      ],
+      "fixtureIds": [
+        "P1"
+      ],
+      "audienceAim": 0,
+      "mood": "a room before the song",
+      "reasons": [
+        {
+          "id": "cit-concept",
+          "label": "Concept: one silhouette, one horizon, one hit",
+          "source": "Concept note v3",
+          "kind": "asset"
+        }
+      ],
+      "note": "The lamp is the only source for 26 seconds.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:41:00+02:00"
+    },
+    {
+      "id": "look-cold-open",
+      "name": "COLD OPEN",
+      "code": "LX 2",
+      "description": "Two washes on the artist, one back special, the practical still on.",
+      "palette": [
+        "#ffe1b0",
+        "#8fa4c8"
+      ],
+      "energy": 0.24,
+      "impact": 54,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "intro"
+      ],
+      "fixtureIds": [
+        "W1",
+        "W2",
+        "S1",
+        "P1"
+      ],
+      "audienceAim": 0,
+      "mood": "held breath",
+      "reasons": [],
+      "note": "Low saturation. The first colour arrives at the build.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:42:00+02:00"
+    },
+    {
+      "id": "look-build",
+      "name": "BUILD — SIDELIGHT",
+      "code": "LX 4",
+      "description": "Side light through the haze, low back spots, bars at 40%.",
+      "palette": [
+        "#3fa7a0",
+        "#d7ff4f"
+      ],
+      "energy": 0.58,
+      "impact": 71,
+      "costDelta": 320,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "build",
+        "sidelight"
+      ],
+      "fixtureIds": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "L1",
+        "L2",
+        "P1"
+      ],
+      "audienceAim": 0,
+      "mood": "pressure building",
+      "reasons": [],
+      "note": "The six-fixture silhouette the drop will answer.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:44:00+02:00"
+    },
+    {
+      "id": "look-aerial-12",
+      "name": "AERIAL 12",
+      "code": "AI 01",
+      "description": "Twelve aerial beams fan the full width, six washing the front row.",
+      "palette": [
+        "#e8f6ff",
+        "#d7ff4f",
+        "#ff4f6d"
+      ],
+      "energy": 0.97,
+      "impact": 97,
+      "costDelta": 3900,
+      "createdBy": "agent",
+      "status": "proposed",
+      "tags": [
+        "drop",
+        "hero",
+        "agent"
+      ],
+      "fixtureIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "X1",
+        "X2",
+        "X3",
+        "X4",
+        "X5",
+        "X6",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "L1",
+        "L2",
+        "T1",
+        "F1",
+        "F2",
+        "P1"
+      ],
+      "audienceAim": 6,
+      "mood": "spectacle",
+      "reasons": [
+        {
+          "id": "cit-rig",
+          "label": "Front truss rated 520 kg; look weighs 564 kg",
+          "source": "Rig schedule v3",
+          "kind": "rig"
+        },
+        {
+          "id": "cit-power",
+          "label": "Venue supply 43.5 kW; look draws 44.1 kW",
+          "source": "Venue profile — Halcyon Hall",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-eye",
+          "label": "Six beams aim below the front-row eyeline",
+          "source": "Sightline model v2",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-ref",
+          "label": "Closest reference: AERIAL 8, Madrid 2025",
+          "source": "Look library",
+          "kind": "asset"
+        }
+      ],
+      "note": "The agent's first answer. Spectacular in previz, wrong on the rig."
+    },
+    {
+      "id": "look-six-beam",
+      "name": "SIX BEAM + MONOLITH",
+      "code": "AI 02",
+      "description": "Six beams, a hard horizon from the screen, no front-row wash.",
+      "palette": [
+        "#d7ff4f",
+        "#51e0d2",
+        "#0b0f0d"
+      ],
+      "energy": 0.93,
+      "impact": 89,
+      "costDelta": 0,
+      "createdBy": "agent",
+      "status": "proposed",
+      "tags": [
+        "drop",
+        "landing",
+        "agent"
+      ],
+      "fixtureIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "L1",
+        "L2",
+        "T1",
+        "F1",
+        "F2",
+        "P1"
+      ],
+      "audienceAim": 0,
+      "videoId": "vid-monolith",
+      "videoTransition": "hard cut on the hit",
+      "mood": "the room gets smaller",
+      "reasons": [
+        {
+          "id": "cit-rig-ok",
+          "label": "564 → 312 kg on the front truss",
+          "source": "Rig schedule v3",
+          "kind": "rig"
+        },
+        {
+          "id": "cit-power-ok",
+          "label": "44.1 → 34.5 kW, 79% of supply",
+          "source": "Venue profile — Halcyon Hall",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-eye-ok",
+          "label": "No fixture below the front-row eyeline",
+          "source": "Sightline model v2",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-human",
+          "label": "The designer rejected the 12-fixture version",
+          "source": "Human decision, 2026-10-30",
+          "kind": "human"
+        }
+      ],
+      "note": "The look that lands: the drop is a horizon, not a rig."
+    },
+    {
+      "id": "look-sideline",
+      "name": "SIDELINE WHISPER",
+      "code": "AI 03",
+      "description": "Wash-only sidelight, one practical, almost no aerial.",
+      "palette": [
+        "#9fd8c6",
+        "#ffd08a"
+      ],
+      "energy": 0.55,
+      "impact": 62,
+      "costDelta": 320,
+      "createdBy": "agent",
+      "status": "proposed",
+      "tags": [
+        "quiet",
+        "agent"
+      ],
+      "fixtureIds": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "P1"
+      ],
+      "audienceAim": 0,
+      "mood": "restraint",
+      "reasons": [
+        {
+          "id": "cit-cheap",
+          "label": "Lowest rig cost of the three candidates",
+          "source": "Budget model v2",
+          "kind": "budget"
+        }
+      ],
+      "note": "Defensible, but it does not answer the song."
+    },
+    {
+      "id": "look-video-drop",
+      "name": "VIDEO DROP — SIGNAL BARS",
+      "code": "AI 04",
+      "description": "Beams off. The screen takes the drop in vertical bars, two beams on the artist.",
+      "palette": [
+        "#51e0d2",
+        "#f5f1e8",
+        "#0b0f0d"
+      ],
+      "energy": 0.9,
+      "impact": 84,
+      "costDelta": 2400,
+      "createdBy": "agent",
+      "status": "proposed",
+      "tags": [
+        "drop",
+        "video",
+        "agent"
+      ],
+      "fixtureIds": [
+        "B1",
+        "B2",
+        "L1",
+        "L2"
+      ],
+      "audienceAim": 0,
+      "videoId": "vid-bars",
+      "videoTransition": "bars in over 4 counts",
+      "mood": "cold signal",
+      "reasons": [
+        {
+          "id": "cit-video",
+          "label": "Cheaper rig than the light drop; more cue complexity",
+          "source": "Budget model v2",
+          "kind": "budget"
+        },
+        {
+          "id": "cit-missing",
+          "label": "SIGNAL BARS v4 is not delivered",
+          "source": "Asset register",
+          "kind": "asset"
+        }
+      ],
+      "note": "The audience choice. Every version of it needs the missing clip."
+    },
+    {
+      "id": "look-afterglow",
+      "name": "AFTERGLOW",
+      "code": "LX 20",
+      "description": "Warm side, dust in the bars, the screen falls to a low horizon.",
+      "palette": [
+        "#ffb454",
+        "#51e0d2",
+        "#2a1d10"
+      ],
+      "energy": 0.3,
+      "impact": 58,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "outro"
+      ],
+      "fixtureIds": [
+        "W1",
+        "W2",
+        "P1",
+        "L1",
+        "L2"
+      ],
+      "audienceAim": 0,
+      "videoId": "vid-afterglow",
+      "mood": "exhale",
+      "reasons": [],
+      "note": "Nothing new after the drop. Let the room breathe.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:50:00+02:00"
+    },
+    {
+      "id": "look-strobe",
+      "name": "STROBE HIT",
+      "code": "LX 8",
+      "description": "One white frame on the downbeat, then black.",
+      "palette": [
+        "#ffffff",
+        "#050607"
+      ],
+      "energy": 0.99,
+      "impact": 66,
+      "costDelta": 0,
+      "createdBy": "designer",
+      "status": "approved",
+      "tags": [
+        "hit"
+      ],
+      "fixtureIds": [
+        "T1",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6"
+      ],
+      "audienceAim": 0,
+      "mood": "impact",
+      "reasons": [],
+      "note": "Single flash. Photosensitivity warning is printed on the cue sheet.",
+      "approvedBy": "Mara Voss",
+      "approvedAt": "2026-10-24T18:47:00+02:00"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-rain",
+      "name": "RAIN",
+      "clip": "rain_loop_v3.mp4",
+      "mapping": "full",
+      "transition": "dissolve 2s",
+      "duration": 125,
+      "resolution": "3840×1600",
+      "status": "delivered",
+      "rightsId": "right-rain",
+      "note": "Slow vertical grain, 4% brightness. The intro texture.",
+      "palette": [
+        "#8fa4c8",
+        "#0b0f0d"
+      ],
+      "cueComplexity": 2
+    },
+    {
+      "id": "vid-monolith",
+      "name": "MONOLITH",
+      "clip": "monolith_horizon_v2.mp4",
+      "mapping": "full",
+      "transition": "hard cut",
+      "duration": 80,
+      "resolution": "3840×1600",
+      "status": "delivered",
+      "rightsId": "right-monolith",
+      "note": "A black slab on a paper horizon. The landing look.",
+      "palette": [
+        "#f5f1e8",
+        "#0b0f0d",
+        "#d7ff4f"
+      ],
+      "cueComplexity": 3
+    },
+    {
+      "id": "vid-bars",
+      "name": "SIGNAL BARS",
+      "clip": "signal_bars_v4.mp4",
+      "mapping": "columns",
+      "transition": "bars in 4 counts",
+      "duration": 95,
+      "resolution": "3840×1600",
+      "status": "missing",
+      "rightsId": "right-monolith",
+      "note": "Not delivered. Blocks the video drop and cue VID 14.",
+      "palette": [
+        "#51e0d2",
+        "#f5f1e8",
+        "#0b0f0d"
+      ],
+      "cueComplexity": 7
+    },
+    {
+      "id": "vid-horizon",
+      "name": "HORIZON",
+      "clip": "horizon_slow_v1.mp4",
+      "mapping": "horizon",
+      "transition": "dissolve 6s",
+      "duration": 140,
+      "resolution": "3840×1600",
+      "status": "delivered",
+      "rightsId": "right-monolith",
+      "note": "One line of light on the lower third. Under the afterglow.",
+      "palette": [
+        "#d7ff4f",
+        "#0b0f0d"
+      ],
+      "cueComplexity": 2
+    },
+    {
+      "id": "vid-afterglow",
+      "name": "AFTERGLOW DUST",
+      "clip": "afterglow_dust_v2.mp4",
+      "mapping": "circle",
+      "transition": "dissolve 8s",
+      "duration": 120,
+      "resolution": "3840×1600",
+      "status": "delivered",
+      "rightsId": "right-rain",
+      "note": "Warm dust in a slow circle. No faces, no lyrics.",
+      "palette": [
+        "#ffb454",
+        "#0b0f0d"
+      ],
+      "cueComplexity": 1
+    }
+  ],
+  "blocking": [
+    {
+      "id": "bk-1",
+      "at": 0,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0.4,
+      "y": 0.6,
+      "z": 0,
+      "note": "Downstage centre, still."
+    },
+    {
+      "id": "bk-2",
+      "at": 26,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0.4,
+      "y": 1.2,
+      "z": 0,
+      "note": "One step in. The lamp finds the face."
+    },
+    {
+      "id": "bk-3",
+      "at": 60,
+      "performer": "Dancer A",
+      "role": "dancer",
+      "x": -3.6,
+      "y": 3,
+      "z": 0,
+      "note": "Enters stage left, slow walk."
+    },
+    {
+      "id": "bk-4",
+      "at": 60,
+      "performer": "Dancer B",
+      "role": "dancer",
+      "x": 3.6,
+      "y": 3,
+      "z": 0,
+      "note": "Mirror. Stays low."
+    },
+    {
+      "id": "bk-5",
+      "at": 94,
+      "performer": "Nova",
+      "role": "artist",
+      "x": -1.6,
+      "y": 2.4,
+      "z": 0,
+      "note": "Drifts left as the side light arrives."
+    },
+    {
+      "id": "bk-6",
+      "at": 125,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0,
+      "y": 1.4,
+      "z": 0,
+      "note": "Centre for the hit."
+    },
+    {
+      "id": "bk-7",
+      "at": 168,
+      "performer": "Dancer A",
+      "role": "dancer",
+      "x": -6.8,
+      "y": 7,
+      "z": 1.4,
+      "note": "Climbs the left tower."
+    },
+    {
+      "id": "bk-8",
+      "at": 168,
+      "performer": "Dancer B",
+      "role": "dancer",
+      "x": 6.8,
+      "y": 7,
+      "z": 1.4,
+      "note": "Mirror on the right tower."
+    },
+    {
+      "id": "bk-9",
+      "at": 205,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0,
+      "y": 4.9,
+      "z": 1.1,
+      "note": "On the DJ booth. The room gets small."
+    },
+    {
+      "id": "bk-10",
+      "at": 225,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0,
+      "y": 4.9,
+      "z": 1.1,
+      "note": "Drop. Arms down. Do not move for four counts."
+    },
+    {
+      "id": "bk-11",
+      "at": 250,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0,
+      "y": 1.9,
+      "z": 0.2,
+      "note": "Steps down to the runway."
+    },
+    {
+      "id": "bk-12",
+      "at": 280,
+      "performer": "Dancer A",
+      "role": "dancer",
+      "x": -3.2,
+      "y": 9.5,
+      "z": 0,
+      "note": "Off the tower, behind the monolith."
+    },
+    {
+      "id": "bk-13",
+      "at": 305,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 0,
+      "y": 2.2,
+      "z": 0,
+      "note": "Afterglow. Centre, close."
+    },
+    {
+      "id": "bk-14",
+      "at": 360,
+      "performer": "Nova",
+      "role": "artist",
+      "x": 2.2,
+      "y": 1.2,
+      "z": 0,
+      "note": "Final step stage right."
+    },
+    {
+      "id": "bk-15",
+      "at": 0,
+      "performer": "Cam 1",
+      "role": "camera",
+      "x": 0,
+      "y": -7,
+      "z": 1.6,
+      "note": "FOH wide. Locked off."
+    },
+    {
+      "id": "bk-16",
+      "at": 176,
+      "performer": "Cam 2",
+      "role": "camera",
+      "x": -7.2,
+      "y": 2,
+      "z": 1.7,
+      "note": "Handheld, stage left. Never crosses the front."
+    },
+    {
+      "id": "bk-17",
+      "at": 225,
+      "performer": "Cam 1",
+      "role": "camera",
+      "x": 0,
+      "y": -7,
+      "z": 1.6,
+      "note": "Wide for the drop. No audience cutaway."
+    },
+    {
+      "id": "bk-18",
+      "at": 280,
+      "performer": "Stage crew",
+      "role": "crew",
+      "x": 3.2,
+      "y": 9.5,
+      "z": 0,
+      "note": "Two crew strike the right monolith in blackout."
+    }
+  ],
+  "cues": [
+    {
+      "id": "LX 1",
+      "number": 1,
+      "at": 0,
+      "kind": "LX",
+      "title": "Blackout",
+      "detail": "House to half, stage to black. Practical off.",
+      "lookId": "look-blackout",
+      "fade": 2,
+      "duration": 6,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Concept v3 · show start"
+    },
+    {
+      "id": "LX 2",
+      "number": 2,
+      "at": 6,
+      "kind": "LX",
+      "title": "One lamp",
+      "detail": "Practical at stage right to 70%. Nothing else.",
+      "lookId": "look-one-lamp",
+      "fade": 3,
+      "duration": 20,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Cue sheet v4 · cold open"
+    },
+    {
+      "id": "STG 1",
+      "number": 3,
+      "at": 12,
+      "kind": "STG",
+      "title": "Preset — lamp and chair",
+      "detail": "Stage crew clear. Chair at 4.2 m stage right.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": false,
+      "citation": "Stage plan v3"
+    },
+    {
+      "id": "LX 3",
+      "number": 4,
+      "at": 26,
+      "kind": "LX",
+      "title": "Cold open",
+      "detail": "Wash 1/2 at 35%, spot 1 at 60%. The lamp stays.",
+      "lookId": "look-cold-open",
+      "fade": 6,
+      "duration": 40,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Look sheet COLD OPEN"
+    },
+    {
+      "id": "VID 1",
+      "number": 5,
+      "at": 32,
+      "kind": "VID",
+      "title": "Rain — low",
+      "detail": "RAIN at 8% brightness, full screen.",
+      "videoId": "vid-rain",
+      "fade": 8,
+      "duration": 56,
+      "owner": "T. Lindqvist",
+      "status": "approved",
+      "safety": false,
+      "citation": "Video map v2"
+    },
+    {
+      "id": "AUD 1",
+      "number": 6,
+      "at": 40,
+      "kind": "AUD",
+      "title": "Playback — Static Bloom",
+      "detail": "Ableton scene 1. Confirmed at 10 dB under.",
+      "fade": 2,
+      "duration": 0,
+      "owner": "T. Lindqvist",
+      "status": "approved",
+      "safety": false,
+      "citation": "Setlist v2"
+    },
+    {
+      "id": "SFX 1",
+      "number": 7,
+      "at": 92,
+      "kind": "SFX",
+      "title": "Haze — low",
+      "detail": "Hazer to 30%. House extract on.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": false,
+      "citation": "Safety sheet v2"
+    },
+    {
+      "id": "LX 4",
+      "number": 8,
+      "at": 94,
+      "kind": "LX",
+      "title": "Build — side light",
+      "detail": "Washes and spots up. Bars at 40%.",
+      "lookId": "look-build",
+      "fade": 12,
+      "duration": 31,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Look sheet BUILD"
+    },
+    {
+      "id": "LX 5",
+      "number": 9,
+      "at": 125,
+      "kind": "LX",
+      "title": "Static Bloom hit",
+      "detail": "Front beams 1–3 at 80%, blackout on 4–6.",
+      "lookId": "look-build",
+      "fade": 1,
+      "duration": 8,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Cue sheet v4"
+    },
+    {
+      "id": "STG 2",
+      "number": 10,
+      "at": 150,
+      "kind": "STG",
+      "title": "Drum riser reveal",
+      "detail": "Clears the riser. No crew on stage after 2:30.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": false,
+      "citation": "Stage plan v3"
+    },
+    {
+      "id": "VID 2",
+      "number": 11,
+      "at": 168,
+      "kind": "VID",
+      "title": "Rain out",
+      "detail": "RAIN out over 6 s. Screen to black.",
+      "videoId": "vid-rain",
+      "fade": 6,
+      "duration": 6,
+      "owner": "T. Lindqvist",
+      "status": "approved",
+      "safety": false,
+      "citation": "Video map v2"
+    },
+    {
+      "id": "CAM 1",
+      "number": 12,
+      "at": 176,
+      "kind": "CAM",
+      "title": "Handheld — stage left",
+      "detail": "Camera 2 enters at stage left. No front-row crossing.",
+      "fade": 0,
+      "duration": 60,
+      "owner": "A. Silva",
+      "status": "approved",
+      "safety": true,
+      "citation": "Camera plan v1"
+    },
+    {
+      "id": "LX 6",
+      "number": 13,
+      "at": 205,
+      "kind": "LX",
+      "title": "Pre-drop — pull back",
+      "detail": "All washes to 20%. The stage gets small.",
+      "lookId": "look-build",
+      "fade": 4,
+      "duration": 20,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Look sheet BUILD"
+    },
+    {
+      "id": "SFX 2",
+      "number": 14,
+      "at": 221,
+      "kind": "SFX",
+      "title": "Haze — high",
+      "detail": "Hazer to 65% for the aerial.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": false,
+      "citation": "Safety sheet v2"
+    },
+    {
+      "id": "LX 7",
+      "number": 15,
+      "at": 225,
+      "kind": "LX",
+      "title": "THE DROP",
+      "detail": "AERIAL 12. Twelve beams, six on the front row.",
+      "lookId": "look-aerial-12",
+      "fade": 0,
+      "duration": 24,
+      "owner": "Mara Voss",
+      "status": "review",
+      "safety": true,
+      "citation": "Agent proposal A-01 · rejected in review"
+    },
+    {
+      "id": "LX 8",
+      "number": 16,
+      "at": 225.4,
+      "kind": "LX",
+      "title": "Strobe hit",
+      "detail": "One frame, full white. Photosensitivity warning.",
+      "lookId": "look-strobe",
+      "fade": 0,
+      "duration": 0.2,
+      "owner": "Mara Voss",
+      "status": "review",
+      "safety": true,
+      "citation": "Safety sheet v2 §4"
+    },
+    {
+      "id": "VID 3",
+      "number": 17,
+      "at": 228,
+      "kind": "VID",
+      "title": "Monolith in",
+      "detail": "MONOLITH hard cut on the downbeat.",
+      "videoId": "vid-monolith",
+      "fade": 0,
+      "duration": 40,
+      "owner": "T. Lindqvist",
+      "status": "review",
+      "safety": false,
+      "citation": "Video map v2"
+    },
+    {
+      "id": "CAM 2",
+      "number": 18,
+      "at": 232,
+      "kind": "CAM",
+      "title": "Camera 1 — wide",
+      "detail": "Camera 1 to wide. No audience cutaways.",
+      "fade": 2,
+      "duration": 70,
+      "owner": "A. Silva",
+      "status": "approved",
+      "safety": false,
+      "citation": "Camera plan v1"
+    },
+    {
+      "id": "VID 4",
+      "number": 19,
+      "at": 250,
+      "kind": "VID",
+      "title": "Signal bars — missing asset",
+      "detail": "SIGNAL BARS v4 has not been delivered.",
+      "videoId": "vid-bars",
+      "fade": 0,
+      "duration": 30,
+      "owner": "Priya Nair",
+      "status": "draft",
+      "safety": false,
+      "citation": "Asset register · open risk R-005"
+    },
+    {
+      "id": "STG 3",
+      "number": 20,
+      "at": 280,
+      "kind": "STG",
+      "title": "Monolith strike",
+      "detail": "Two crew, blackout only. 90 s window.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": true,
+      "citation": "Stage plan v3 §6"
+    },
+    {
+      "id": "LX 9",
+      "number": 21,
+      "at": 305,
+      "kind": "LX",
+      "title": "Afterglow",
+      "detail": "Washes to warm 30%. Beams out. Bars to 15%.",
+      "lookId": "look-afterglow",
+      "fade": 10,
+      "duration": 35,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Look sheet AFTERGLOW"
+    },
+    {
+      "id": "VID 5",
+      "number": 22,
+      "at": 310,
+      "kind": "VID",
+      "title": "Afterglow dust",
+      "detail": "AFTERGLOW DUST, circle mapping, 8 s dissolve.",
+      "videoId": "vid-afterglow",
+      "fade": 8,
+      "duration": 85,
+      "owner": "T. Lindqvist",
+      "status": "approved",
+      "safety": false,
+      "citation": "Video map v2"
+    },
+    {
+      "id": "AUD 2",
+      "number": 23,
+      "at": 330,
+      "kind": "AUD",
+      "title": "Playback — Afterglow",
+      "detail": "Ableton scene 3. No click in the house.",
+      "fade": 4,
+      "duration": 0,
+      "owner": "T. Lindqvist",
+      "status": "approved",
+      "safety": false,
+      "citation": "Setlist v2"
+    },
+    {
+      "id": "LX 10",
+      "number": 24,
+      "at": 410,
+      "kind": "LX",
+      "title": "Final blackout",
+      "detail": "Everything to zero over 8 s. Practical off last.",
+      "lookId": "look-blackout",
+      "fade": 8,
+      "duration": 10,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Cue sheet v4"
+    },
+    {
+      "id": "STG 4",
+      "number": 25,
+      "at": 420,
+      "kind": "STG",
+      "title": "Bow",
+      "detail": "House at 40%. Stage clear for the bow line.",
+      "fade": 0,
+      "duration": 0,
+      "owner": "R. Okafor",
+      "status": "approved",
+      "safety": false,
+      "citation": "Stage plan v3"
+    },
+    {
+      "id": "LX 11",
+      "number": 26,
+      "at": 430,
+      "kind": "LX",
+      "title": "House",
+      "detail": "House to full. Work light on.",
+      "lookId": "look-afterglow",
+      "fade": 6,
+      "duration": 10,
+      "owner": "Mara Voss",
+      "status": "approved",
+      "safety": false,
+      "citation": "Cue sheet v4"
+    }
+  ],
+  "budget": {
+    "currency": "EUR",
+    "approved": 29000,
+    "contingencyPct": 0.08,
+    "lines": [
+      {
+        "id": "bl-beam",
+        "category": "rig",
+        "name": "Beam 1600 × 6",
+        "qty": 6,
+        "unit": "fixture-nights",
+        "unitCost": 210,
+        "note": "Base rig. Six on the front truss."
+      },
+      {
+        "id": "bl-wash",
+        "category": "rig",
+        "name": "Wash × 4",
+        "qty": 4,
+        "unit": "fixture-nights",
+        "unitCost": 95,
+        "note": "Mid truss."
+      },
+      {
+        "id": "bl-spot",
+        "category": "rig",
+        "name": "Spot × 4",
+        "qty": 4,
+        "unit": "fixture-nights",
+        "unitCost": 130,
+        "note": "Back truss."
+      },
+      {
+        "id": "bl-bar",
+        "category": "rig",
+        "name": "LED bar × 2",
+        "qty": 2,
+        "unit": "fixture-nights",
+        "unitCost": 70,
+        "note": "Side accents."
+      },
+      {
+        "id": "bl-strobe",
+        "category": "rig",
+        "name": "Strobe × 1",
+        "qty": 1,
+        "unit": "fixture-nights",
+        "unitCost": 45,
+        "note": "One hit."
+      },
+      {
+        "id": "bl-follow",
+        "category": "rig",
+        "name": "Follow spot × 2",
+        "qty": 2,
+        "unit": "operator-nights",
+        "unitCost": 250,
+        "note": "Two operators, FOH."
+      },
+      {
+        "id": "bl-rigging",
+        "category": "rig",
+        "name": "Truss, motors and rigging",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 2800,
+        "note": "Includes load test certificate."
+      },
+      {
+        "id": "bl-haze",
+        "category": "rig",
+        "name": "Haze and consumables",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 380,
+        "note": "Low-lying."
+      },
+      {
+        "id": "bl-crew",
+        "category": "crew",
+        "name": "Crew — 5 × 2 days",
+        "qty": 10,
+        "unit": "crew-days",
+        "unitCost": 650,
+        "note": "LD, rigger, 2 techs, video op. Changeover in the fee."
+      },
+      {
+        "id": "bl-power",
+        "category": "power",
+        "name": "Power distribution and cable",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 1450,
+        "note": "63 A three-phase house supply."
+      },
+      {
+        "id": "bl-screen",
+        "category": "video",
+        "name": "LED screen 12×5",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 4800,
+        "note": "Absen 3.9 mm, 1,200 nits."
+      },
+      {
+        "id": "bl-content",
+        "category": "content",
+        "name": "Base video content — RAIN",
+        "qty": 1,
+        "unit": "licence",
+        "unitCost": 2100,
+        "note": "Generated in-house. Cleared worldwide."
+      },
+      {
+        "id": "bl-truck",
+        "category": "transport",
+        "name": "Trucking — 2 trucks",
+        "qty": 2,
+        "unit": "trucks",
+        "unitCost": 1450,
+        "note": "Home venue and one leg."
+      },
+      {
+        "id": "bl-aerial",
+        "category": "rig",
+        "name": "AERIAL 12 add-on — 6 beams, rigging, crew",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 3900,
+        "note": "Six extra beams, additional truss pick and one crew day.",
+        "optional": true,
+        "lookIds": [
+          "look-aerial-12"
+        ]
+      },
+      {
+        "id": "bl-monolith",
+        "category": "content",
+        "name": "MONOLITH content + playback operator",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 1950,
+        "note": "Delivered clip, one playback op rehearsal.",
+        "optional": true,
+        "videoId": "vid-monolith"
+      },
+      {
+        "id": "bl-sideline",
+        "category": "rig",
+        "name": "SIDELINE add-on — practical and cable",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 320,
+        "note": "One practical and cable run.",
+        "optional": true,
+        "lookIds": [
+          "look-sideline"
+        ]
+      },
+      {
+        "id": "bl-video-drop",
+        "category": "content",
+        "name": "SIGNAL BARS content + playback",
+        "qty": 1,
+        "unit": "show",
+        "unitCost": 2400,
+        "note": "Not yet delivered. Priced to hold the option.",
+        "optional": true,
+        "lookIds": [
+          "look-video-drop"
+        ]
+      }
+    ],
+    "note": "One venue, one show. Crew day = 10 h. Contingency is applied to the base subtotal, not to optional add-ons."
+  },
+  "rights": [
+    {
+      "id": "right-music",
+      "asset": "Static Bloom / Night Signal / Afterglow",
+      "kind": "music",
+      "owner": "Nova Vale (self-released)",
+      "licence": "Commissioned instrumental — in-house",
+      "territory": "Worldwide",
+      "from": "2026-01-01",
+      "to": "2030-12-31",
+      "status": "cleared",
+      "note": "Synthesised in the browser for the public demo. No commercial recording is used.",
+      "source": "Publishing letter, 2026-09-12"
+    },
+    {
+      "id": "right-monolith",
+      "asset": "MONOLITH / SIGNAL BARS / HORIZON",
+      "kind": "video",
+      "owner": "Halcyon Content Studio",
+      "licence": "AI-assisted content — tour licence",
+      "territory": "EU · UK · US",
+      "from": "2026-09-01",
+      "to": "2026-11-10",
+      "status": "cleared",
+      "note": "Expires before Paris. Extension is in negotiation.",
+      "source": "Content licence v2"
+    },
+    {
+      "id": "right-rain",
+      "asset": "RAIN / AFTERGLOW DUST",
+      "kind": "video",
+      "owner": "Halcyon Content Studio",
+      "licence": "Generated in-house — unrestricted",
+      "territory": "Worldwide",
+      "from": "2026-01-01",
+      "to": "2030-12-31",
+      "status": "cleared",
+      "note": "Generated with a documented prompt set. No third-party footage.",
+      "source": "Provenance sheet v1"
+    },
+    {
+      "id": "right-likeness",
+      "asset": "Nova Vale — name, image, likeness",
+      "kind": "likeness",
+      "owner": "Nova Vale",
+      "licence": "Tour and promotional use",
+      "territory": "Worldwide",
+      "from": "2026-08-01",
+      "to": "2027-06-30",
+      "status": "cleared",
+      "note": "Excludes broadcast of the Copenhagen show without a separate rider.",
+      "source": "Artist rider §4.2"
+    },
+    {
+      "id": "right-venue",
+      "asset": "Venue rig, power and sightline profiles",
+      "kind": "venue",
+      "owner": "Halcyon Productions",
+      "licence": "Customer confidential",
+      "territory": "Internal",
+      "from": "2026-01-01",
+      "to": "2027-12-31",
+      "status": "cleared",
+      "note": "Pilot data. Never leaves the production network in a live deployment.",
+      "source": "Pilot agreement §7"
+    },
+    {
+      "id": "right-software",
+      "asset": "CUE look suggestions — model 1.4.0",
+      "kind": "software",
+      "owner": "Jiuwen",
+      "licence": "AI-assisted output, human-authored",
+      "territory": "Pilot",
+      "from": "2026-09-01",
+      "to": "2027-09-01",
+      "status": "cleared",
+      "note": "AI proposals are labelled. The designer owns the approved look.",
+      "source": "Model card v1.4.0"
+    }
+  ],
+  "venues": [
+    {
+      "id": "v-halcyon",
+      "name": "Halcyon Hall",
+      "city": "Brooklyn",
+      "country": "US",
+      "address": "72 Wythe Ave, Brooklyn, NY",
+      "capacity": 2400,
+      "stage": {
+        "width": 18,
+        "depth": 12,
+        "trim": 9
+      },
+      "rigCapacityKg": 2200,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 43.5
+      },
+      "loadInHours": 8,
+      "changeoverHours": 3,
+      "curfew": "23:30",
+      "frontRow": {
+        "distance": 2.2,
+        "eyeHeight": 1.15
+      },
+      "notes": "House rig. Front truss pick points at 8 m. Loading dock at stage left.",
+      "lastVerified": "2026-10-18",
+      "verifiedBy": "R. Okafor",
+      "status": "verified"
+    },
+    {
+      "id": "v-pier9",
+      "name": "Pier 9",
+      "city": "Rotterdam",
+      "country": "NL",
+      "address": "Waalhaven 9, Rotterdam",
+      "capacity": 1800,
+      "stage": {
+        "width": 16,
+        "depth": 10,
+        "trim": 7.5
+      },
+      "rigCapacityKg": 1600,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 43.5
+      },
+      "loadInHours": 5,
+      "changeoverHours": 2,
+      "curfew": "23:00",
+      "frontRow": {
+        "distance": 1.8,
+        "eyeHeight": 1.15
+      },
+      "notes": "Two metres narrower than the home stage. Screen cannot fly at 12 m width.",
+      "lastVerified": "2026-09-30",
+      "verifiedBy": "J. van Dijk",
+      "status": "verified"
+    },
+    {
+      "id": "v-apolo",
+      "name": "Sala Apolo",
+      "city": "Barcelona",
+      "country": "ES",
+      "address": "Carrer Nou de la Rambla 113",
+      "capacity": 1200,
+      "stage": {
+        "width": 14,
+        "depth": 9,
+        "trim": 7
+      },
+      "rigCapacityKg": 1200,
+      "power": {
+        "amps": 50,
+        "phases": 3,
+        "volts": 230,
+        "kw": 34.5
+      },
+      "loadInHours": 4,
+      "changeoverHours": 2,
+      "curfew": "02:30",
+      "frontRow": {
+        "distance": 1.5,
+        "eyeHeight": 1.1
+      },
+      "notes": "Power data missing from the last survey. Trim is 7.0 m; screen must drop 2 m.",
+      "lastVerified": "2025-11-02",
+      "verifiedBy": "House technical",
+      "status": "stale"
+    },
+    {
+      "id": "v-fabrik",
+      "name": "Fabrik",
+      "city": "Berlin",
+      "country": "DE",
+      "address": "Köpenicker Str. 70, Berlin",
+      "capacity": 1500,
+      "stage": {
+        "width": 15,
+        "depth": 10,
+        "trim": 8
+      },
+      "rigCapacityKg": 1400,
+      "power": {
+        "amps": 50,
+        "phases": 3,
+        "volts": 230,
+        "kw": 34.5
+      },
+      "loadInHours": 6,
+      "changeoverHours": 3,
+      "curfew": "01:00",
+      "frontRow": {
+        "distance": 2,
+        "eyeHeight": 1.15
+      },
+      "notes": "Rig profile last verified in 2024. Back truss capacity is not on the drawing.",
+      "lastVerified": "2024-09-12",
+      "verifiedBy": "House technical",
+      "status": "stale"
+    },
+    {
+      "id": "v-trabendo",
+      "name": "La Trabendo",
+      "city": "Paris",
+      "country": "FR",
+      "address": "211 Ave Jean Jaurès, Paris",
+      "capacity": 700,
+      "stage": {
+        "width": 12,
+        "depth": 8,
+        "trim": 6.5
+      },
+      "rigCapacityKg": 900,
+      "power": {
+        "amps": 40,
+        "phases": 3,
+        "volts": 230,
+        "kw": 27.6
+      },
+      "loadInHours": 4,
+      "changeoverHours": 2,
+      "curfew": "23:00",
+      "frontRow": {
+        "distance": 1.4,
+        "eyeHeight": 1.1
+      },
+      "notes": "Low trim. The full aerial look is not physically possible here.",
+      "lastVerified": "2026-02-11",
+      "verifiedBy": "L. Moreau",
+      "status": "verified"
+    },
+    {
+      "id": "v-ballroom",
+      "name": "Electric Ballroom",
+      "city": "London",
+      "country": "UK",
+      "address": "184 Camden High St, London",
+      "capacity": 900,
+      "stage": {
+        "width": 13,
+        "depth": 9,
+        "trim": 7
+      },
+      "rigCapacityKg": 1100,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 43.5
+      },
+      "loadInHours": 4,
+      "changeoverHours": 2,
+      "curfew": "23:00",
+      "frontRow": {
+        "distance": 1.6,
+        "eyeHeight": 1.1
+      },
+      "notes": "Follow-spot position is at the rear of the balcony. Travel day from Paris.",
+      "lastVerified": "2026-03-04",
+      "verifiedBy": "A. Shah",
+      "status": "verified"
+    },
+    {
+      "id": "v-vega",
+      "name": "VEGA",
+      "city": "Copenhagen",
+      "country": "DK",
+      "address": "Enghavevej 40, Copenhagen",
+      "capacity": 1500,
+      "stage": {
+        "width": 16,
+        "depth": 10,
+        "trim": 8.5
+      },
+      "rigCapacityKg": 1300,
+      "power": {
+        "amps": 63,
+        "phases": 3,
+        "volts": 230,
+        "kw": 43.5
+      },
+      "loadInHours": 5,
+      "changeoverHours": 2,
+      "curfew": "23:30",
+      "frontRow": {
+        "distance": 1.9,
+        "eyeHeight": 1.15
+      },
+      "notes": "The Copenhagen show is a broadcast stream. Likeness rider does not cover it yet.",
+      "lastVerified": "2026-01-20",
+      "verifiedBy": "M. Sørensen",
+      "status": "verified"
+    }
+  ],
+  "dates": [
+    {
+      "id": "d-home",
+      "date": "2026-11-05",
+      "city": "Brooklyn",
+      "venueId": "v-halcyon",
+      "loadIn": "2026-11-04T08:00:00-05:00",
+      "show": "2026-11-05T20:30:00-05:00",
+      "curfew": "23:30",
+      "crewCall": "2026-11-05T13:00:00-05:00",
+      "status": "at_risk",
+      "leg": "home",
+      "note": "Home show. The full rig, the full cue sheet, the crew sign-off."
+    },
+    {
+      "id": "d-rtm",
+      "date": "2026-11-08",
+      "city": "Rotterdam",
+      "venueId": "v-pier9",
+      "loadIn": "2026-11-08T07:00:00+01:00",
+      "show": "2026-11-08T20:00:00+01:00",
+      "curfew": "23:00",
+      "crewCall": "2026-11-08T12:00:00+01:00",
+      "status": "at_risk",
+      "leg": "europe",
+      "note": "Stage is 2 m narrower. Screen and runway need a variant."
+    },
+    {
+      "id": "d-bcn",
+      "date": "2026-11-11",
+      "city": "Barcelona",
+      "venueId": "v-apolo",
+      "loadIn": "2026-11-11T08:00:00+01:00",
+      "show": "2026-11-11T21:00:00+01:00",
+      "curfew": "02:30",
+      "crewCall": "2026-11-11T13:00:00+01:00",
+      "status": "planned",
+      "leg": "europe",
+      "note": "First show after the rights expiry date. Needs a content plan."
+    },
+    {
+      "id": "d-ber",
+      "date": "2026-11-14",
+      "city": "Berlin",
+      "venueId": "v-fabrik",
+      "loadIn": "2026-11-14T07:00:00+01:00",
+      "show": "2026-11-14T20:30:00+01:00",
+      "curfew": "01:00",
+      "crewCall": "2026-11-14T12:00:00+01:00",
+      "status": "planned",
+      "leg": "europe",
+      "note": "Stale rig profile. Verify the back truss before load-in."
+    },
+    {
+      "id": "d-par",
+      "date": "2026-11-17",
+      "city": "Paris",
+      "venueId": "v-trabendo",
+      "loadIn": "2026-11-17T08:00:00+01:00",
+      "show": "2026-11-17T20:00:00+01:00",
+      "curfew": "23:00",
+      "crewCall": "2026-11-17T12:00:00+01:00",
+      "status": "planned",
+      "leg": "europe",
+      "note": "Low trim. Aerial looks are replaced by the sidelight variant."
+    },
+    {
+      "id": "d-lon",
+      "date": "2026-11-20",
+      "city": "London",
+      "venueId": "v-ballroom",
+      "loadIn": "2026-11-20T08:00:00+00:00",
+      "show": "2026-11-20T20:00:00+00:00",
+      "curfew": "23:00",
+      "crewCall": "2026-11-20T12:00:00+00:00",
+      "status": "planned",
+      "leg": "uk",
+      "note": "Travel day from Paris. Follow-spot operator not yet confirmed."
+    },
+    {
+      "id": "d-cph",
+      "date": "2026-11-23",
+      "city": "Copenhagen",
+      "venueId": "v-vega",
+      "loadIn": "2026-11-23T08:00:00+01:00",
+      "show": "2026-11-23T20:30:00+01:00",
+      "curfew": "23:30",
+      "crewCall": "2026-11-23T12:00:00+01:00",
+      "status": "planned",
+      "leg": "uk",
+      "note": "Broadcast stream. Likeness rider excludes broadcast."
+    }
+  ],
+  "risks": [
+    {
+      "owner": "Mara Voss",
+      "role": "Lighting designer",
+      "due": "2026-10-31T18:00:00+01:00",
+      "slaHours": 24,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Confirm the house supply at 63 A three-phase",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Drop two beams or split the look",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Re-run the power calculation and attach the meter reading",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Detected on the show v4 check. Confidence 0.94."
+        }
+      ],
+      "estimate": "Estimated 1.6 kW over supply; the house breaker trips at 100% for 4 min.",
+      "groupKey": "home:power",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-001",
+      "kind": "power",
+      "severity": "critical",
+      "state": "new",
+      "title": "AERIAL 12 exceeds the house supply",
+      "detail": "The hero look draws 44.1 kW against a 43.5 kW supply. The extra six beams are the difference. Nothing on the rig protects this automatically.",
+      "dateId": "d-home",
+      "venueId": "v-halcyon",
+      "lookId": "look-aerial-12",
+      "whyNow": "The look was proposed by the agent 14 h ago and is still attached to cue LX 7. The home show load-in is in 5 days.",
+      "fix": {
+        "label": "Drop to the six-beam landing look",
+        "effort": "1 h",
+        "cost": 0,
+        "owner": "Mara Voss"
+      },
+      "evidence": [
+        {
+          "id": "cit-power",
+          "label": "Supply 43.5 kW · design 44.1 kW (101.4%)",
+          "source": "Venue profile — Halcyon Hall",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-look",
+          "label": "AERIAL 12 fixture list includes six add-on beams",
+          "source": "Look sheet AI 01",
+          "kind": "rig"
+        },
+        {
+          "id": "cit-cue",
+          "label": "Cue LX 7 references AERIAL 12",
+          "source": "Cue sheet v4",
+          "kind": "cue"
+        }
+      ]
+    },
+    {
+      "owner": "Mara Voss",
+      "role": "Lighting designer",
+      "due": "2026-10-31T12:00:00+01:00",
+      "slaHours": 12,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Ask the rigger to re-weigh the front truss",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Move two beams to the mid truss",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Attach the revised load test certificate",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Weight model recomputed from the look fixture list."
+        }
+      ],
+      "estimate": "44 kg over. Not a margin call: a stop-work item until the rigger signs.",
+      "groupKey": "home:weight",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-002",
+      "kind": "weight",
+      "severity": "critical",
+      "state": "new",
+      "title": "Front truss is 44 kg over its rating",
+      "detail": "AERIAL 12 puts 564 kg on the front truss. The truss is rated 520 kg. This is a rigging safety item, not a budget item.",
+      "dateId": "d-home",
+      "venueId": "v-halcyon",
+      "lookId": "look-aerial-12",
+      "whyNow": "Six add-on beams were added to the front truss after the last load test. The rigging plan has not been re-stamped.",
+      "fix": {
+        "label": "Remove the six add-on beams; keep the base six",
+        "effort": "2 h",
+        "cost": 0,
+        "owner": "R. Okafor"
+      },
+      "evidence": [
+        {
+          "id": "cit-truss",
+          "label": "Front truss capacity 520 kg; look 564 kg",
+          "source": "Rig schedule v3",
+          "kind": "rig"
+        },
+        {
+          "id": "cit-load",
+          "label": "Load test certificate dated 2026-10-12 covers the base rig only",
+          "source": "Rigging pack",
+          "kind": "rig"
+        }
+      ]
+    },
+    {
+      "owner": "Mara Voss",
+      "role": "Lighting designer",
+      "due": "2026-11-01T18:00:00+01:00",
+      "slaHours": 48,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Re-aim the six beams above the eyeline",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Ask the venue crew to walk the front row during focus",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Glare model flagged 6 audience-aimed fixtures."
+        },
+        {
+          "at": "2026-10-30T02:10:00+01:00",
+          "actor": "Mara Voss",
+          "action": "risk.acknowledged",
+          "detail": "Seen in the trust-beat review. Re-aim or replace."
+        }
+      ],
+      "estimate": "Front row would be unusable for the 24 s of the drop.",
+      "groupKey": "home:glare",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-003",
+      "kind": "glare",
+      "severity": "high",
+      "state": "acknowledged",
+      "title": "Six beams aim below the front-row eyeline",
+      "detail": "Six fixtures in AERIAL 12 are focused at 18° elevation, below the 1.15 m eyeline 2.2 m from the stage. In previz this reads as a beautiful fan; in the room it is a blind front row.",
+      "dateId": "d-home",
+      "venueId": "v-halcyon",
+      "lookId": "look-aerial-12",
+      "whyNow": "The glare cone is visible in the previz only when the camera moves to the audience position. The designer saw it on the trust-beat review and acknowledged it.",
+      "fix": {
+        "label": "Use the six-beam landing look; no front-row wash",
+        "effort": "30 min",
+        "cost": 0,
+        "owner": "Mara Voss"
+      },
+      "evidence": [
+        {
+          "id": "cit-glare",
+          "label": "Glare index 0.92 against a 0.55 limit",
+          "source": "Sightline model v2",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-eye",
+          "label": "Front-row eye height 1.15 m at 2.2 m",
+          "source": "Venue profile — Halcyon Hall",
+          "kind": "venue"
+        }
+      ]
+    },
+    {
+      "owner": "Jonas Reed",
+      "role": "Producer",
+      "due": "2026-11-02T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Get the written extension or a fallback clip",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Replace MONOLITH with RAIN for Paris and later",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Update the cue sheet and the rights register",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Rights window checked against every tour date."
+        }
+      ],
+      "estimate": "Estimated rights exposure: three shows, one content package, no broadcast.",
+      "groupKey": "tour:rights",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-004",
+      "kind": "rights",
+      "severity": "critical",
+      "state": "assigned",
+      "title": "Video rights expire before Paris",
+      "detail": "MONOLITH, SIGNAL BARS and HORIZON are cleared to 2026-11-10. Paris (11-17), London (11-20) and Copenhagen (11-23) are outside the window.",
+      "dateId": "d-par",
+      "venueId": "v-trabendo",
+      "whyNow": "The extension request went to the content studio on 28 Oct. No written extension yet. The first show after expiry is 7 days away.",
+      "fix": {
+        "label": "Extend the licence to 2026-12-31, or swap to RAIN",
+        "effort": "1 day",
+        "cost": 0,
+        "owner": "Jonas Reed"
+      },
+      "evidence": [
+        {
+          "id": "cit-rights",
+          "label": "Licence expires 2026-11-10",
+          "source": "Content licence v2",
+          "kind": "rights"
+        },
+        {
+          "id": "cit-dates",
+          "label": "Paris 11-17 · London 11-20 · Copenhagen 11-23",
+          "source": "Tour calendar",
+          "kind": "schedule"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-03T18:00:00+01:00",
+      "slaHours": 48,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Confirm the delivery date in writing",
+          "done": true
+        },
+        {
+          "id": "c2",
+          "label": "Prepare the MONOLITH fallback for VID 14",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Rehearse the fallback cue",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Cue/asset drift detected."
+        },
+        {
+          "at": "2026-10-30T09:12:00+01:00",
+          "actor": "Priya Nair",
+          "action": "risk.assigned",
+          "detail": "Chasing the content studio."
+        },
+        {
+          "at": "2026-10-30T11:40:00+01:00",
+          "actor": "Priya Nair",
+          "action": "check.completed",
+          "detail": "Delivery date confirmed by email for 2026-11-01."
+        }
+      ],
+      "estimate": "One cue blocked; the video-drop option is not playable until it lands.",
+      "groupKey": "tour:asset",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-005",
+      "kind": "asset",
+      "severity": "high",
+      "state": "investigating",
+      "title": "SIGNAL BARS v4 has not been delivered",
+      "detail": "Cue VID 14 references a clip that is not in the asset register. The video drop cannot be rehearsed or played.",
+      "dateId": "d-bcn",
+      "venueId": "v-apolo",
+      "whyNow": "The clip was due 27 Oct. The content studio confirmed a render in progress; the file is still missing.",
+      "fix": {
+        "label": "Deliver SIGNAL BARS v4 or point VID 14 at MONOLITH",
+        "effort": "4 h",
+        "cost": 0,
+        "owner": "T. Lindqvist"
+      },
+      "evidence": [
+        {
+          "id": "cit-asset",
+          "label": "signal_bars_v4.mp4 missing",
+          "source": "Asset register",
+          "kind": "asset"
+        },
+        {
+          "id": "cit-cue14",
+          "label": "Cue VID 14 references SIGNAL BARS",
+          "source": "Cue sheet v4",
+          "kind": "cue"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-04T18:00:00+01:00",
+      "slaHours": 48,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Cut a 16 × 10 variant with a 10 m screen",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Confirm the runway can be shortened",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Re-check the aerial trim at 7.5 m",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Venue compatibility check vs show v4."
+        }
+      ],
+      "estimate": "Without a variant: 2 m of screen and the runway ends off the deck.",
+      "groupKey": "tour:venue",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-006",
+      "kind": "venue",
+      "severity": "high",
+      "state": "new",
+      "title": "Pier 9 stage is 2 m too small for this design",
+      "detail": "The show is built on an 18 × 12 m stage. Pier 9 is 16 × 10 m with a 7.5 m trim. The runway and the 12 m screen do not fit without a variant.",
+      "dateId": "d-rtm",
+      "venueId": "v-pier9",
+      "whyNow": "The Rotterdam advance came back today. The venue drawing differs from the version used at design kickoff.",
+      "fix": {
+        "label": "Create the Pier 9 variant from the show version",
+        "effort": "3 h",
+        "cost": 0,
+        "owner": "Mara Voss"
+      },
+      "evidence": [
+        {
+          "id": "cit-stage",
+          "label": "Design stage 18 × 12 m; Pier 9 16 × 10 m",
+          "source": "Stage plan v3",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-trim",
+          "label": "Trim 7.5 m vs 9.0 m home",
+          "source": "Venue profile — Pier 9",
+          "kind": "venue"
+        }
+      ]
+    },
+    {
+      "owner": "Jonas Reed",
+      "role": "Producer",
+      "due": "2026-11-02T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Choose the landing look",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Re-approve the budget with the final look",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Budget drift exceeded the 1% tolerance."
+        }
+      ],
+      "estimate": "€577 over. The landing look is €1,373 under.",
+      "groupKey": "home:budget",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-007",
+      "kind": "budget",
+      "severity": "medium",
+      "state": "acknowledged",
+      "title": "Hero look puts the show €577 over budget",
+      "detail": "The active AERIAL 12 look adds €3,900. The show lands at €29,577 against an approved €29,000.",
+      "dateId": "d-home",
+      "venueId": "v-halcyon",
+      "lookId": "look-aerial-12",
+      "whyNow": "The agent's first proposal is still the active cue. The approved budget has not changed since 12 Oct.",
+      "fix": {
+        "label": "Approve the six-beam landing look at €27,627",
+        "effort": "15 min",
+        "cost": 0,
+        "owner": "Jonas Reed"
+      },
+      "evidence": [
+        {
+          "id": "cit-budget",
+          "label": "€29,577 current vs €29,000 approved",
+          "source": "Budget model v2",
+          "kind": "budget"
+        },
+        {
+          "id": "cit-addon",
+          "label": "AERIAL add-on €3,900",
+          "source": "Rate card 2026",
+          "kind": "budget"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-05T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Cut a 20-cue variant for Barcelona",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Add two local crew for the screen",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Move the focus call to the morning",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Schedule compression check."
+        }
+      ],
+      "estimate": "Estimated 1 h 20 min short. Add two crew or cut six cues.",
+      "groupKey": "tour:schedule",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-008",
+      "kind": "schedule",
+      "severity": "medium",
+      "state": "new",
+      "title": "Barcelona load-in is 4 h for a 26-cue show",
+      "detail": "The show has 26 cues and a screen that has to be re-rigged. The venue allows 4 h load-in and 2 h changeover. The cue complexity is above the 3 h benchmark.",
+      "dateId": "d-bcn",
+      "venueId": "v-apolo",
+      "whyNow": "The cue count grew from 18 to 26 after the drop review. The advance was written for 18.",
+      "fix": {
+        "label": "Add two local crew and a 07:00 focus call",
+        "effort": "2 h",
+        "cost": 640,
+        "owner": "Priya Nair"
+      },
+      "evidence": [
+        {
+          "id": "cit-loadin",
+          "label": "Load-in 4 h · changeover 2 h",
+          "source": "Venue profile — Sala Apolo",
+          "kind": "schedule"
+        },
+        {
+          "id": "cit-cues",
+          "label": "26 cues; benchmark 18 cues per 4 h",
+          "source": "Cue complexity model",
+          "kind": "cue"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-06T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Request the current rig drawing",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Verify the back truss capacity on site",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Update the venue profile with the source",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Stale profile exceeded the freshness contract."
+        }
+      ],
+      "estimate": "Rig decisions for Berlin are marked low confidence until verified.",
+      "groupKey": "tour:data",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-009",
+      "kind": "data",
+      "severity": "medium",
+      "state": "new",
+      "title": "Fabrik rig profile is two years old",
+      "detail": "The Berlin venue profile was last verified on 2024-09-12. The back truss capacity is not on the drawing. No readiness decision can be trusted until it is re-verified.",
+      "dateId": "d-ber",
+      "venueId": "v-fabrik",
+      "whyNow": "The profile is older than the 12-month freshness contract. The Berlin advance is due on 6 Nov.",
+      "fix": {
+        "label": "Re-verify with the house technical manager",
+        "effort": "1 day",
+        "cost": 0,
+        "owner": "Priya Nair"
+      },
+      "evidence": [
+        {
+          "id": "cit-stale",
+          "label": "Last verified 2024-09-12",
+          "source": "Venue profile — Fabrik",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-contract",
+          "label": "Freshness contract: 12 months",
+          "source": "Readiness settings",
+          "kind": "schedule"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-07T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Confirm a second local follow-spot operator",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Book the travel day from Paris",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Add the operator to the call sheet",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Crew approval deadline check."
+        }
+      ],
+      "estimate": "Without the second operator the follow looks are single-sided.",
+      "groupKey": "tour:crew",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-010",
+      "kind": "crew",
+      "severity": "medium",
+      "state": "assigned",
+      "title": "London follow-spot operator not confirmed",
+      "detail": "The London show needs two follow-spot operators at the rear balcony. Only one is confirmed. The travel day from Paris is the same day.",
+      "dateId": "d-lon",
+      "venueId": "v-ballroom",
+      "whyNow": "The local crew sheet came back with one name. The London show is 14 days out; the crew deadline is 7 Nov.",
+      "fix": {
+        "label": "Book the second operator through the venue",
+        "effort": "2 h",
+        "cost": 380,
+        "owner": "Priya Nair"
+      },
+      "evidence": [
+        {
+          "id": "cit-crew",
+          "label": "1 of 2 follow-spot operators confirmed",
+          "source": "Crew sheet — London",
+          "kind": "schedule"
+        },
+        {
+          "id": "cit-travel",
+          "label": "Paris → London travel on 2026-11-20",
+          "source": "Tour calendar",
+          "kind": "schedule"
+        }
+      ]
+    },
+    {
+      "owner": "Jonas Reed",
+      "role": "Producer",
+      "due": "2026-11-08T18:00:00+01:00",
+      "slaHours": 72,
+      "confidence": 0.94,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Ask the artist's management for a broadcast rider",
+          "done": false
+        },
+        {
+          "id": "c2",
+          "label": "Prepare a no-audience-cut camera plan",
+          "done": false
+        },
+        {
+          "id": "c3",
+          "label": "Confirm the stream can be cancelled without penalty",
+          "done": false
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-30T01:35:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "New broadcast date checked against the likeness rider."
+        }
+      ],
+      "estimate": "Rights exposure: one stream, one territory, no recording release.",
+      "groupKey": "tour:likeness",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-011",
+      "kind": "rights",
+      "severity": "medium",
+      "state": "new",
+      "title": "Copenhagen broadcast is outside the likeness rider",
+      "detail": "The Copenhagen show is a broadcast stream. The artist rider covers tour and promotional use, but excludes broadcast without a separate rider.",
+      "dateId": "d-cph",
+      "venueId": "v-vega",
+      "whyNow": "The stream was added on 29 Oct. The rider has not been amended.",
+      "fix": {
+        "label": "Sign a one-show broadcast rider",
+        "effort": "2 days",
+        "cost": 0,
+        "owner": "Jonas Reed"
+      },
+      "evidence": [
+        {
+          "id": "cit-rider",
+          "label": "Rider excludes broadcast of the Copenhagen show",
+          "source": "Artist rider §4.2",
+          "kind": "rights"
+        },
+        {
+          "id": "cit-stream",
+          "label": "Broadcast added 2026-10-29",
+          "source": "Tour calendar",
+          "kind": "schedule"
+        }
+      ]
+    },
+    {
+      "owner": "Priya Nair",
+      "role": "Tour manager",
+      "due": "2026-11-01T18:00:00+01:00",
+      "slaHours": 48,
+      "confidence": 0.9,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Record the supply and the source",
+          "done": true
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-28T14:00:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Power data missing."
+        },
+        {
+          "at": "2026-10-29T16:20:00+01:00",
+          "actor": "Priya Nair",
+          "action": "risk.resolved",
+          "detail": "Supply confirmed and recorded."
+        },
+        {
+          "at": "2026-10-29T16:25:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.verified",
+          "detail": "Re-check passed. Risk closed."
+        }
+      ],
+      "estimate": "Resolved. Re-check if the profile falls stale again.",
+      "groupKey": "tour:power-data",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-012",
+      "kind": "data",
+      "severity": "low",
+      "state": "resolved",
+      "title": "Sala Apolo power data was missing",
+      "detail": "The venue profile had no power survey. The house technical manager confirmed 50 A three-phase on the call.",
+      "dateId": "d-bcn",
+      "venueId": "v-apolo",
+      "whyNow": "Resolved on 29 Oct after a call with the house. The profile now has a source and a date.",
+      "fix": {
+        "label": "No action — data recorded",
+        "effort": "0 min",
+        "cost": 0,
+        "owner": "Priya Nair"
+      },
+      "evidence": [
+        {
+          "id": "cit-call",
+          "label": "50 A three-phase confirmed by phone",
+          "source": "House technical call, 2026-10-29",
+          "kind": "venue"
+        }
+      ],
+      "resolvedAt": "2026-10-29T16:20:00+01:00",
+      "verifiedAt": "2026-10-29T16:25:00+01:00"
+    },
+    {
+      "owner": "Mara Voss",
+      "role": "Lighting designer",
+      "due": "2026-10-30T18:00:00+01:00",
+      "slaHours": 48,
+      "confidence": 0.8,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Confirm the variant covers the 7.5 m trim",
+          "done": true
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-28T10:00:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Trim below the design height."
+        },
+        {
+          "at": "2026-10-28T12:30:00+01:00",
+          "actor": "Mara Voss",
+          "action": "risk.dismissed",
+          "detail": "Dismissed: design change. The EU variant covers it."
+        }
+      ],
+      "estimate": "No cost. Recorded as an intentional design change.",
+      "groupKey": "tour:trim",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-013",
+      "kind": "venue",
+      "severity": "low",
+      "state": "dismissed",
+      "title": "Apolo trim is 2 m lower than the home stage",
+      "detail": "The design was altered to a 7.5 m trim for the European leg. The low trim is expected and covered by the venue variant.",
+      "dateId": "d-bcn",
+      "venueId": "v-apolo",
+      "whyNow": "Dismissed after the European variant was approved. Reason category: design change, not a false alarm.",
+      "fix": {
+        "label": "No action — covered by the EU variant",
+        "effort": "0 min",
+        "cost": 0,
+        "owner": "Mara Voss"
+      },
+      "evidence": [
+        {
+          "id": "cit-variant",
+          "label": "EU variant approved 26 Oct",
+          "source": "Show version v4",
+          "kind": "asset"
+        }
+      ]
+    },
+    {
+      "owner": "R. Okafor",
+      "role": "Venue crew",
+      "due": "2026-10-29T18:00:00+01:00",
+      "slaHours": 12,
+      "confidence": 0.97,
+      "checks": [
+        {
+          "id": "c1",
+          "label": "Re-patch and meter the feed",
+          "done": true
+        }
+      ],
+      "history": [
+        {
+          "at": "2026-10-28T09:00:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.opened",
+          "detail": "Distro on the house lighting feed."
+        },
+        {
+          "at": "2026-10-29T10:00:00+01:00",
+          "actor": "R. Okafor",
+          "action": "risk.resolved",
+          "detail": "Re-patched and metered."
+        },
+        {
+          "at": "2026-10-29T10:05:00+01:00",
+          "actor": "CUE readiness",
+          "action": "risk.verified",
+          "detail": "Re-check passed."
+        }
+      ],
+      "estimate": "No cost. The risk would have stopped the load-in.",
+      "groupKey": "home:distro",
+      "provenance": "Pinned to show v4 · rig schedule v3 · venue profile 2026-10-18",
+      "id": "R-014",
+      "kind": "power",
+      "severity": "high",
+      "state": "resolved",
+      "title": "Home venue distro was on the wrong feed",
+      "detail": "The 63 A distro was patched to the house lighting feed. Re-patched to the production feed and metered at 61 A per phase under full load.",
+      "dateId": "d-home",
+      "venueId": "v-halcyon",
+      "whyNow": "Resolved after the site visit. The meter reading is attached to the venue profile.",
+      "fix": {
+        "label": "No action — re-patched and metered",
+        "effort": "0 min",
+        "cost": 0,
+        "owner": "R. Okafor"
+      },
+      "evidence": [
+        {
+          "id": "cit-meter",
+          "label": "61 A per phase under full load",
+          "source": "Site visit, 2026-10-29",
+          "kind": "venue"
+        }
+      ],
+      "resolvedAt": "2026-10-29T10:00:00+01:00",
+      "verifiedAt": "2026-10-29T10:05:00+01:00"
+    }
+  ],
+  "versions": [
+    {
+      "id": "v1",
+      "label": "Concept",
+      "at": "2026-09-28T17:30:00+02:00",
+      "author": "Mara Voss",
+      "status": "approved",
+      "note": "One lamp, one horizon, one hit.",
+      "changes": [
+        {
+          "kind": "look",
+          "detail": "Concept rule set: no fixture below the front-row eyeline."
+        },
+        {
+          "kind": "stage",
+          "detail": "18 × 12 m end-on stage, 12 × 5 m screen."
+        }
+      ],
+      "approvedBy": "Jonas Reed",
+      "approvedAt": "2026-09-28T18:10:00+02:00",
+      "signature": "JR-0928"
+    },
+    {
+      "id": "v2",
+      "label": "Halcyon Hall",
+      "at": "2026-10-08T19:05:00+02:00",
+      "author": "Mara Voss",
+      "status": "approved",
+      "note": "Home venue locked. Rig and power checked.",
+      "changes": [
+        {
+          "kind": "look",
+          "detail": "BUILD — SIDELIGHT added to the setlist."
+        },
+        {
+          "kind": "budget",
+          "detail": "Approved budget set at €29,000."
+        },
+        {
+          "kind": "rights",
+          "detail": "MONOLITH licence recorded to 2026-11-10."
+        }
+      ],
+      "approvedBy": "Jonas Reed",
+      "approvedAt": "2026-10-08T20:00:00+02:00",
+      "signature": "JR-1008"
+    },
+    {
+      "id": "v3",
+      "label": "Rotterdam",
+      "at": "2026-10-16T14:20:00+02:00",
+      "author": "Mara Voss",
+      "status": "approved",
+      "note": "European leg variant. Trim and stage reduced.",
+      "changes": [
+        {
+          "kind": "stage",
+          "detail": "EU variant: 16 × 10 m stage, 10 m screen."
+        },
+        {
+          "kind": "look",
+          "detail": "SIDELINE WHISPER promoted for low-trim venues."
+        }
+      ],
+      "approvedBy": "Jonas Reed",
+      "approvedAt": "2026-10-16T15:10:00+02:00",
+      "signature": "JR-1016"
+    },
+    {
+      "id": "v4",
+      "label": "Rehearsal R2",
+      "at": "2026-10-27T21:40:00+02:00",
+      "author": "Mara Voss",
+      "status": "approved",
+      "note": "The drop was rebuilt after the agent's first proposal.",
+      "changes": [
+        {
+          "kind": "look",
+          "detail": "AERIAL 12 proposed by the agent; rejected by the designer."
+        },
+        {
+          "kind": "cue",
+          "detail": "Cue LX 7 re-pointed to SIX BEAM + MONOLITH."
+        },
+        {
+          "kind": "budget",
+          "detail": "Current show €27,627 with the landing look."
+        }
+      ],
+      "approvedBy": "Jonas Reed",
+      "approvedAt": "2026-10-27T22:05:00+02:00",
+      "signature": "JR-1027"
+    },
+    {
+      "id": "v5",
+      "label": "Show — 5 Nov",
+      "at": "2026-10-30T02:00:00+01:00",
+      "author": "Mara Voss",
+      "status": "review",
+      "note": "Current rehearsal version. Awaiting the safety sign-off and the rights extension.",
+      "changes": [
+        {
+          "kind": "cue",
+          "detail": "Cue VID 14 blocked: SIGNAL BARS is missing."
+        },
+        {
+          "kind": "rights",
+          "detail": "Video rights expire 2026-11-10."
+        },
+        {
+          "kind": "budget",
+          "detail": "Budget re-approval needed if the aerial look returns."
+        }
+      ]
+    }
+  ],
+  "suggestions": [
+    {
+      "id": "A-01",
+      "name": "AERIAL 12",
+      "summary": "Twelve beams fan the full width; six wash the front row.",
+      "kind": "look",
+      "lookId": "look-aerial-12",
+      "impact": 97,
+      "confidence": 0.72,
+      "costDelta": 3900,
+      "status": "proposed",
+      "flags": [
+        "power",
+        "weight",
+        "glare"
+      ],
+      "rank": 1,
+      "reasons": [
+        {
+          "id": "cit-ref",
+          "label": "Closest reference: AERIAL 8, Madrid 2025 (impact 0.91)",
+          "source": "Look library",
+          "kind": "asset"
+        },
+        {
+          "id": "cit-energy",
+          "label": "Energy curve peaks at 0.96 at 3:45",
+          "source": "Setlist v2",
+          "kind": "asset"
+        }
+      ]
+    },
+    {
+      "id": "A-02",
+      "name": "SIX BEAM + MONOLITH",
+      "summary": "Six beams, a hard horizon, no front-row wash.",
+      "kind": "look",
+      "lookId": "look-six-beam",
+      "impact": 89,
+      "confidence": 0.84,
+      "costDelta": 1950,
+      "status": "proposed",
+      "flags": [],
+      "rank": 2,
+      "reasons": [
+        {
+          "id": "cit-eye-ok",
+          "label": "No fixture below the front-row eyeline",
+          "source": "Sightline model v2",
+          "kind": "venue"
+        },
+        {
+          "id": "cit-budget-ok",
+          "label": "Lands €1,373 under the approved budget",
+          "source": "Budget model v2",
+          "kind": "budget"
+        }
+      ]
+    },
+    {
+      "id": "A-03",
+      "name": "SIDELINE WHISPER",
+      "summary": "Wash-only sidelight, one practical, almost no aerial.",
+      "kind": "look",
+      "lookId": "look-sideline",
+      "impact": 62,
+      "confidence": 0.66,
+      "costDelta": 320,
+      "status": "proposed",
+      "flags": [],
+      "rank": 3,
+      "reasons": [
+        {
+          "id": "cit-cheap",
+          "label": "Lowest rig cost of the three candidates",
+          "source": "Budget model v2",
+          "kind": "budget"
+        }
+      ]
+    },
+    {
+      "id": "A-04",
+      "name": "VIDEO DROP",
+      "summary": "Beams off. The screen takes the drop in vertical bars.",
+      "kind": "video",
+      "videoId": "vid-bars",
+      "impact": 84,
+      "confidence": 0.58,
+      "costDelta": 2400,
+      "status": "proposed",
+      "flags": [
+        "asset"
+      ],
+      "rank": 4,
+      "reasons": [
+        {
+          "id": "cit-missing",
+          "label": "SIGNAL BARS v4 is not delivered",
+          "source": "Asset register",
+          "kind": "asset"
+        },
+        {
+          "id": "cit-cheaper",
+          "label": "Cheaper rig than the light drop; more cue complexity",
+          "source": "Cue complexity model",
+          "kind": "cue"
+        }
+      ]
+    }
+  ],
+  "agentTrace": [
+    {
+      "step": 1,
+      "tool": "show.read",
+      "title": "Read the show and the energy curve",
+      "detail": "3 songs · 7:20 · peak 0.96 at 3:45 · 26 cues.",
+      "ms": 120,
+      "citations": [
+        "song-2"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 2,
+      "tool": "stage.read",
+      "title": "Read the stage and the rig",
+      "detail": "18 × 12 m stage · 25 fixtures · front truss 520 kg · 63 A three-phase.",
+      "ms": 180,
+      "citations": [
+        "cit-rig",
+        "cit-power"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 3,
+      "tool": "rig.check",
+      "title": "Check power, weight and trim",
+      "detail": "Base rig uses 34.5 kW of 43.5 kW. The add-on takes it to 44.1 kW.",
+      "ms": 240,
+      "citations": [
+        "cit-power",
+        "cit-rig"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 4,
+      "tool": "sightline.check",
+      "title": "Check the audience sightlines",
+      "detail": "Front-row eye at 1.15 m. Six audience-aimed fixtures would sit below it.",
+      "ms": 210,
+      "citations": [
+        "cit-eye"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 5,
+      "tool": "look.generate",
+      "title": "Propose three looks and one video drop",
+      "detail": "AERIAL 12 · SIX BEAM + MONOLITH · SIDELINE WHISPER · VIDEO DROP.",
+      "ms": 640,
+      "citations": [
+        "cit-ref"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 6,
+      "tool": "safety.check",
+      "title": "Flag the unsafe candidate",
+      "detail": "AERIAL 12 fails power, weight and glare. It is still ranked first on impact.",
+      "ms": 300,
+      "citations": [
+        "cit-power",
+        "cit-rig",
+        "cit-eye"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 7,
+      "tool": "cue.draft",
+      "title": "Draft twelve lighting and video cues",
+      "detail": "Drop at 3:45. Strobe at 3:45.4 collides with the drop cue.",
+      "ms": 280,
+      "citations": [
+        "cit-cue"
+      ],
+      "status": "done"
+    },
+    {
+      "step": 8,
+      "tool": "human.review",
+      "title": "Wait for the designer",
+      "detail": "No cue is released and no safety sign-off is automated. The designer decides.",
+      "ms": 0,
+      "citations": [
+        "cit-human"
+      ],
+      "status": "waiting"
+    }
+  ],
+  "audits": [
+    {
+      "id": "a-01",
+      "at": "2026-10-30T11:40:00+01:00",
+      "actor": "Priya Nair",
+      "action": "risk.check",
+      "object": "R-005",
+      "detail": "Delivery date confirmed for SIGNAL BARS: 2026-11-01.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "asset-register"
+      ]
+    },
+    {
+      "id": "a-02",
+      "at": "2026-10-30T09:12:00+01:00",
+      "actor": "Priya Nair",
+      "action": "risk.assigned",
+      "object": "R-005",
+      "detail": "Chasing the content studio for SIGNAL BARS v4.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "asset-register"
+      ]
+    },
+    {
+      "id": "a-03",
+      "at": "2026-10-30T02:10:00+01:00",
+      "actor": "Mara Voss",
+      "action": "risk.acknowledged",
+      "object": "R-003",
+      "detail": "Glare seen in the audience-position previz. Re-aim or replace.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "sightline-model"
+      ]
+    },
+    {
+      "id": "a-04",
+      "at": "2026-10-30T02:00:00+01:00",
+      "actor": "Mara Voss",
+      "action": "version.created",
+      "object": "v5",
+      "detail": "Show v5 created from Rehearsal R2.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "show"
+      ]
+    },
+    {
+      "id": "a-05",
+      "at": "2026-10-30T01:35:00+01:00",
+      "actor": "CUE readiness",
+      "action": "readiness.scan",
+      "object": "tour-eu",
+      "detail": "14 risks checked · 4 new · 1 reopened · 9 unchanged.",
+      "modelVersion": "cue-readiness-1.2",
+      "sources": [
+        "venue",
+        "rig",
+        "rights",
+        "cue",
+        "budget"
+      ]
+    },
+    {
+      "id": "a-06",
+      "at": "2026-10-29T16:25:00+01:00",
+      "actor": "CUE readiness",
+      "action": "risk.verified",
+      "object": "R-012",
+      "detail": "Sala Apolo power data re-check passed. Risk closed.",
+      "modelVersion": "cue-readiness-1.2",
+      "sources": [
+        "venue"
+      ]
+    },
+    {
+      "id": "a-07",
+      "at": "2026-10-29T16:20:00+01:00",
+      "actor": "Priya Nair",
+      "action": "risk.resolved",
+      "object": "R-012",
+      "detail": "50 A three-phase confirmed by the house.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "venue"
+      ]
+    },
+    {
+      "id": "a-08",
+      "at": "2026-10-28T12:30:00+01:00",
+      "actor": "Mara Voss",
+      "action": "risk.dismissed",
+      "object": "R-013",
+      "detail": "Dismissed: design change. EU variant covers the low trim.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "show-variant"
+      ]
+    },
+    {
+      "id": "a-09",
+      "at": "2026-10-27T22:05:00+02:00",
+      "actor": "Jonas Reed",
+      "action": "version.approved",
+      "object": "v4",
+      "detail": "Rehearsal R2 approved. Signature JR-1027.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "show"
+      ]
+    },
+    {
+      "id": "a-10",
+      "at": "2026-10-27T21:52:00+02:00",
+      "actor": "Mara Voss",
+      "action": "look.rejected",
+      "object": "look-aerial-12",
+      "detail": "Rejected: 44 kg over the truss, 1.6 kW over supply, blinds the front row.",
+      "modelVersion": "cue-looksmith-1.4.0",
+      "sources": [
+        "agent",
+        "rig",
+        "venue",
+        "sightline-model"
+      ]
+    },
+    {
+      "id": "a-11",
+      "at": "2026-10-27T21:40:00+02:00",
+      "actor": "CUE agent",
+      "action": "look.proposed",
+      "object": "look-aerial-12",
+      "detail": "3 candidates ranked. AERIAL 12 first at 97 impact.",
+      "modelVersion": "cue-looksmith-1.4.0",
+      "sources": [
+        "show",
+        "look-library"
+      ]
+    },
+    {
+      "id": "a-12",
+      "at": "2026-10-18T15:20:00+02:00",
+      "actor": "R. Okafor",
+      "action": "venue.verified",
+      "object": "v-halcyon",
+      "detail": "Rig, power and sightlines verified on site.",
+      "modelVersion": "cue-1.0.0",
+      "sources": [
+        "venue"
+      ]
+    }
+  ],
+  "notifications": [
+    {
+      "id": "n-01",
+      "at": "2026-10-30T11:40:00+01:00",
+      "kind": "asset",
+      "severity": "high",
+      "title": "SIGNAL BARS delivery date confirmed",
+      "detail": "Priya confirmed 2026-11-01 with the content studio. VID 14 stays blocked until then.",
+      "riskId": "R-005",
+      "read": false,
+      "channel": "in_app"
+    },
+    {
+      "id": "n-02",
+      "at": "2026-10-30T01:35:00+01:00",
+      "kind": "digest",
+      "severity": "info",
+      "title": "Show-week brief — 5 days to load-in",
+      "detail": "4 new risks, 2 approvals due, 1 fixed-but-not-verified item.",
+      "read": false,
+      "channel": "email"
+    },
+    {
+      "id": "n-03",
+      "at": "2026-10-30T01:35:00+01:00",
+      "kind": "risk",
+      "severity": "critical",
+      "title": "Power and weight stop-work on the hero look",
+      "detail": "AERIAL 12 is over the truss rating and the house supply. The show cannot load in with this cue.",
+      "riskId": "R-001",
+      "read": false,
+      "channel": "slack"
+    },
+    {
+      "id": "n-04",
+      "at": "2026-10-29T16:20:00+01:00",
+      "kind": "risk",
+      "severity": "low",
+      "title": "Sala Apolo power risk resolved",
+      "detail": "50 A three-phase recorded and verified. Risk closed.",
+      "riskId": "R-012",
+      "read": true,
+      "channel": "in_app"
+    },
+    {
+      "id": "n-05",
+      "at": "2026-10-28T12:30:00+01:00",
+      "kind": "risk",
+      "severity": "low",
+      "title": "Apolo trim risk dismissed",
+      "detail": "Design change, covered by the EU variant. Reason recorded.",
+      "riskId": "R-013",
+      "read": true,
+      "channel": "in_app"
+    },
+    {
+      "id": "n-06",
+      "at": "2026-10-27T21:52:00+02:00",
+      "kind": "approval",
+      "severity": "info",
+      "title": "Show v5 awaiting approval",
+      "detail": "The designer signed the cue sheet; the producer sign-off is outstanding.",
+      "read": true,
+      "channel": "email"
+    }
+  ],
+  "metrics": {
+    "timeToFirstLook": 42,
+    "timeToCueSheet": 11,
+    "timeToApprove": 2.4,
+    "previzIterations": 3,
+    "baselineIterations": 11,
+    "cueChanges": 4,
+    "rigCostAvoided": 8640,
+    "rehearsalHoursSaved": 6.5,
+    "precision": 0.86,
+    "actionableRate": 0.31,
+    "risksPerWeek": 3.2,
+    "approvalOnTime": 0.92,
+    "weekly": [
+      {
+        "week": "W34",
+        "iterations": 11,
+        "cueChanges": 17,
+        "risks": 6,
+        "cost": 31500
+      },
+      {
+        "week": "W35",
+        "iterations": 9,
+        "cueChanges": 15,
+        "risks": 5.4,
+        "cost": 30800
+      },
+      {
+        "week": "W36",
+        "iterations": 8,
+        "cueChanges": 13,
+        "risks": 5.1,
+        "cost": 30100
+      },
+      {
+        "week": "W37",
+        "iterations": 6,
+        "cueChanges": 11,
+        "risks": 4.6,
+        "cost": 29600
+      },
+      {
+        "week": "W38",
+        "iterations": 6,
+        "cueChanges": 9,
+        "risks": 4.2,
+        "cost": 29200
+      },
+      {
+        "week": "W39",
+        "iterations": 4,
+        "cueChanges": 7,
+        "risks": 3.8,
+        "cost": 28700
+      },
+      {
+        "week": "W40",
+        "iterations": 4,
+        "cueChanges": 6,
+        "risks": 3.5,
+        "cost": 28300
+      },
+      {
+        "week": "W41",
+        "iterations": 3,
+        "cueChanges": 4,
+        "risks": 3.2,
+        "cost": 27627
+      }
+    ]
+  },
+  "provenance": {
+    "track": "Synthesised in the browser from the show energy curve. No commercial recording.",
+    "trackLicence": "Commissioned instrumental · in-house · cleared worldwide",
+    "assets": "Stage, rig, set and video content are generated for this demo. No artist or venue content.",
+    "model": "CUE Looksmith",
+    "modelVersion": "1.4.0",
+    "inference": "Deterministic local rules; no cloud model call in the public demo.",
+    "dataStay": "On device. No upload, no analytics, no third-party request after load.",
+    "createdAt": "2026-10-30T02:00:00+01:00",
+    "note": "Every AI proposal is labelled. The designer authors the show; the system proposes and checks."
+  },
+  "integrations": [
+    {
+      "id": "depence",
+      "name": "Depence²",
+      "protocol": "Previz exchange",
+      "kind": "previz",
+      "status": "simulated",
+      "detail": "Stage, rig and look import/export. Reference adapter; no live licence attached.",
+      "direction": "both"
+    },
+    {
+      "id": "capture",
+      "name": "Capture",
+      "protocol": "Previz exchange",
+      "kind": "previz",
+      "status": "available",
+      "detail": "Mapping and look export.",
+      "direction": "export"
+    },
+    {
+      "id": "wysiwyg",
+      "name": "WYSIWYG",
+      "protocol": "Previz exchange",
+      "kind": "previz",
+      "status": "available",
+      "detail": "Rig and patch import.",
+      "direction": "import"
+    },
+    {
+      "id": "vectorworks",
+      "name": "Vectorworks Spotlight",
+      "protocol": "VWX / CSV",
+      "kind": "previz",
+      "status": "available",
+      "detail": "Drafting reference and fixture schedule.",
+      "direction": "import"
+    },
+    {
+      "id": "grandma3",
+      "name": "grandMA3",
+      "protocol": "MVR / XML",
+      "kind": "console",
+      "status": "simulated",
+      "detail": "Cue and patch export. Reference adapter; no console attached.",
+      "direction": "export"
+    },
+    {
+      "id": "disguise",
+      "name": "disguise",
+      "protocol": "Media server",
+      "kind": "video",
+      "status": "available",
+      "detail": "Screen mapping and clip list.",
+      "direction": "both"
+    },
+    {
+      "id": "resolume",
+      "name": "Resolume",
+      "protocol": "Arena / OSC",
+      "kind": "video",
+      "status": "simulated",
+      "detail": "Clip and layer export. No live control.",
+      "direction": "export"
+    },
+    {
+      "id": "notch",
+      "name": "Notch",
+      "protocol": "Block export",
+      "kind": "video",
+      "status": "available",
+      "detail": "Content block handoff.",
+      "direction": "import"
+    },
+    {
+      "id": "dam",
+      "name": "Dropbox / DAM",
+      "protocol": "Asset links",
+      "kind": "dam",
+      "status": "connected",
+      "detail": "Clip register with freshness checks. Connected in the demo.",
+      "direction": "import"
+    },
+    {
+      "id": "calendar",
+      "name": "Google Calendar",
+      "protocol": "Calendar sync",
+      "kind": "calendar",
+      "status": "connected",
+      "detail": "Tour dates, load-in and rehearsal calls.",
+      "direction": "import"
+    },
+    {
+      "id": "xero",
+      "name": "Xero",
+      "protocol": "Budget export",
+      "kind": "finance",
+      "status": "available",
+      "detail": "Purchase orders and show cost codes.",
+      "direction": "export"
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "protocol": "Webhook + HMAC",
+      "kind": "chat",
+      "status": "connected",
+      "detail": "Risk digest and acknowledge actions.",
+      "direction": "both"
+    },
+    {
+      "id": "teams",
+      "name": "Microsoft Teams",
+      "protocol": "Webhook",
+      "kind": "chat",
+      "status": "available",
+      "detail": "Show-week brief to the production channel.",
+      "direction": "export"
+    }
+  ],
+  "users": [
+    {
+      "id": "u-mara",
+      "name": "Mara Voss",
+      "initials": "MV",
+      "role": "designer",
+      "venueIds": [
+        "v-halcyon"
+      ],
+      "note": "Author of the show. Owns the looks and the cue sheet."
+    },
+    {
+      "id": "u-jonas",
+      "name": "Jonas Reed",
+      "initials": "JR",
+      "role": "producer",
+      "venueIds": [],
+      "note": "Budget, approvals and rights. Signs the show version."
+    },
+    {
+      "id": "u-priya",
+      "name": "Priya Nair",
+      "initials": "PN",
+      "role": "tour_manager",
+      "venueIds": [],
+      "note": "Tour dates, crew, travel and venue advances."
+    },
+    {
+      "id": "u-okafor",
+      "name": "R. Okafor",
+      "initials": "RO",
+      "role": "crew",
+      "venueIds": [
+        "v-halcyon"
+      ],
+      "note": "Venue crew. Rigging and power sign-off."
+    },
+    {
+      "id": "u-tobias",
+      "name": "T. Lindqvist",
+      "initials": "TL",
+      "role": "crew",
+      "venueIds": [
+        "v-halcyon",
+        "v-pier9"
+      ],
+      "note": "Video and playback."
+    },
+    {
+      "id": "u-admin",
+      "name": "Site Admin",
+      "initials": "SA",
+      "role": "admin",
+      "venueIds": [],
+      "note": "Integrations, retention and tenancy."
+    }
+  ],
+  "billing": {
+    "plan": "Production company · tour",
+    "shows": 3,
+    "seats": 8,
+    "perShow": 1200,
+    "perSeatMonth": 95,
+    "mrr": 4360,
+    "nextInvoice": "2026-11-01",
+    "setupFee": 4500,
+    "note": "Per-show fee for three shows plus eight annual seats. The readiness layer is included in the tour tier."
+  },
+  "readiness": {
+    "mode": "shadow",
+    "stopSwitch": false,
+    "quietHours": "22:00-06:00",
+    "digest": "daily",
+    "maxRisksPerProducerWeek": 12,
+    "channels": [
+      "in_app",
+      "email",
+      "slack"
+    ],
+    "coverageFloor": 0.9,
+    "stopReasons": []
+  }
+}

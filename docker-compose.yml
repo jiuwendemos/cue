@@ -1,0 +1,16 @@
+services:
+  cue:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      CUE_DB: /data/cue.sqlite3
+      CUE_TENANTS: halcyon
+      CUE_STRICT_INTEGRATIONS: "0"
+      CUE_RENDER_DEVICE: gpu
+    volumes:
+      - cue-data:/data
+    restart: unless-stopped
+
+volumes:
+  cue-data:

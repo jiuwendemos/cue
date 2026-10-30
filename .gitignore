@@ -1,0 +1,29 @@
+# node
+node_modules/
+web/node_modules/
+web/dist/
+web/.vite/
+npm-debug.log*
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+cue-data/
+server/logs/
+.env
+.env.local
+
+# editors / os
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# generated video workspaces
+demo/video/

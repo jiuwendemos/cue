@@ -1,0 +1,367 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useStore } from "../lib/store";
+import { useUI } from "../lib/ui";
+import {
+  cueConflicts,
+  cueSheetHtml,
+  cueSheetRows,
+  downloadText,
+  effectiveLook,
+  fmtClock,
+  fmtTimecode,
+  missingAssetCues,
+  songAt,
+  toCsv,
+} from "../lib/engine";
+import type { Cue, CueKind, CueStatus } from "../types";
+import { Chip, Drawer, PageHead, Panel } from "../components/UI";
+import { Icon } from "../components/Icon";
+
+const KINDS: (CueKind | "all")[] = ["all", "LX", "VID", "STG", "AUD", "SFX", "CAM"];
+
+export default function CueSheet() {
+  const store = useStore();
+  const ui = useUI();
+  const { pack, cues, rejectedLooks, acceptedLookId, signedCues } = store;
+  const [params, setParams] = useSearchParams();
+  const [kind, setKind] = useState<CueKind | "all">("all");
+  const [query, setQuery] = useState("");
+  const [safetyOnly, setSafetyOnly] = useState(false);
+  const [paper, setPaper] = useState(false);
+  const [selected, setSelected] = useState<string | null>(params.get("cue"));
+  const [draft, setDraft] = useState<Cue | null>(null);
+
+  const conflicts = useMemo(() => cueConflicts({ ...pack, cues }), [cues, pack]);
+  const missing = useMemo(() => missingAssetCues({ ...pack, cues }), [cues, pack]);
+  const rows = useMemo(() => cueSheetRows({ ...pack, cues }, rejectedLooks, acceptedLookId), [acceptedLookId, cues, pack, rejectedLooks]);
+  const signedSafety = pack.cues.filter((c) => c.safety && signedCues[c.id]).length;
+  const safetyCount = pack.cues.filter((c) => c.safety).length;
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    return rows.filter((c) => {
+      if (kind !== "all" && c.kind !== kind) return false;
+      if (safetyOnly && !c.safety) return false;
+      if (!q) return true;
+      return `${c.id} ${c.title} ${c.detail} ${c.owner} ${c.lookName} ${c.videoName} ${c.scene}`.toLowerCase().includes(q);
+    });
+  }, [kind, query, rows, safetyOnly]);
+
+  useEffect(() => {
+    const cueId = params.get("cue");
+    if (cueId) setSelected(cueId);
+  }, [params]);
+
+  useEffect(() => {
+    if (!selected) {
+      setDraft(null);
+      return;
+    }
+    const cue = cues.find((c) => c.id === selected) ?? null;
+    setDraft(cue ? { ...cue } : null);
+  }, [cues, selected]);
+
+  const openCue = (id: string) => {
+    setSelected(id);
+    const p = new URLSearchParams(params);
+    p.set("cue", id);
+    setParams(p, { replace: true });
+  };
+
+  const closeCue = () => {
+    setSelected(null);
+    const p = new URLSearchParams(params);
+    p.delete("cue");
+    setParams(p, { replace: true });
+  };
+
+  const exportCsv = () => {
+    const header = ["number", "cue", "at", "timecode", "kind", "scene", "title", "detail", "look", "video", "fade_s", "owner", "status", "safety", "signed_by", "signed_at"];
+    const body = rows.map((c) => [
+      c.number, c.id, c.at, fmtTimecode(c.at), c.kind, c.scene, c.title, c.detail, c.lookName, c.videoName, c.fade, c.owner, c.status, c.safety ? "yes" : "no",
+      signedCues[c.id]?.actor ?? "", signedCues[c.id]?.at ?? "",
+    ]);
+    downloadText(`cue-sheet-${pack.project.version}.csv`, toCsv([header, ...body]), "text/csv;charset=utf-8");
+  };
+
+  const exportHtml = () => {
+    downloadText(`cue-sheet-${pack.project.version}.html`, cueSheetHtml(pack, rejectedLooks, acceptedLookId, store.signOffName), "text/html;charset=utf-8");
+  };
+
+  const exportJson = () => {
+    downloadText(`cue-sheet-${pack.project.version}.json`, JSON.stringify({ show: pack.project, rows }, null, 2), "application/json");
+  };
+
+  const saveDraft = () => {
+    if (!draft) return;
+    store.patchCue(draft.id, {
+      title: draft.title,
+      detail: draft.detail,
+      at: draft.at,
+      fade: draft.fade,
+      owner: draft.owner,
+      status: draft.status,
+      lookId: draft.lookId,
+    });
+    setDraft(null);
+    closeCue();
+  };
+
+  const statusChip = (status: CueStatus) => (
+    <Chip tone={status === "released" ? "ok" : status === "approved" ? "accent" : status === "review" ? "warn" : "neutral"}>{status}</Chip>
+  );
+
+  return (
+    <div>
+      <PageHead
+        kicker={`${pack.project.artist} · ${pack.project.title} · ${pack.project.version}`}
+        title={ui.t("cues.title")}
+        sub={ui.t("cues.sub")}
+        actions={
+          <>
+            <button className="btn" onClick={() => setPaper((p) => !p)}><Icon name="file" size={13} /> {paper ? "Table" : "Paper"}</button>
+            <button className="btn" onClick={() => window.print()}><Icon name="print" size={13} /> {ui.t("common.print")}</button>
+            <button className="btn" onClick={exportCsv}><Icon name="download" size={13} /> CSV</button>
+            <button className="btn" onClick={exportHtml}><Icon name="download" size={13} /> HTML</button>
+            <button className="btn" onClick={exportJson}><Icon name="download" size={13} /> JSON</button>
+          </>
+        }
+      />
+
+      <div className="cue-toolbar">
+        <div className="row gap6 wrap">
+          {KINDS.map((k) => (
+            <button key={k} className={`btn sm${kind === k ? " primary" : " ghost"}`} onClick={() => setKind(k)}>{k}</button>
+          ))}
+        </div>
+        <input className="input" style={{ maxWidth: 240 }} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search cues, look, owner…" aria-label="Search cues" />
+        <button className={`btn sm${safetyOnly ? " danger" : ""}`} onClick={() => setSafetyOnly((v) => !v)} aria-pressed={safetyOnly}><Icon name="alert" size={12} /> Safety only</button>
+        <span className="topbar-spacer" />
+        <Chip tone="accent">{filtered.length} cues</Chip>
+        <Chip>{signedSafety} / {safetyCount} safety signed</Chip>
+        <button className="btn primary sm" onClick={store.signSafetyCues}><Icon name="shield" size={12} /> {ui.t("cues.sign_all")}</button>
+      </div>
+
+      {(conflicts.length > 0 || missing.length > 0) && (
+        <div className="cue-alerts">
+          {conflicts.map((c) => (
+            <div key={`${c.a.id}-${c.b.id}`} className="cue-alert">
+              <Icon name="alert" size={14} />
+              <span><b>Timing collision {c.a.id} / {c.b.id}</b> — {Math.abs(c.a.at - c.b.at).toFixed(1)} s apart at {fmtTimecode(c.b.at)}. Move one cue or merge them.</span>
+              <button className="btn sm ghost" onClick={() => openCue(c.b.id)}>Open {c.b.id}</button>
+            </div>
+          ))}
+          {missing.map((c) => (
+            <div key={c.id} className="cue-alert bad">
+              <Icon name="alert" size={14} />
+              <span><b>{c.id} references a missing clip</b> — {pack.videos.find((v) => v.id === c.videoId)?.name}. The cue cannot play until the asset lands.</span>
+              <Link className="btn sm ghost" to="/readiness?risk=R-005">Open risk R-005</Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {paper ? (
+        <div className="cue-sheet-paper">
+          <div className="paper-head">
+            <div>
+              <h1>CUE — {pack.project.artist} / {pack.project.title}</h1>
+              <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>{pack.project.tour} · {pack.project.productionCompany} · Show {pack.project.version}</div>
+            </div>
+            <div className="paper-meta">
+              CUE cue sheet<br />
+              Designer {pack.project.designer}<br />
+              Producer {pack.project.producer}<br />
+              {fmtClock(pack.setlist[pack.setlist.length - 1].end)} running time
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>#</th><th>Cue</th><th>At</th><th>Scene</th><th>Title and action</th><th>Look</th><th>Video</th><th>Fade</th><th>Owner</th><th>Status</th></tr></thead>
+            <tbody>
+              {rows.map((c) => (
+                <tr key={c.id} className={c.safety ? "warn" : ""}>
+                  <td>{c.number}</td>
+                  <td style={{ fontFamily: "monospace" }}>{c.id}</td>
+                  <td style={{ fontFamily: "monospace" }}>{fmtTimecode(c.at)}</td>
+                  <td>{c.scene}</td>
+                  <td><b>{c.title}</b> — {c.detail} {c.safety && <span style={{ color: "#a11", fontWeight: 700 }}>SAFETY</span>}</td>
+                  <td>{c.lookName}</td>
+                  <td>{c.videoName}</td>
+                  <td>{c.fade}s</td>
+                  <td>{c.owner}</td>
+                  <td>{c.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 18, fontSize: 9, color: "#555" }}>
+            <span>Safety sign-off: {store.signOffName} · no cue is released to the venue without a human signature.</span>
+            <span className="signature" style={{ color: "#141610", borderColor: "#999" }}>{store.signOffName.split(" ").map((p) => p[0]).join("")}-1030</span>
+          </div>
+        </div>
+      ) : (
+        <div className="cue-wrap">
+          <table className="cue-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Cue</th><th>At</th><th>Scene</th><th>Title and action</th><th>Look</th><th>Video</th><th>Fade</th><th>Owner</th><th>Status</th><th>Safety</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c) => {
+                const look = effectiveLook(pack, c.lookId, rejectedLooks, acceptedLookId);
+                const original = pack.looks.find((l) => l.id === c.lookId);
+                const redirected = original && look && original.id !== look.id;
+                const video = pack.videos.find((v) => v.id === c.videoId);
+                return (
+                  <tr key={c.id} className={`${selected === c.id ? "selected " : ""}${c.safety ? "safety" : ""}`} onClick={() => openCue(c.id)}>
+                    <td className="cue-time">{c.number}</td>
+                    <td className="cue-id">{c.id}</td>
+                    <td className="cue-time">{fmtTimecode(c.at)}</td>
+                    <td className="small soft">{songAt(pack, c.at)?.title ?? "—"}</td>
+                    <td>
+                      <div className="cue-title">{c.title}</div>
+                      <div className="cue-detail">{c.detail}</div>
+                    </td>
+                    <td className="cue-look">
+                      {look?.name ?? "—"}
+                      {redirected && <span className="soft"> ← {original?.name}</span>}
+                    </td>
+                    <td className="cue-look">
+                      {video?.name ?? "—"}
+                      {video?.status === "missing" && <Chip tone="bad" className="ml4">missing</Chip>}
+                    </td>
+                    <td className="cue-time">{c.fade}s</td>
+                    <td className="cue-owner">{c.owner}</td>
+                    <td>{statusChip(c.status)}</td>
+                    <td>
+                      {c.safety ? (
+                        signedCues[c.id] ? (
+                          <span className="sign-badge"><Icon name="check" size={11} /> {signedCues[c.id].signature}</span>
+                        ) : (
+                          <button className="btn sm danger" onClick={(e) => { e.stopPropagation(); store.signCue(c.id); }}>Sign</button>
+                        )
+                      ) : (
+                        <span className="soft xsmall">—</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="row between mt12 wrap">
+        <span className="xsmall soft">
+          {conflicts.length} timing conflict(s) · {missing.length} missing asset(s) · {safetyCount - signedSafety} safety cue(s) unsigned.
+          The table exports HTML, CSV and JSON; the venue format is a signed export in the pilot.
+        </span>
+        <span className="xsmall soft mono">Signed: {Object.keys(signedCues).length} · {pack.project.version} · cue math checked</span>
+      </div>
+
+      <div className="section-label"><span>The technical score</span><span className="soft xsmall">read-only preview</span></div>
+      <div className="cue-summary">
+        {[
+          ["Lighting", cues.filter((c) => c.kind === "LX").length],
+          ["Video", cues.filter((c) => c.kind === "VID").length],
+          ["Stage", cues.filter((c) => c.kind === "STG").length],
+          ["Audio", cues.filter((c) => c.kind === "AUD").length],
+          ["SFX", cues.filter((c) => c.kind === "SFX").length],
+          ["Camera", cues.filter((c) => c.kind === "CAM").length],
+        ].map(([label, count]) => (
+          <div className="cue-summary-cell" key={String(label)}>
+            <span>{label}</span>
+            <b>{count}</b>
+          </div>
+        ))}
+      </div>
+
+      <Drawer
+        open={Boolean(draft)}
+        title={draft ? `${draft.id} · ${draft.title}` : "Cue"}
+        onClose={closeCue}
+        actions={
+          <>
+            <button className="btn" onClick={closeCue}>Cancel</button>
+            {draft && draft.safety && !signedCues[draft.id] && <button className="btn ok" onClick={() => { store.signCue(draft.id); }}>Sign safety</button>}
+            {draft && <button className="btn primary" onClick={saveDraft}>Save cue</button>}
+          </>
+        }
+      >
+        {draft && (
+          <div className="col gap12">
+            <div className="row between">
+              <span className="cue-id mono">{draft.id}</span>
+              <div className="row gap6">
+                {statusChip(draft.status)}
+                {draft.safety && <Chip tone="bad">safety</Chip>}
+                {signedCues[draft.id] && <span className="sign-badge"><Icon name="check" size={11} /> {signedCues[draft.id].signature}</span>}
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="cue-title">Title</label>
+              <input id="cue-title" className="input" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} />
+            </div>
+            <div className="field">
+              <label htmlFor="cue-detail">Action</label>
+              <textarea id="cue-detail" className="textarea" value={draft.detail} onChange={(e) => setDraft({ ...draft, detail: e.target.value })} />
+            </div>
+            <div className="look-drawer-grid">
+              <div className="field">
+                <label htmlFor="cue-at">Time (seconds)</label>
+                <input id="cue-at" className="input mono" type="number" step="0.1" value={draft.at} onChange={(e) => setDraft({ ...draft, at: Number(e.target.value) })} />
+              </div>
+              <div className="field">
+                <label htmlFor="cue-fade">Fade (seconds)</label>
+                <input id="cue-fade" className="input mono" type="number" step="0.1" value={draft.fade} onChange={(e) => setDraft({ ...draft, fade: Number(e.target.value) })} />
+              </div>
+              <div className="field">
+                <label htmlFor="cue-look">Look</label>
+                <select id="cue-look" className="select" value={draft.lookId ?? ""} onChange={(e) => setDraft({ ...draft, lookId: e.target.value || undefined })}>
+                  <option value="">—</option>
+                  {pack.looks.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="cue-owner">Owner</label>
+                <input id="cue-owner" className="input" value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} />
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="cue-status">Status</label>
+              <select id="cue-status" className="select" value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as CueStatus })}>
+                {(["draft", "review", "approved", "released"] as CueStatus[]).map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="evidence-item">
+              <b>Citation</b>
+              <span>{draft.citation}</span>
+            </div>
+            {draft.lookId && rejectedLooks.includes(draft.lookId) && (
+              <div className="banner danger">
+                <Icon name="alert" size={14} />
+                <span>This cue points at a rejected look. It resolves to {effectiveLook(pack, draft.lookId, rejectedLooks, acceptedLookId)?.name ?? "nothing"} on the sheet.</span>
+              </div>
+            )}
+            <div className="row gap6">
+              <Link to={`/show?tab=stage&t=${draft.at}&look=${draft.lookId ?? ""}`} className="btn sm"><Icon name="stage" size={12} /> Open in previz at {fmtClock(draft.at)}</Link>
+              <button className="btn sm danger" onClick={() => { store.signCue(draft.id); }} disabled={!draft.safety}>Sign safety</button>
+            </div>
+            <p className="xsmall soft">Editing the cue writes an audit event and bumps the show. It does not change a cue that has already been released to the venue without a new sign-off.</p>
+          </div>
+        )}
+      </Drawer>
+
+      <Panel title="What this sheet is" className="mt24">
+        <p className="small muted">
+          The cue sheet is the technical score. Lighting, video, stage, audio, SFX and camera share one numbering space and one clock.
+          A cue that references a rejected look resolves to the approved look on the printed sheet, with the original still visible in the editor.
+          Safety cues — strobe, camera crossing, monolith strike — require a named human signature. CUE never releases a show automatically.
+        </p>
+      </Panel>
+    </div>
+  );
+}

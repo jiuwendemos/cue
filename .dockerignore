@@ -1,0 +1,9 @@
+web/node_modules
+web/dist
+server/.pytest_cache
+server/.ruff_cache
+**/__pycache__
+.git
+cue-data
+docs/assets
+*.png

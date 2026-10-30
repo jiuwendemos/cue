@@ -1,0 +1,26 @@
+[Unit]
+Description=CUE — live show design studio (on-site API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cue
+Group=cue
+WorkingDirectory=/opt/cue
+EnvironmentFile=/etc/cue/cue.env
+ExecStart=/opt/cue/.venv/bin/uvicorn cue.api.app:app --host 127.0.0.1 --port 8000 --app-dir /opt/cue/server
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/cue
+# The production office runs without outbound network during a show week.
+IPAddressDeny=any
+IPAddressAllow=localhost
+# Remove the two lines above only for a deliberate integration window.
+
+[Install]
+WantedBy=multi-user.target
