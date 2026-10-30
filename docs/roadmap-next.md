@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**483 checkboxes: 126 already in the demo, 357 to build.** The count is the point: this is the work,
+**483 checkboxes: 129 already in the demo, 354 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -392,7 +392,7 @@ the rest. Never live control.
 ## C1 · OpenJiuwen / DeepAgent
 
 - [x] **P0** HTTP adapter for a DeepAgent/OpenAI-compatible endpoint, with an explicit 502 on failure
-- [ ] **P0** Real DeepAgent/JiuwenSwarm client, not a status-only seam
+- [x] **P0** Real OpenJiuwen DeepAgent client with eight read-only show tools
 - [ ] **P0** Model configuration per tenant
 - [ ] **P0** Auth and secret handling
 - [x] **P0** Typed tool schemas and a tool registry
@@ -600,7 +600,7 @@ the rest. Never live control.
 
 - [ ] **P0** One previz adapter is live, not a reference
 - [ ] **P0** One console export is live, not a reference
-- [ ] **P0** One real DeepAgent call returns a cited answer
+- [x] **P0** One real DeepAgent call returns a cited answer (verified live)
 - [ ] **P0** One real user signs in with SSO
 - [ ] **P0** One real asset arrives from a DAM
 - [ ] **P0** One real risk reaches Slack and is acknowledged
@@ -629,7 +629,7 @@ the rest. Never live control.
 - [ ] True 3D/WebGL previz path (B4)
 - [ ] WCAG 2.2 AA audit (B7)
 - [ ] Route splitting, Lighthouse CI and 10k virtualization (B8)
-- [ ] Real DeepAgent client and evals (C1)
+- [x] Real DeepAgent client and evals (C1)
 
 ## Next 90 days — make it connected
 

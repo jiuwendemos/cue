@@ -113,9 +113,13 @@ def create_app(db_path: str | None = None) -> FastAPI:
     async def lifespan(app: FastAPI):
         app.state.pack = load_pack()
         app.state.store = Store(db_path or os.getenv("CUE_DB", str(config.DB_PATH)))
-        app.state.agent = AgentRuntime(app.state.pack)
+        app.state.agent = AgentRuntime(app.state.pack, app.state.store, config.DEFAULT_TENANT)
         app.state.render = {"device": config.RENDER_DEVICE, "quality": "high", "frame_ms": 8.2, "export_s": 2.4}
         app.state.scheduler = None
+        app.state.warmup = None
+        if config.OPENJIUWEN_WARMUP:
+            # Do not block startup, but have the runtime hot before the first click.
+            app.state.warmup = asyncio.create_task(asyncio.to_thread(app.state.agent.warm))
         if config.SCHEDULER_ENABLED:
             app.state.scheduler = asyncio.create_task(scheduler_loop(app))
         yield
@@ -124,6 +128,18 @@ def create_app(db_path: str | None = None) -> FastAPI:
         app.state.store.close()
 
     app = FastAPI(title="CUE", version="1.0.0", lifespan=lifespan)
+
+    @app.middleware("http")
+    async def live_data_is_never_cached(request: Request, call_next: Any) -> Any:
+        """A stale readiness board or agent status is worse than a slow one."""
+        response = await call_next(request)
+        path = request.url.path
+        if path.startswith(("/api/", "/mcp/")) or path == "/mcp":
+            response.headers["Cache-Control"] = "no-store, max-age=0"
+        elif path.endswith(".html") or path == "/":
+            response.headers["Cache-Control"] = "no-cache"
+        return response
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=config.cors_origins(),
@@ -199,10 +215,26 @@ def create_app(db_path: str | None = None) -> FastAPI:
         if not body.question.strip():
             raise HTTPException(400, "question is required")
         try:
-            result = state(request).agent.ask(body.question, body.active_look_id, body.rejected_looks)
+            result = state(request).agent.ask(
+                body.question,
+                body.active_look_id,
+                body.rejected_looks,
+                tenant=tenant(),
+            )
         except AgentUnavailable as exc:
             raise HTTPException(502, detail=f"the configured agent backend is unavailable: {exc}") from exc
-        state(request).store.audit(tenant(), "CUE agent", "agent.answer", body.active_look_id or "show", body.question[:240], ["agent"])
+        backend = result.get("backend", "deterministic-local")
+        detail = f"{body.question[:200]} · {backend} · {len(result.get('citations', []))} citations"
+        state(request).store.audit(tenant(), "CUE agent", "agent.answer", body.active_look_id or "show", detail, ["agent"])
+        return result
+
+    @app.post("/api/agent/probe")
+    def agent_probe(request: Request) -> dict[str, Any]:
+        try:
+            result = state(request).agent.probe()
+        except AgentUnavailable as exc:
+            raise HTTPException(502, detail=f"the agent probe failed: {exc}") from exc
+        state(request).store.audit(tenant(), "Site Admin", "agent.probe", "agent", f"latency {result.get('latency_ms')} ms", ["agent"])
         return result
 
     @app.get("/api/show")

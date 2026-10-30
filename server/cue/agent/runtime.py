@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import threading
 from dataclasses import asdict, dataclass
 from typing import Any
 from urllib import error, request
@@ -48,16 +49,65 @@ class Status:
     backend: str
     model: str
     detail: str
+    provider: str | None = None
+    endpoint: str | None = None
+    runtime_version: str | None = None
+    ready: bool | None = None
+    last_error: str | None = None
+    last_latency_ms: int | None = None
+    warmup: dict[str, Any] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 class AgentRuntime:
-    def __init__(self, pack: dict[str, Any]) -> None:
+    """Chooses the real runtime, the HTTP adapter or the local engine.
+
+    The local engine is not a stub: it is the offline path and the public demo's
+    answer set. The OpenJiuwen path is the on-site one.
+    """
+
+    def __init__(self, pack: dict[str, Any], store: Any = None, tenant: str | None = None) -> None:
         self.pack = pack
+        self.store = store
+        self.tenant = tenant or config.DEFAULT_TENANT
+        self._openjiuwen: Any = None
+        self._openjiuwen_tried = False
+        self._backend_lock = threading.Lock()
+
+    def _backend(self) -> Any:
+        """Lazily construct the OpenJiuwen backend; ``None`` means not enabled."""
+        with self._backend_lock:
+            if not self._openjiuwen_tried:
+                self._openjiuwen_tried = True
+                try:
+                    from .openjiuwen_backend import OpenJiuwenBackend
+
+                    backend = OpenJiuwenBackend(self.pack, self.store)
+                    self._openjiuwen = backend if backend.enabled() else None
+                except Exception:  # noqa: BLE001 - a missing optional runtime must not break the app
+                    self._openjiuwen = None
+            return self._openjiuwen
 
     def status(self) -> Status:
+        backend = self._backend()
+        if backend is not None:
+            data = backend.status()
+            return Status(
+                configured=bool(data["configured"]),
+                available=bool(data["available"]),
+                backend=str(data["backend"]),
+                model=str(data["model"]),
+                detail=str(data["detail"]),
+                provider=data.get("provider"),
+                endpoint=data.get("endpoint"),
+                runtime_version=data.get("runtime_version"),
+                ready=data.get("ready"),
+                last_error=data.get("last_error"),
+                last_latency_ms=data.get("last_latency_ms"),
+                warmup=data.get("warmup"),
+            )
         configured = bool(config.AGENT_ENDPOINT)
         return Status(
             configured=configured,
@@ -132,9 +182,52 @@ class AgentRuntime:
             "links": body.get("links", []),
         }
 
-    def ask(self, question: str, active_look_id: str | None = None, rejected_looks: list[str] | None = None) -> dict[str, Any]:
+    def ask(
+        self,
+        question: str,
+        active_look_id: str | None = None,
+        rejected_looks: list[str] | None = None,
+        tenant: str | None = None,
+    ) -> dict[str, Any]:
+        backend = self._backend()
+        if backend is not None:
+            try:
+                return backend.ask(question, active_look_id, rejected_looks, tenant=tenant or self.tenant)
+            except AgentUnavailable as exc:
+                if not config.AGENT_FALLBACK:
+                    raise
+                local = self._local_ask(question, active_look_id, rejected_looks)
+                local["degraded"] = True
+                local["backend"] = "deterministic-local"
+                local["notice"] = (
+                    f"OpenJiuwen is configured but did not answer ({exc}). "
+                    "This is the deterministic local answer, not the model."
+                )
+                return local
         if config.AGENT_ENDPOINT:
             return self._remote_ask(question, active_look_id, rejected_looks)
+        return self._local_ask(question, active_look_id, rejected_looks)
+
+    def warm(self) -> dict[str, Any]:
+        """Pay the import and Runner start once, at boot rather than on a click."""
+        backend = self._backend()
+        if backend is None:
+            return {"ok": False, "reason": "the OpenJiuwen runtime is not enabled"}
+        return backend.warm()
+
+    def probe(self) -> dict[str, Any]:
+        """A real model call, so on-site staff can check the runtime in one click."""
+        backend = self._backend()
+        if backend is None:
+            raise AgentUnavailable("the OpenJiuwen runtime is not enabled")
+        return backend.probe()
+
+    def _local_ask(
+        self,
+        question: str,
+        active_look_id: str | None = None,
+        rejected_looks: list[str] | None = None,
+    ) -> dict[str, Any]:
         q = question.lower().strip()
         pack = self.pack
         active = next((look for look in pack["looks"] if look["id"] == active_look_id), None) or pack["looks"][4]

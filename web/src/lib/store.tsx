@@ -93,6 +93,12 @@ export interface AgentStatus {
   backend: string;
   model: string;
   detail: string;
+  provider?: string | null;
+  endpoint?: string | null;
+  runtime_version?: string | null;
+  ready?: boolean | null;
+  last_error?: string | null;
+  last_latency_ms?: number | null;
 }
 
 interface StoreValue {
@@ -145,6 +151,7 @@ interface StoreValue {
   completeRiskCheck: (riskId: string, checkId: string) => void;
   runReadinessCheck: () => void;
   refreshLive: () => Promise<void>;
+  untilBooted: () => Promise<boolean>;
   approveVersion: (id: string, actor: string, note: string) => void;
   createVersion: (label: string, note: string) => string;
   setBudgetApproved: (value: number) => void;
@@ -178,6 +185,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const timer = useRef<number | null>(null);
   const [live, setLive] = useState(false);
   const liveRef = useRef(false);
+  // Resolves once the on-site handshake has finished (or was skipped). A page
+  // opened with ?q= must not fall back to the local engine while it waits.
+  const boot = useRef<{ promise: Promise<boolean>; resolve: (value: boolean) => void } | null>(null);
+  if (!boot.current) {
+    let resolve!: (value: boolean) => void;
+    const promise = new Promise<boolean>((settle) => {
+      resolve = settle;
+    });
+    boot.current = { promise, resolve };
+  }
+  const untilBooted = useCallback(
+    () =>
+      Promise.race([
+        boot.current!.promise,
+        new Promise<boolean>((resolve) => window.setTimeout(() => resolve(liveRef.current), 4000)),
+      ]),
+    [],
+  );
   const [agentStatus, setAgentStatus] = useState<AgentStatus>({
     configured: false,
     available: true,
@@ -205,16 +230,38 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const staticHost = location.hostname.endsWith("github.io") || location.protocol === "file:";
     const viteDev = (location.hostname === "127.0.0.1" || location.hostname === "localhost") && (location.port === "5174" || location.port === "5173");
-    if (staticHost || viteDev) return;
+    if (staticHost || viteDev) {
+      boot.current!.resolve(false);
+      return;
+    }
     let cancelled = false;
     (async () => {
       try {
-        const health = await fetch(apiUrl("health"));
-        if (!health.ok) return;
-        const data = (await health.json()) as { ok: boolean };
+        // The service may still be starting when the first paint happens. A
+        // short retry is better than a whole session stuck in demo mode.
+        let health: Response | null = null;
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            const response = await fetch(apiUrl("health"));
+            if (response.ok) {
+              health = response;
+              break;
+            }
+          } catch {
+            /* retry once more */
+          }
+          await new Promise((resolve) => window.setTimeout(resolve, 900 * (attempt + 1)));
+        }
+        if (!health) return;
+        const data = (await health.json()) as { ok: boolean; agent?: Partial<AgentStatus> };
         if (cancelled || !data.ok) return;
         liveRef.current = true;
         setLive(true);
+        // The health payload already carries the agent status, so the runtime
+        // chip cannot disagree with the answer that follows.
+        if (!cancelled && data.agent) {
+          setAgentStatus((prev) => ({ ...prev, ...data.agent }));
+        }
         try {
           const status = await fetch(apiUrl("agent/status"));
           if (status.ok) {
@@ -224,7 +271,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             }
           }
         } catch {
-          /* status is optional */
+          /* the health payload above is enough */
         }
 
         // Hydrate the human decisions from the on-site store. The public Pages
@@ -290,7 +337,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       } catch {
         /* offline-first */
       }
-    })();
+    })().finally(() => {
+      if (!cancelled) boot.current!.resolve(liveRef.current);
+    });
     return () => {
       cancelled = true;
     };
@@ -863,6 +912,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       completeRiskCheck,
       runReadinessCheck,
       refreshLive,
+      untilBooted,
       approveVersion,
       createVersion,
       setBudgetApproved,
@@ -881,7 +931,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ranked, activeLook, activeLookId, checks, cues, state.signedCues, risks, openRisks, riskCounts, notifications, unread,
       state.settings, state.stopReasons, state.audits, versions, currentVersion, budgetApproved, state.briefSeen, nextDateId,
       activeSuggestion, acceptSuggestion, rejectSuggestion, selectLook, rejectLook, clearDrop, voteDrop, patchCue, signCue, signSafetyCues,
-      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck, runReadinessCheck, refreshLive,
+      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck, runReadinessCheck, refreshLive, untilBooted,
       approveVersion, createVersion, setBudgetApproved, setReadinessMode, patchSettings, setStopSwitch, readNotification,
       readAllNotifications, markBriefSeen, reset, toast, say,
     ],

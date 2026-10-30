@@ -57,7 +57,17 @@ Environment (see `.env.example`):
 | `CUE_WEBHOOK_URL` / `CUE_WEBHOOK_SECRET` | empty | signed generic webhook |
 | `CUE_SMTP_HOST` / `CUE_SMTP_USER` / `CUE_SMTP_PASSWORD` | empty | email delivery |
 | `CUE_SMS_URL` / `CUE_SMS_TOKEN` | empty | SMS gateway |
-| `CUE_AGENT_ENDPOINT` / `CUE_AGENT_API_KEY` | empty | real remote agent |
+| `CUE_AGENT_ENDPOINT` / `CUE_AGENT_API_KEY` | empty | remote HTTP agent (not the local runtime) |
+| `CUE_ENV_FILE` | empty | dotenv file to read; CoachMe names are mapped |
+| `CUE_OPENJIUWEN` | `auto` | `auto`, `1` (require) or `0` (disable) |
+| `CUE_LLM_PROVIDER` | `OpenAI` | provider for the model client |
+| `CUE_LLM_API_BASE` | empty | OpenAI-compatible base URL |
+| `CUE_LLM_API_KEY` | empty | model credentials |
+| `CUE_LLM_MODEL` | empty | model name |
+| `CUE_LLM_TIMEOUT` | `120` | per-call timeout in seconds |
+| `CUE_LLM_SSL_VERIFY` | `false` | verify the endpoint certificate |
+| `CUE_OPENJIUWEN_WARMUP` | `1` | import and start the runtime at boot |
+| `CUE_AGENT_FALLBACK` | `0` | `1` returns a labelled local answer on failure |
 
 ## Docker
 

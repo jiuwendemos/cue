@@ -55,10 +55,39 @@ The on-site service now ships:
 - **real export files**: iCalendar, grandMA3 CSV/XML, Resolume CSV, Vectorworks fixture CSV and a minimal MVR exchange ZIP;
 - a **signed share link** for the cue sheet with expiry;
 - an **MCP-compatible JSON-RPC server** at `POST /mcp` with read-only show, checks, budget, readiness, cue-sheet and ask tools;
-- an **optional remote agent adapter** for a DeepAgent/OpenAI-compatible endpoint, with an explicit 502 when the backend is unavailable.
+- a **real OpenJiuwen runtime**: a DeepAgent over an OpenAI-compatible model, with eight typed,
+  read-only show tools and citations taken only from the tools the model actually called;
+- an **optional remote agent adapter** for a service that is not a local runtime, with an explicit 502
+  when a configured backend is unavailable.
 
 The public demo still answers locally and makes no external call. Configure the environment to point
 any of these at a real service. See [production wiring](docs/production-wiring.md).
+
+### The OpenJiuwen agent
+
+![A live, cited answer from the OpenJiuwen agent](docs/assets/agent.png)
+
+The on-site service answers with the same stack CoachMe runs: `openjiuwen`'s `Model` over an
+OpenAI-compatible endpoint, a `DeepAgent` built with CUE's tools, and the global `Runner`.
+
+```bash
+# Point at any dotenv file. A CoachMe .env (API_BASE / API_KEY / MODEL_NAME) is mapped
+# onto CUE_LLM_* automatically. Copy .env.example to .env for the local path.
+export CUE_ENV_FILE=../coachme/.env      # PowerShell: $env:CUE_ENV_FILE="..\coachme\.env"
+
+# Run the service with an interpreter that has openjiuwen installed.
+cd server
+PYTHONPATH=. python -m uvicorn cue.api.app:app --port 8000
+```
+
+What the model can read: `show_summary`, `look_checks`, `look_budget`, `open_risks`, `cue_sheet`,
+`find_venue`, `rights_windows`, `next_show`. Every tool is read-only. The answer carries the real tool
+steps, the citations from those calls and the timings. If the runtime is configured but unreachable the
+API returns **502** (`CUE_AGENT_FALLBACK=1` opts into a clearly labelled local answer instead). The
+runtime is warmed in the background at boot, so the first question is not a 90-second wait.
+
+Verified against `openjiuwen 0.1.19` and a live `deepseek-v4-pro` endpoint: a cited answer in ~8 s
+after warm-up, with 1-3 tool reads.
 
 ### Show watch
 
@@ -237,7 +266,7 @@ The full, item-by-item status is in [docs/roadmap.md](docs/roadmap.md). The shor
 - **1 — the pilot surface:** built as software. One production company, three shows and 90 days still need a real customer.
 - **4 — tour readiness:** built. Risk board, lifecycle, show-week brief, dedupe, coverage, precision, kill switch.
 - **5 — interface 2026:** built. Three themes, tokens, command palette, role navigation, mobile review, EN/中文, provenance, accessibility.
-- **6 — production wiring:** code paths for the agent, render/inference, integrations, store and security. The end-to-end gate needs a real tour.
+- **6 - production wiring:** the OpenJiuwen agent, render/inference, integrations, store and security are wired. The end-to-end gate needs a real tour.
 - **2–3 — production and scale:** adapters and UI surfaces exist; live vendor integrations and a multi-city network are pilot work.
 
 **The next three tracks** — [make it proactive, make it true 2026, make it connected](docs/roadmap-next.md) — are

@@ -93,7 +93,12 @@ def call_tool(pack: dict[str, Any], store: Store, tenant: str, agent: AgentRunti
         rows = cue_rows(pack, arguments.get("rejected") or [], arguments.get("accepted"))
         return {"rows": rows, "signed": store.cue_signatures(tenant)}
     if name == "ask":
-        return agent.ask(arguments.get("question", ""), arguments.get("active_look_id"), arguments.get("rejected_looks") or [])
+        return agent.ask(
+            arguments.get("question", ""),
+            arguments.get("active_look_id"),
+            arguments.get("rejected_looks") or [],
+            tenant=tenant,
+        )
     raise ValueError(f"unknown tool {name}")
 
 

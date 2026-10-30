@@ -12,6 +12,17 @@ services:
       CUE_SCAN_INTERVAL_MINUTES: "1440"
       CUE_PUBLIC_URL: http://127.0.0.1:8000
       CUE_SHARE_SECRET: change-me-before-a-pilot
+      # The real agent needs openjiuwen installed in the image (see the README).
+      # Without it the service reports deterministic-local and says why.
+      CUE_OPENJIUWEN: ${CUE_OPENJIUWEN:-auto}
+      CUE_OPENJIUWEN_WARMUP: "1"
+      CUE_LLM_PROVIDER: ${CUE_LLM_PROVIDER:-OpenAI}
+      CUE_LLM_API_BASE: ${CUE_LLM_API_BASE:-}
+      CUE_LLM_API_KEY: ${CUE_LLM_API_KEY:-}
+      CUE_LLM_MODEL: ${CUE_LLM_MODEL:-}
+      CUE_LLM_TIMEOUT: "120"
+      CUE_LLM_SSL_VERIFY: "false"
+      CUE_AGENT_FALLBACK: "0"
     volumes:
       - cue-data:/data
     restart: unless-stopped

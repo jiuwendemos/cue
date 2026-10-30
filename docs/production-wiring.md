@@ -101,13 +101,46 @@ curl -s -X POST http://127.0.0.1:8000/api/readiness/R-001/dismiss \
 - Signed share links use HMAC-SHA256 and expire; `/api/share/cue-sheet` verifies the token before it
   prints.
 
-## Remote agent
+## OpenJiuwen runtime
 
-- Set `CUE_AGENT_ENDPOINT` to a DeepAgent or OpenAI-compatible endpoint. The adapter sends the show,
-  the active look, rejected looks and the tool list; it accepts a CUE answer shape or a chat completion.
-- `CUE_AGENT_API_KEY` is sent as a Bearer token.
-- A configured but unreachable endpoint returns **502**, not a silent local answer.
-- Without an endpoint, the deterministic local agent remains the default.
+The real path is `server/cue/agent/openjiuwen_backend.py`. It uses the same primitives as CoachMe:
+
+```python
+ModelClientConfig(client_provider=..., api_key=..., api_base=..., timeout=..., verify_ssl=...)
+ModelRequestConfig(model=..., temperature=..., top_p=...)
+create_deep_agent(model=..., system_prompt=..., tools=[...], workspace=..., max_iterations=8)
+Runner.start(); Runner.run_agent(agent, {"query": ...}, session="cue-<uuid>")
+```
+
+- **Credentials**: `CUE_LLM_PROVIDER`, `CUE_LLM_API_BASE`, `CUE_LLM_API_KEY`, `CUE_LLM_MODEL`.
+  `CUE_ENV_FILE` can point at another checkout's dotenv file; `API_BASE` / `API_KEY` / `MODEL_NAME`
+  are mapped onto the `CUE_LLM_*` names. Process variables always win.
+- **Tools**: eight typed, read-only callables (`show_summary`, `look_checks`, `look_budget`,
+  `open_risks`, `cue_sheet`, `find_venue`, `rights_windows`, `next_show`). openjiuwen extracts the
+  schema from the signature and docstring.
+- **Citations**: each tool returns `{data, citations}`. The adapter collects citations only from the
+  tools the model actually called and returns them with the answer, plus the tool steps and timings.
+- **Isolation**: every run gets a fresh `session` id, so answers do not leak into each other. The
+  workspace is `<CUE_RUNTIME>/agent`, never the repo.
+- **Warm-up**: `CUE_OPENJIUWEN_WARMUP=1` imports the runtime and starts `Runner` in a background task
+  at boot. The first question then costs one model round, not the import.
+- **Failure**: configured but unreachable → **502**. `CUE_AGENT_FALLBACK=1` returns the deterministic
+  local answer with `degraded: true` and a visible notice instead.
+- **Read-only**: no tool writes. The agent cannot change a cue, approve a version, sign safety or
+  release a show.
+- **Probe**: `POST /api/agent/probe` makes a real, tiny model call and returns the latency.
+
+### Remote HTTP adapter
+
+If the agent lives behind a service rather than in this process, set `CUE_AGENT_ENDPOINT` and
+`CUE_AGENT_API_KEY`. The adapter sends the show, the active look, rejected looks and the tool list,
+and accepts either a CUE answer shape or an OpenAI chat completion.
+
+### Verified
+
+Against `openjiuwen 0.1.19` and a live `deepseek-v4-pro` endpoint: one cited answer in ~8 s after
+warm-up, 1-3 tool reads, 10-12 citations. `pytest -m live` runs the same check when
+`CUE_LIVE_AGENT=1` and `CUE_ENV_FILE` are set.
 
 ## Production gate
 
@@ -122,6 +155,8 @@ curl -s -X POST http://127.0.0.1:8000/api/readiness/R-001/dismiss \
 - [x] MCP-compatible read-only tools.
 - [x] Real iCalendar, console, video, fixture and MVR exchange exports.
 - [x] Remote agent adapter with explicit failure.
+- [x] Real OpenJiuwen DeepAgent with eight typed, read-only show tools.
+- [x] Live cited answer verified against a real endpoint, with a `live` test.
 - [ ] Durable queue/worker (the current loop is in-process).
 - [ ] One live previz adapter.
 - [ ] One live console export.

@@ -26,6 +26,9 @@ cue = ["data/*.json"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+  "live: calls a real model endpoint; skipped unless CUE_LIVE_AGENT=1",
+]
 
 [tool.ruff]
 line-length = 120

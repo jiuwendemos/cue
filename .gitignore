@@ -16,6 +16,19 @@ build/
 dist/
 cue-data/
 server/logs/
+# openjiuwen DeepAgent scaffolding, if a workspace is ever misconfigured
+server/AGENT.md
+server/HEARTBEAT.md
+server/IDENTITY.md
+server/SOUL.md
+server/USER.md
+server/agents/
+server/coding_memory/
+server/context/
+server/memory/
+server/messages/
+server/skills/
+server/todo/
 .env
 .env.local
 
