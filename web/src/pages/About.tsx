@@ -114,6 +114,9 @@ export default function About() {
             <Chip>rehearsal time saved</Chip>
           </div>
           <Link to="/pilot" className="btn sm mt12">Open the pilot dashboard <Icon name="arrow" size={11} /></Link>
+          <a href="https://github.com/jiuwendemos/cue/blob/main/docs/roadmap-next.md" target="_blank" rel="noreferrer" className="btn sm mt8">
+            <Icon name="external" size={11} /> The next three tracks
+          </a>
         </Panel>
       </div>
 
