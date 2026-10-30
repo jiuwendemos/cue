@@ -8,6 +8,7 @@ import { CommandPalette } from "./CommandPalette";
 import { Chip } from "./UI";
 import { DemoGuide } from "./DemoGuide";
 import { SettingsDrawer } from "./SettingsDrawer";
+import { LayoutDebug } from "./LayoutDebug";
 
 interface NavItem {
   to: string;
@@ -173,7 +174,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <Icon name="alert" size={16} />
             {unread > 0 && <span className="dot warn" />}
           </button>
-          <button className="icon-btn" onClick={ui.toggleTheme} aria-label={`Theme: ${ui.theme}`} title={`Theme: ${ui.theme}`}>
+          <button className="icon-btn theme-btn" onClick={ui.toggleTheme} aria-label={`Theme: ${ui.theme}`} title={`Theme: ${ui.theme}`}>
             <Icon name={ui.theme === "dark" ? "moon" : ui.theme === "light" ? "sun" : "contrast"} size={16} />
           </button>
           <button className="locale-btn" onClick={() => ui.setLocale(ui.locale === "en" ? "zh" : "en")} aria-label="Switch language" title="Switch language">
@@ -189,10 +190,10 @@ export function Shell({ children }: { children: ReactNode }) {
               <option key={r} value={r}>{roleLabel[r]}</option>
             ))}
           </select>
-          <button className="icon-btn" onClick={() => setSettingsOpen(true)} aria-label="Studio settings" title="Studio settings">
+          <button className="icon-btn settings-btn" onClick={() => setSettingsOpen(true)} aria-label="Studio settings" title="Studio settings">
             <Icon name="settings" size={15} />
           </button>
-          <button className="icon-btn" onClick={reset} aria-label={ui.t("common.reset_demo")} title={ui.t("common.reset_demo")}>
+          <button className="icon-btn reset-btn" onClick={reset} aria-label={ui.t("common.reset_demo")} title={ui.t("common.reset_demo")}>
             <Icon name="reset" size={15} />
           </button>
           <button className="avatar" title={`${pack.project.designer} · ${roleLabel[ui.role]}`} onClick={() => setSettingsOpen(true)}>
@@ -344,6 +345,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <DemoGuide open={guideOpen} onClose={() => setGuideOpen(false)} onOpenSettings={() => setSettingsOpen(true)} />
       <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} onGuide={() => setGuideOpen(true)} />
+      {new URLSearchParams(location.search).get("debug") === "1" && <LayoutDebug />}
 
       <div className={`toast${toast ? " show" : ""}`} role="status" aria-live="polite">{toast}</div>
     </div>

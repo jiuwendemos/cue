@@ -1259,8 +1259,15 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13p
   .moodboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 820px) {
-  .poster-title { font-size: clamp(58px, 20vw, 90px); }
-  .poster-meta { font-size: 8.5px; gap: 6px; }
+  .page-head { flex-direction: column; align-items: stretch; }
+  .page-actions { width: 100%; }
+  .page-actions .btn { flex: 0 1 auto; }
+  .role-select { display: none; }
+  .topbar-actions { gap: 2px; }
+  .poster-title { font-size: clamp(54px, 18vw, 86px); }
+  .poster-meta { font-size: 8.5px; gap: 5px; max-width: 100%; }
+  .poster-copy, .poster-stage, .home-hero, .poster-hero { min-width: 0; max-width: 100%; }
+  .poster-lead, .poster-line { max-width: 100%; }
   .song-row { grid-template-columns: 20px 1fr 70px; }
   .song-row .energy-bar { display: none; }
   .studio-ledger { grid-template-columns: 1fr 1fr; }
@@ -1272,6 +1279,13 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13p
   .desk-row { grid-template-columns: 34px 1fr; }
   .desk-meta { display: none; }
   .demo-pill { display: none; }
+}
+@media (max-width: 520px) {
+  .topbar-actions .theme-btn, .topbar-actions .reset-btn { display: none; }
+  .poster-title { font-size: clamp(50px, 19vw, 76px); }
+  .poster-actions .btn, .home-actions .btn { flex: 1 1 100%; justify-content: center; }
+  .song-row { grid-template-columns: 20px 1fr 64px; gap: 6px; }
+  .song-time { font-size: 8.5px; }
 }
 @media (max-width: 820px) {
   .look-grid { grid-template-columns: 1fr; }
