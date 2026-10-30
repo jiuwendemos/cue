@@ -669,6 +669,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         detail: "Re-check passed on power, weight and glare. Three risks marked resolved; verification is still required before the show-week brief clears them.",
         sources: ["rig", "venue", "sightline-model"],
       });
+      for (const id of ["R-001", "R-002", "R-003"]) call(`readiness/${id}/resolve`, { actor: "CUE readiness", note: "Re-check passed." });
       say("Re-check passed — power, weight and glare resolved, verification pending");
     } else {
       pushAudit({
@@ -680,7 +681,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       say(`Re-check still fails on ${failing.map((c) => c.id).join(", ")}`);
     }
-  }, [checks, pushAudit, say]);
+  }, [call, checks, pushAudit, say]);
 
   const approveVersion = useCallback(
     (id: string, actor: string, note: string) => {
