@@ -212,7 +212,7 @@ export function lookStats(pack: Pack, look: Look): LookStats {
     glare: glareForLook(look),
     cost: look.costDelta,
     budgetTotal,
-    budgetPct: budgetTotal / pack.budget.approved,
+    budgetPct: pack.budget.approved ? budgetTotal / pack.budget.approved : 0,
     fixtureCount: look.fixtureIds.length,
   };
 }
@@ -399,25 +399,31 @@ function check(
 export function checksFor(pack: Pack, lookId: string | undefined, venueId: string | undefined = pack.project.venueId, dateId: string | undefined = "d-home"): CheckResult[] {
   const look = lookById(pack, lookId);
   const stats = look ? lookStats(pack, look) : null;
+  const venue = venueById(pack, venueId) ?? venueById(pack, pack.project.venueId);
   const out: CheckResult[] = [];
 
   if (look && stats) {
-    const powerStatus = stats.supplyPct > 1 ? "fail" : stats.supplyPct > 0.9 ? "warn" : "pass";
+    // The room's supply is the limit, not the home rig's. A tour is a set of rooms.
+    const supplyKw = venue?.power.kw ?? pack.rig.power.kw;
+    const supplyPct = stats.powerKw / supplyKw;
+    const powerStatus = supplyPct > 1 ? "fail" : supplyPct > 0.9 ? "warn" : "pass";
     out.push(check(
       "power", "power", powerStatus,
       powerStatus === "fail" ? "The look exceeds the house supply" : "Power is inside the house supply",
-      `${stats.powerKw.toFixed(1)} kW drawn of ${pack.rig.power.kw} kW (${fmtPct(stats.supplyPct)}).`,
-      stats.supplyPct, 1, "×",
-      [{ id: "cit-power", label: `${pack.rig.power.amps} A ${pack.rig.power.phases}-phase supply`, source: "Venue profile — Halcyon Hall", kind: "venue" }],
+      `${stats.powerKw.toFixed(1)} kW drawn of ${supplyKw} kW${venue ? ` at ${venue.name}` : ""} (${fmtPct(supplyPct)}).`,
+      supplyPct, 1, "×",
+      [{ id: "cit-power", label: `${venue?.power.amps ?? pack.rig.power.amps} A ${venue?.power.phases ?? pack.rig.power.phases}-phase supply`, source: `Venue profile — ${venue?.name ?? "Home"}`, kind: "venue" }],
       look.id,
     ));
-    const weightStatus = stats.weightPct > 1 ? "fail" : stats.weightPct > 0.9 ? "warn" : "pass";
+    const rigCapacity = Math.min(stats.frontCapacityKg, venue?.rigCapacityKg ?? Number.POSITIVE_INFINITY);
+    const weightPct = stats.frontKg / rigCapacity;
+    const weightStatus = weightPct > 1 ? "fail" : weightPct > 0.9 ? "warn" : "pass";
     out.push(check(
       "weight", "weight", weightStatus,
       weightStatus === "fail" ? "The front truss is over its rating" : "Truss loads are inside the rating",
-      `${stats.frontKg} kg on the front truss of ${stats.frontCapacityKg} kg (${fmtPct(stats.weightPct)}). Cable included.`,
-      stats.weightPct, 1, "×",
-      [{ id: "cit-rig", label: `Front truss rated ${stats.frontCapacityKg} kg`, source: "Rig schedule v3", kind: "rig" }],
+      `${stats.frontKg} kg on the front truss of ${rigCapacity} kg (${fmtPct(weightPct)}). Cable included.`,
+      weightPct, 1, "×",
+      [{ id: "cit-rig", label: `Front truss rated ${stats.frontCapacityKg} kg${venue ? `; venue rating ${venue.rigCapacityKg} kg` : ""}`, source: "Rig schedule v3", kind: "rig" }],
       look.id,
     ));
     const glareStatus = stats.glare > GLARE_LIMIT ? "fail" : stats.glare > GLARE_LIMIT * 0.8 ? "warn" : "pass";

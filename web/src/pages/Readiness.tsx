@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { useUI } from "../lib/ui";
 import {
+  checksFor,
   daysUntil,
   downloadText,
   fmtDate,
@@ -63,6 +64,17 @@ export default function Readiness() {
   const nextDate = pack.dates.find((d) => d.id === store.nextDateId) ?? pack.dates[0];
   const days = daysUntil(nextDate.show, pack.project.anchor);
   const selected = risks.find((r) => r.id === selectedId) ?? null;
+  // In a workspace there is no server scanner: run the same checks across every
+  // date so a new tour gets evidence before load-in, not after.
+  const liveChecks = useMemo(() => {
+    if (store.mode !== "workspace") return [];
+    return pack.dates.map((date) => ({
+      date,
+      venue: pack.venues.find((v) => v.id === date.venueId),
+      checks: checksFor(pack, store.activeLook.id, date.venueId, date.id).filter((check) => check.status !== "pass"),
+    }));
+  }, [pack, store.activeLook.id, store.mode]);
+  const liveFailures = liveChecks.reduce((total, row) => total + row.checks.length, 0);
 
   useEffect(() => {
     const riskId = params.get("risk");
@@ -236,6 +248,42 @@ export default function Readiness() {
         <Stat label="Precision" value={fmtPct(store.pack.metrics.precision)} foot="confirmed risks / raised · gate 0.80" tone="accent" />
         <Stat label="Cost exposure" value={fmtMoney(riskCounts.exposure)} foot="estimated fix cost, not spend" />
       </div>
+
+      {store.mode === "workspace" && (
+        <Panel
+          title="Checks on this tour"
+          sub={`${store.activeLook.name} across ${pack.dates.length} date(s) · the same rules as the demo, run on your numbers`}
+          actions={
+            <div className="row gap6">
+              <Chip tone={liveFailures ? "bad" : "ok"}>{liveFailures ? `${liveFailures} failing` : "all pass"}</Chip>
+              <Link to="/show" className="btn sm">Change the look</Link>
+            </div>
+          }
+        >
+          <div className="live-check-list">
+            {liveChecks.map(({ date, venue, checks }) => (
+              <div key={date.id} className={`live-check-row${checks.length ? " has-risk" : ""}`}>
+                <b>{date.city}</b>
+                <span className="soft">{venue?.name ?? "no venue"} · {fmtDate(date.date)}</span>
+                <div className="row gap4 wrap">
+                  {checks.length === 0 ? (
+                    <span className="ok xsmall">pass</span>
+                  ) : (
+                    checks.map((check) => (
+                      <Chip key={check.id} tone={check.status === "fail" ? "bad" : "warn"}>{check.title}</Chip>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+            {liveChecks.length === 0 && <p className="xsmall soft">Add a date in My tour to run the checks.</p>}
+          </div>
+          <p className="xsmall soft mt12">
+            Power, weight, glare, venue fit, rights, assets and budget. On site the scanner turns these into tracked risks;
+            here they are live from the show pack.
+          </p>
+        </Panel>
+      )}
 
       <div className="readiness-grid">
         <div>

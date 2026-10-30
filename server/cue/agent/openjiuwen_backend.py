@@ -571,21 +571,24 @@ class OpenJiuwenBackend:
         active_look_id: str | None = None,
         rejected_looks: list[str] | None = None,
         tenant: str | None = None,
+        pack: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if not self.enabled():
             raise AgentUnavailable("the OpenJiuwen runtime is not enabled")
         tenant_id = tenant or config.DEFAULT_TENANT
+        show = pack or self.pack
         capture = _Capture()
         started = time.perf_counter()
         with self._run_guard:
             try:
                 build_started = time.perf_counter()
-                tools = build_tools(self.pack, self.store, tenant_id, capture, active_look_id)
-                agent = self._build_agent(tools)
+                # A posted workspace pack is read-only and has no tenant store.
+                tools = build_tools(show, self.store if pack is None else None, tenant_id, capture, active_look_id)
+                agent = self._build_agent(tools, show)
                 build_ms = int((time.perf_counter() - build_started) * 1000)
                 run_started = time.perf_counter()
                 result = self._loop.run(
-                    self._run_agent(agent, self._prompt(question, active_look_id, rejected_looks)),
+                    self._run_agent(agent, self._prompt(question, active_look_id, rejected_looks, show)),
                     timeout=config.LLM_TIMEOUT,
                 )
                 run_ms = int((time.perf_counter() - run_started) * 1000)
@@ -630,7 +633,7 @@ class OpenJiuwenBackend:
             raise AgentUnavailable("the OpenJiuwen runtime is not enabled")
         started = time.perf_counter()
         try:
-            agent = self._build_agent([])
+            agent = self._build_agent([], self.pack)
             result = self._loop.run(
                 self._run_agent(agent, "Reply with the single word: ready"),
                 timeout=min(config.LLM_TIMEOUT, 60),
@@ -649,7 +652,7 @@ class OpenJiuwenBackend:
 
     # ----------------------------------------------------------------- internals
 
-    def _build_agent(self, tools: list[Any]) -> Any:
+    def _build_agent(self, tools: list[Any], pack: dict[str, Any]) -> Any:
         if not runtime_installed():
             raise AgentUnavailable("the openjiuwen package is not installed")
         from openjiuwen.core.foundation.llm import Model, ModelClientConfig, ModelRequestConfig
@@ -669,7 +672,7 @@ class OpenJiuwenBackend:
         workspace.mkdir(parents=True, exist_ok=True)
         return create_deep_agent(
             model=model,
-            system_prompt=self._system_prompt(),
+            system_prompt=self._system_prompt(pack),
             tools=tools,
             max_iterations=MAX_ITERATIONS,
             workspace=str(workspace),
@@ -700,8 +703,8 @@ class OpenJiuwenBackend:
         await self._ensure_runner()
         return await Runner.run_agent(agent, {"query": prompt}, session=f"cue-{uuid4().hex}")
 
-    def _system_prompt(self) -> str:
-        project = self.pack["project"]
+    def _system_prompt(self, pack: dict[str, Any]) -> str:
+        project = pack["project"]
         rules = "\n".join(f"{index + 1}. {rule}" for index, rule in enumerate(GUARDRAILS))
         return (
             f"You are CUE, the design agent for {project['artist']} — {project['title']} ({project['tour']}, {project['version']}).\n"
@@ -720,8 +723,14 @@ class OpenJiuwenBackend:
             f"Guardrails:\n{rules}\n"
         )
 
-    def _prompt(self, question: str, active_look_id: str | None, rejected_looks: list[str] | None) -> str:
-        active = active_look_id or self.pack["looks"][0]["id"]
+    def _prompt(
+        self,
+        question: str,
+        active_look_id: str | None,
+        rejected_looks: list[str] | None,
+        pack: dict[str, Any],
+    ) -> str:
+        active = active_look_id or pack["looks"][0]["id"]
         rejected = ", ".join(rejected_looks or []) or "none"
         return (
             f"Active look: {active}. Rejected looks: {rejected}.\n"

@@ -1,0 +1,8 @@
+1
+00:00:00,050 --> 00:00:06,155
+Create my tour gives a valid workspace — one venue, one look, one cue, no budget.
+
+2
+00:00:06,155 --> 00:00:11,014
+The checklist is the path: venue, look, cue sheet, budget, date.
+

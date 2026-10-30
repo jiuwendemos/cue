@@ -23,6 +23,26 @@ browser. Nothing is uploaded, and there is no cloud model call. Read the
 
 ---
 
+## The 3-minute walkthrough
+
+[**▶ Watch: a new tour, built from nothing (2:57, English)**](https://github.com/jiuwendemos/cue/blob/main/demo/cue-walkthrough-en.mp4)
+
+Not a tour of screens. A production office starts from six empty fields and builds
+**Harbour Lights — The Long Way Round**:
+
+- the show, the team, a second room and a second date;
+- import the Vectorworks fixture schedule and the grandMA3 cue list;
+- build the look: 27.3 kW, 440 kg on the front truss;
+- the checks name The Foundry, where 23 kW and a 400 kg rating cannot take it;
+- the OpenJiuwen agent reads the posted tour and proposes a lower-power option;
+- the designer cuts it to seven beams — 19.1 kW, 326 kg — and both rooms pass;
+- the real budget lands at €12,744; approve €13,000 and the tour is €256 under;
+- sign the safety cues.
+
+[How it was made](demo/walkthrough/README.md) · [the script](demo/walkthrough/script-en.md).
+
+---
+
 ## What is here
 
 | Surface | What it is | Try it |

@@ -1,0 +1,16 @@
+1
+00:00:00,050 --> 00:00:01,037
+Ask the agent.
+
+2
+00:00:01,037 --> 00:00:08,561
+It reads this tour, calls the read-only tools and answers with the numbers: The Foundry, and a reduced look as the cheaper option.
+
+3
+00:00:08,561 --> 00:00:10,318
+The tool trace is on the right.
+
+4
+00:00:10,318 --> 00:00:12,358
+It proposes; it does not apply.
+

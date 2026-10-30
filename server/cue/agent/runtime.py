@@ -188,13 +188,18 @@ class AgentRuntime:
         active_look_id: str | None = None,
         rejected_looks: list[str] | None = None,
         tenant: str | None = None,
+        pack: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         backend = self._backend()
+        if backend is None and pack is not None:
+            raise AgentUnavailable("the OpenJiuwen runtime is required to analyse a workspace pack")
         if backend is not None:
             try:
-                return backend.ask(question, active_look_id, rejected_looks, tenant=tenant or self.tenant)
+                return backend.ask(question, active_look_id, rejected_looks, tenant=tenant or self.tenant, pack=pack)
             except AgentUnavailable as exc:
-                if not config.AGENT_FALLBACK:
+                # The deterministic fallback only knows the demo show; never
+                # answer a different show with it.
+                if pack is not None or not config.AGENT_FALLBACK:
                     raise
                 local = self._local_ask(question, active_look_id, rejected_looks)
                 local["degraded"] = True

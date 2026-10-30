@@ -1,0 +1,1 @@
+We start with six fields: artist, title, tour, the first room and the date. No sample data underneath. Harbour Lights, The Long Way Round, Kade 12 in Amsterdam, in November.

@@ -359,11 +359,44 @@ export default function MyTour() {
           </div>
           {lookDraft && (
             <div className="tour-form">
+              <div className="row gap6 mb8">
+                <button className="btn sm" onClick={() => setLookDraft((d) => d && { ...d, fixtureIds: ws.rig.fixtures.map((f) => f.id) })}>All fixtures</button>
+                <button className="btn sm" onClick={() => setLookDraft((d) => d && { ...d, fixtureIds: [] })}>None</button>
+              </div>
               <div className="grid g2">
                 {row("Name", lookDraft.name, (v) => setLookDraft((d) => d && { ...d, name: v }))}
                 {row("Palette (hex, comma)", lookDraft.palette.join(", "), (v) => setLookDraft((d) => d && { ...d, palette: v.split(",").map((c) => c.trim()).filter(Boolean) }))}
                 {row("Audience-aimed fixtures", lookDraft.audienceAim, (v) => setLookDraft((d) => d && { ...d, audienceAim: v }), "number")}
                 {row("Energy (0-1)", lookDraft.energy, (v) => setLookDraft((d) => d && { ...d, energy: v }), "number", "0.05")}
+              </div>
+              <div className="look-fixtures">
+                <span className="label">Fixtures in this look<span className="note">{lookDraft.fixtureIds.length} of {ws.rig.fixtures.length} selected</span></span>
+                <div className="look-fixture-grid">
+                  {ws.rig.fixtures.map((fixture) => {
+                    const on = lookDraft.fixtureIds.includes(fixture.id);
+                    return (
+                      <label key={fixture.id} className={`look-fixture${on ? " on" : ""}`}>
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            setLookDraft((draft) =>
+                              draft
+                                ? {
+                                    ...draft,
+                                    fixtureIds: on
+                                      ? draft.fixtureIds.filter((id) => id !== fixture.id)
+                                      : [...draft.fixtureIds, fixture.id],
+                                  }
+                                : draft,
+                            )
+                          }
+                        />
+                        <span>{fixture.label}<small>{fixture.watts} W · {fixture.weightKg} kg</small></span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
               <div className="row gap8 mt12 wrap">
                 <button

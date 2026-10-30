@@ -1,0 +1,1 @@
+Instead of typing the rig, import the Vectorworks fixture schedule: twenty fixtures, twelve beams. Import the grandMA3 cue list: twelve cues. The files are parsed in the browser; nothing is uploaded. The blank placeholder cue is removed, so the sheet is the console's list.

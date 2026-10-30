@@ -1,0 +1,1 @@
+This is not a tour of a demo. It is a new tour, built from nothing in CUE: a blank workspace, a real venue list, imported files, a design decision, an agent that finds the problem, and a tour that ends checked, priced, signed and ready.

@@ -1,0 +1,67 @@
+[
+  {
+    "key": "00_intro",
+    "start": 0.0,
+    "duration": 15.53
+  },
+  {
+    "key": "01_blank",
+    "start": 15.53,
+    "duration": 12.86
+  },
+  {
+    "key": "02_new",
+    "start": 28.39,
+    "duration": 11.66
+  },
+  {
+    "key": "03_configure",
+    "start": 40.05,
+    "duration": 14.38
+  },
+  {
+    "key": "04_imports",
+    "start": 54.43,
+    "duration": 17.66
+  },
+  {
+    "key": "05_look",
+    "start": 72.09,
+    "duration": 13.25
+  },
+  {
+    "key": "06_checks",
+    "start": 85.34,
+    "duration": 13.15
+  },
+  {
+    "key": "07_agent",
+    "start": 98.49,
+    "duration": 13.01
+  },
+  {
+    "key": "08_fix",
+    "start": 111.5,
+    "duration": 16.46
+  },
+  {
+    "key": "09_money",
+    "start": 127.96,
+    "duration": 21.94
+  },
+  {
+    "key": "10_sign",
+    "start": 149.9,
+    "duration": 8.35
+  },
+  {
+    "key": "11_ready",
+    "start": 158.25,
+    "duration": 14.23
+  },
+  {
+    "key": "12_end",
+    "start": 172.48,
+    "duration": 4.0
+  }
+]

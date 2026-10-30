@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { useUI } from "../lib/ui";
-import { budgetForLook, downloadText, fmtMoney, fmtPct, toCsv } from "../lib/engine";
+import { budgetTotal, downloadText, fmtMoney, fmtPct, toCsv } from "../lib/engine";
 import { clearEvents, demoSummary, track, type DemoSummary } from "../lib/telemetry";
 import { BUYER, DEMO_CUT } from "../lib/positioning";
 import { Chip, PageHead, Panel, Stat } from "../components/UI";
@@ -26,9 +26,9 @@ export default function Manager() {
   const [checking, setChecking] = useState(false);
   const [resetMs, setResetMs] = useState<number | null>(null);
 
-  const aerial = budgetForLook(pack, "look-aerial-12");
-  const landing = budgetForLook(pack, "look-six-beam");
-  const under = (store.budgetApproved ?? pack.budget.approved) - landing;
+  // The active look travels with the show: demo or workspace.
+  const activeCost = budgetTotal(pack, store.activeLook.id);
+  const headroom = (store.budgetApproved ?? pack.budget.approved) - activeCost;
   const iterationDrop = 1 - m.previzIterations / m.baselineIterations;
   const vote = store.vote;
   const chosen = vote === "video" ? "Video drop" : vote === "light" ? "Light drop" : "AERIAL 12 (uncommitted)";
@@ -135,6 +135,13 @@ export default function Manager() {
 
   const current = DEMO_CUT[step];
   const funnel = summary;
+  // The cut is a route, not a slide: the numbers on it are the live show's.
+  const stepMetric = (id: string, fallback: string) => {
+    if (id === "cues") return `${pack.cues.length} cues`;
+    if (id === "budget") return fmtMoney(store.budgetApproved);
+    if (id === "readiness") return `${store.openRisks.length} open`;
+    return fallback;
+  };
 
   const proof = useMemo(
     () => [
@@ -200,7 +207,7 @@ export default function Manager() {
             >
               <span className="mono">{item.n}</span>
               <b>{item.title}</b>
-              <span className="soft">{item.metric} · {item.label}</span>
+              <span className="soft">{stepMetric(item.id, item.metric)} · {item.label}</span>
             </button>
           ))}
         </div>
@@ -237,15 +244,15 @@ export default function Manager() {
                 <tr><td>Rig cost avoided</td><td>—</td><td><b>{fmtMoney(m.rigCostAvoided)}</b></td><td>not booked until invoiced</td></tr>
                 <tr><td>Rehearsal hours saved</td><td>—</td><td><b>{m.rehearsalHoursSaved} h</b></td><td>not a person score</td></tr>
                 <tr><td>Approvals on time</td><td>—</td><td><b>{fmtPct(m.approvalOnTime)}</b></td><td>not a creative judgement</td></tr>
-                <tr><td>Show cost, landing look</td><td>{fmtMoney(aerial)} hero</td><td><b>{fmtMoney(landing)}</b></td><td>before contingency is signed</td></tr>
-                <tr><td>Headroom under approval</td><td>—</td><td><b>{fmtMoney(under)}</b></td><td>before the next venue variant</td></tr>
+                <tr><td>Show cost, active look</td><td>—</td><td><b>{fmtMoney(activeCost)}</b></td><td>before contingency is signed</td></tr>
+                <tr><td>Headroom under approval</td><td>—</td><td><b>{fmtMoney(headroom)}</b></td><td>before the next venue variant</td></tr>
               </tbody>
             </table>
           </div>
           <div className="row gap6 mt12 wrap">
             <Chip tone={vote ? "ok" : "warn"}>{vote ? `room chose: ${chosen}` : "room has not voted"}</Chip>
             <Chip>{pack.cues.length} cues</Chip>
-            <Chip>{fmtMoney(landing)} landing look</Chip>
+            <Chip>{fmtMoney(activeCost)} active look</Chip>
             <Link to="/pilot" className="btn sm">Open the pilot plan <Icon name="arrow" size={10} /></Link>
           </div>
           <p className="xsmall soft mt12">

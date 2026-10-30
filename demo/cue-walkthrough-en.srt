@@ -1,0 +1,167 @@
+1
+00:00:00,050 --> 00:00:01,627
+This is not a tour of a demo.
+
+2
+00:00:01,627 --> 00:00:14,858
+It is a new tour, built from nothing in CUE: a blank workspace, a real venue list, imported files, a design decision, an agent that finds the problem, and a tour that ends checked, priced, signed and ready.
+
+3
+00:00:15,580 --> 00:00:21,178
+We start with six fields: artist, title, tour, the first room and the date.
+
+4
+00:00:21,178 --> 00:00:22,864
+No sample data underneath.
+
+5
+00:00:22,864 --> 00:00:27,735
+Harbour Lights, The Long Way Round, Kade 12 in Amsterdam, in November.
+
+6
+00:00:28,440 --> 00:00:34,545
+Create my tour gives a valid workspace — one venue, one look, one cue, no budget.
+
+7
+00:00:34,545 --> 00:00:39,404
+The checklist is the path: venue, look, cue sheet, budget, date.
+
+8
+00:00:40,100 --> 00:00:41,512
+Now make it the real tour.
+
+9
+00:00:41,512 --> 00:00:42,349
+The team.
+
+10
+00:00:42,349 --> 00:00:49,625
+A second room, The Foundry in Manchester: a twelve by eight stage, twenty-three kilowatts, a four-hundred-kilo rig rating.
+
+11
+00:00:49,625 --> 00:00:50,639
+A second date.
+
+12
+00:00:50,639 --> 00:00:53,776
+Two rooms with different limits — that is what a tour is.
+
+13
+00:00:54,480 --> 00:01:00,338
+Instead of typing the rig, import the Vectorworks fixture schedule: twenty fixtures, twelve beams.
+
+14
+00:01:00,338 --> 00:01:03,687
+Import the grandMA3 cue list: twelve cues.
+
+15
+00:01:03,687 --> 00:01:06,906
+The files are parsed in the browser; nothing is uploaded.
+
+16
+00:01:06,906 --> 00:01:11,434
+The blank placeholder cue is removed, so the sheet is the console's list.
+
+17
+00:01:12,140 --> 00:01:17,007
+Build the look on the imported rig: all twenty fixtures, lime and cyan.
+
+18
+00:01:17,007 --> 00:01:22,644
+The app computes twenty-seven point three kilowatts and four hundred and forty kilos on the front truss.
+
+19
+00:01:22,644 --> 00:01:24,672
+This is the show the designer wants.
+
+20
+00:01:25,390 --> 00:01:28,040
+Now the app does the work a production office does.
+
+21
+00:01:28,040 --> 00:01:29,420
+Kade 12 can take it.
+
+22
+00:01:29,420 --> 00:01:37,840
+The Foundry has twenty-three kilowatts and a four-hundred-kilo rating: the checks name the room, the limit and the gap — before anyone plugs anything in.
+
+23
+00:01:38,540 --> 00:01:39,527
+Ask the agent.
+
+24
+00:01:39,527 --> 00:01:47,051
+It reads this tour, calls the read-only tools and answers with the numbers: The Foundry, and a reduced look as the cheaper option.
+
+25
+00:01:47,051 --> 00:01:48,808
+The tool trace is on the right.
+
+26
+00:01:48,808 --> 00:01:50,848
+It proposes; it does not apply.
+
+27
+00:01:51,550 --> 00:01:58,669
+So the designer makes the decision: a seven-beam cut, nineteen point one kilowatts and three hundred and twenty-six kilos.
+
+28
+00:01:58,669 --> 00:01:59,507
+Select it.
+
+29
+00:01:59,507 --> 00:02:01,417
+The checks pass in both rooms.
+
+30
+00:02:01,417 --> 00:02:07,313
+This is the loop the product is for — propose, check, decide, and the numbers follow the decision.
+
+31
+00:02:08,010 --> 00:02:09,952
+The money is not a separate spreadsheet.
+
+32
+00:02:09,952 --> 00:02:14,728
+Add the real lines: rig and crew, five crew for two days, the van.
+
+33
+00:02:14,728 --> 00:02:18,172
+The true total is twelve thousand seven hundred and forty-four.
+
+34
+00:02:18,172 --> 00:02:22,122
+The first approval was twelve thousand — seven hundred and forty-four over.
+
+35
+00:02:22,122 --> 00:02:27,004
+The producer approves thirteen thousand; the tour is two hundred and fifty-six under.
+
+36
+00:02:27,004 --> 00:02:29,245
+Every look re-prices against that number.
+
+37
+00:02:29,950 --> 00:02:31,374
+Sign the safety cues.
+
+38
+00:02:31,374 --> 00:02:34,251
+The sheet the crew gets is the sheet the checks were reading.
+
+39
+00:02:34,251 --> 00:02:37,588
+Export CSV, HTML or JSON.
+
+40
+00:02:38,300 --> 00:02:42,672
+From six empty fields to a tour that is checked, priced, signed and ready.
+
+41
+00:02:42,672 --> 00:02:49,240
+The band and the rooms are invented; the arithmetic, the imports, the agent and the decisions are real.
+
+42
+00:02:49,240 --> 00:02:51,834
+CUE designs; the crew runs the show.

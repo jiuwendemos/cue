@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:05,648
+We start with six fields: artist, title, tour, the first room and the date.
+
+2
+00:00:05,648 --> 00:00:07,334
+No sample data underneath.
+
+3
+00:00:07,334 --> 00:00:12,205
+Harbour Lights, The Long Way Round, Kade 12 in Amsterdam, in November.
+

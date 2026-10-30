@@ -1,0 +1,90 @@
+[
+  {
+    "name": "blank",
+    "file": "00-blank.png"
+  },
+  {
+    "name": "new-form",
+    "file": "01-new-form.png"
+  },
+  {
+    "name": "tour-new",
+    "file": "02-tour-new.png"
+  },
+  {
+    "name": "show-team",
+    "file": "03-show-team.png"
+  },
+  {
+    "name": "venue-form",
+    "file": "04-venue-form.png"
+  },
+  {
+    "name": "date-form",
+    "file": "05-date-form.png"
+  },
+  {
+    "name": "venues-dates",
+    "file": "06-venues-dates.png"
+  },
+  {
+    "name": "imports",
+    "file": "07-imports.png"
+  },
+  {
+    "name": "cues-imported",
+    "file": "08-cues-imported.png"
+  },
+  {
+    "name": "look-form",
+    "file": "09-look-form.png"
+  },
+  {
+    "name": "studio-full",
+    "file": "10-studio-full.png"
+  },
+  {
+    "name": "checks-fail",
+    "file": "11-checks-fail.png"
+  },
+  {
+    "name": "agent",
+    "file": "12-agent.png"
+  },
+  {
+    "name": "look-cut",
+    "file": "13-look-cut.png"
+  },
+  {
+    "name": "studio-fixed",
+    "file": "14-studio-fixed.png"
+  },
+  {
+    "name": "checks-pass",
+    "file": "15-checks-pass.png"
+  },
+  {
+    "name": "budget-lines",
+    "file": "16-budget-lines.png"
+  },
+  {
+    "name": "budget-over",
+    "file": "17-budget-over.png"
+  },
+  {
+    "name": "budget-under",
+    "file": "18-budget-under.png"
+  },
+  {
+    "name": "cues-signed",
+    "file": "19-cues-signed.png"
+  },
+  {
+    "name": "ready",
+    "file": "20-ready.png"
+  },
+  {
+    "name": "home-final",
+    "file": "21-home-final.png"
+  }
+]

@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:04,917
+Build the look on the imported rig: all twenty fixtures, lime and cyan.
+
+2
+00:00:04,917 --> 00:00:10,554
+The app computes twenty-seven point three kilowatts and four hundred and forty kilos on the front truss.
+
+3
+00:00:10,554 --> 00:00:12,582
+This is the show the designer wants.
+

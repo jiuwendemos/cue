@@ -38,6 +38,15 @@ function RichText({ text }: { text: string }) {
   );
 }
 
+const WORKSPACE_SAMPLES = [
+  "Which room cannot power the full look?",
+  "Which shows fall outside the video licence?",
+  "What does the Long Way look cost?",
+  "Which clip is missing, and what is the fallback?",
+  "What load is on the front truss?",
+  "What should the producer fix first?",
+];
+
 const SAMPLES = [
   "Why is the front truss over?",
   "Show rig conflicts on this leg",
@@ -69,8 +78,20 @@ export default function Agent() {
       return;
     }
     // A deep link can land before the on-site handshake finishes.
-    const live = store.live || (await store.untilBooted());
-    if (!live) {
+    const online = store.live || (await store.untilBooted());
+    const workspace = store.mode === "workspace";
+    if (!online) {
+      if (workspace) {
+        setAnswer({
+          question: q,
+          title: "The agent needs the on-site runtime",
+          body: "Your tour is analysed by the OpenJiuwen runtime. Start the on-site service, or open the synthetic demo for the offline answer set.",
+          citations: [],
+          links: [{ label: "Data source", to: "/settings" }],
+          tool: "agent.unavailable",
+        });
+        return;
+      }
       setAnswer(answerQuestion(pack, q, { activeLookId: activeLook.id, rejectedLooks }));
       return;
     }
@@ -79,7 +100,13 @@ export default function Agent() {
       const response = await fetch(new URL("api/agent/ask", document.baseURI).toString(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q, active_look_id: activeLook.id, rejected_looks: rejectedLooks }),
+        body: JSON.stringify({
+          question: q,
+          active_look_id: activeLook.id,
+          rejected_looks: rejectedLooks,
+          // The on-site runtime reads the posted pack; it never writes it.
+          ...(workspace ? { pack: store.pack } : {}),
+        }),
       });
       if (!response.ok) {
         const detail = (await response.json().catch(() => ({}))) as { detail?: string };
@@ -88,8 +115,20 @@ export default function Agent() {
       const data = (await response.json()) as LiveAnswer;
       setAnswer({ ...data, question: q });
     } catch (error) {
-      store.say(error instanceof Error ? error.message : "The agent did not answer.");
-      setAnswer(answerQuestion(pack, q, { activeLookId: activeLook.id, rejectedLooks }));
+      const message = error instanceof Error ? error.message : "The agent did not answer.";
+      store.say(message);
+      if (store.mode === "workspace") {
+        setAnswer({
+          question: q,
+          title: "The agent did not answer",
+          body: `${message}. Your tour is unchanged; the agent is read-only.`,
+          citations: [],
+          links: [{ label: "Readiness", to: "/readiness" }],
+          tool: "agent.error",
+        });
+      } else {
+        setAnswer(answerQuestion(pack, q, { activeLookId: activeLook.id, rejectedLooks }));
+      }
     } finally {
       setBusy(false);
     }
@@ -121,6 +160,7 @@ export default function Agent() {
 
   const live = agentStatus.backend === "openjiuwen";
   const steps = answer?.steps ?? null;
+  const samples = store.mode === "workspace" ? WORKSPACE_SAMPLES : SAMPLES;
   const latency = probe?.latency_ms ?? agentStatus.last_latency_ms ?? null;
 
   const suggestions = useMemo(() => ranked, [ranked]);
@@ -143,6 +183,7 @@ export default function Agent() {
             <Chip tone={live ? "ok" : agentStatus.configured ? "warn" : "info"} dot>
               {live ? `openjiuwen · ${agentStatus.model}` : agentStatus.configured ? "configured" : "offline demo"}
             </Chip>
+            {store.mode === "workspace" && <Chip tone="accent">your tour</Chip>}
             <Link to="/provenance" className="btn"><Icon name="provenance" size={13} /> Model card</Link>
           </>
         }
@@ -167,7 +208,7 @@ export default function Agent() {
               </button>
             </div>
             <div className="row gap4 wrap mb12">
-              {SAMPLES.slice(0, 4).map((s) => <button key={s} className="btn sm ghost" onClick={() => void ask(s)} disabled={busy}>{s}</button>)}
+              {samples.slice(0, 4).map((s) => <button key={s} className="btn sm ghost" onClick={() => void ask(s)} disabled={busy}>{s}</button>)}
             </div>
             {answer ? (
               <div className="answer-card">
@@ -206,7 +247,7 @@ export default function Agent() {
                 <h3>Ask the show a question</h3>
                 <p>The agent answers from the rig, the venue, the cue sheet, the rights register and the budget. It will say when the evidence is missing.</p>
                 <div className="row gap4 wrap mt12" style={{ justifyContent: "center" }}>
-                  {SAMPLES.slice(2).map((s) => <button key={s} className="btn sm" onClick={() => void ask(s)} disabled={busy}>{s}</button>)}
+                  {samples.slice(2).map((s) => <button key={s} className="btn sm" onClick={() => void ask(s)} disabled={busy}>{s}</button>)}
                 </div>
               </div>
             )}
@@ -214,7 +255,15 @@ export default function Agent() {
 
           <Panel
             title="Agent runtime"
-            sub={live ? "The on-site build answers through OpenJiuwen" : "The public demo answers deterministically"}
+            sub={
+              store.mode === "workspace"
+                ? live
+                  ? "OpenJiuwen reads your posted tour, read-only"
+                  : "Your tour needs the on-site runtime"
+                : live
+                  ? "The on-site build answers through OpenJiuwen"
+                  : "The public demo answers deterministically"
+            }
             actions={
               store.live ? (
                 <button className="btn sm" onClick={() => void runProbe()} disabled={probing}>
@@ -307,7 +356,7 @@ export default function Agent() {
             </p>
           </Panel>
 
-          <Panel title="Ranked proposals" sub="Impact first, consequences attached. A rejection re-ranks on the next read.">
+          {store.mode === "demo" && <Panel title="Ranked proposals" sub="Impact first, consequences attached. A rejection re-ranks on the next read.">
             <div className="suggest-list">
               {suggestions.map((s) => {
                 const rejected = s.status === "rejected";
@@ -344,9 +393,9 @@ export default function Agent() {
                 );
               })}
             </div>
-          </Panel>
+          </Panel>}
 
-          <Panel title="Agent citation coverage" sub="What the pilot measures">
+          {store.mode === "demo" && <Panel title="Agent citation coverage" sub="What the pilot measures">
             <div className="row gap16">
               <div><div className="stat-label">Claims with a source</div><div className="stat-value" style={{ fontSize: 28 }}>95<span style={{ fontSize: 12, color: "var(--muted)" }}>%</span></div></div>
               <div><div className="stat-label">Missing evidence</div><div className="stat-value" style={{ fontSize: 28 }}>1</div></div>
@@ -354,7 +403,7 @@ export default function Agent() {
             </div>
             <p className="xsmall soft mt12">The one missing evidence item is SIGNAL BARS v4. The agent says “missing asset”, not a guess. That is the behaviour the pilot checks.</p>
             <Link to="/pilot" className="btn sm mt12">Pilot measurement <Icon name="arrow" size={11} /></Link>
-          </Panel>
+          </Panel>}
         </div>
       </div>
 

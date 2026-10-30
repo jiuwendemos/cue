@@ -1,0 +1,16 @@
+1
+00:00:00,050 --> 00:00:05,908
+Instead of typing the rig, import the Vectorworks fixture schedule: twenty fixtures, twelve beams.
+
+2
+00:00:05,908 --> 00:00:09,257
+Import the grandMA3 cue list: twelve cues.
+
+3
+00:00:09,257 --> 00:00:12,476
+The files are parsed in the browser; nothing is uploaded.
+
+4
+00:00:12,476 --> 00:00:17,004
+The blank placeholder cue is removed, so the sheet is the console's list.
+

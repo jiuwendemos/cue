@@ -310,8 +310,8 @@ const risks: ReadinessRisk[] = [
   {
     id: "R-EX-01",
     kind: "power",
-    title: "Studio 4 supplies 20 kW; the design draws 24.3 kW",
-    detail: "Glasgow has a 32 A three-phase supply. The full beam look is 24.3 kW. The landing look draws 14.6 kW.",
+    title: "Studio 4 supplies 20 kW; the design draws 27.3 kW",
+    detail: "Glasgow has a 32 A three-phase supply. The full beam look is 27.3 kW. The warm look draws 17.3 kW.",
     severity: "critical",
     state: "new",
     owner: "Sana Okafor",
@@ -329,7 +329,7 @@ const risks: ReadinessRisk[] = [
     ],
     fix: { label: "Use the warm look in Glasgow", effort: "1 h", cost: 0, owner: "Ines Duarte" },
     evidence: [
-      { id: "cit-ex-power", label: "20 kW supply vs 24.3 kW design", source: "Venue profile — Studio 4", kind: "venue" },
+      { id: "cit-ex-power", label: "20 kW supply vs 27.3 kW design", source: "Venue profile — Studio 4", kind: "venue" },
       { id: "cit-ex-rig", label: "12 × 1,600 W beams", source: "Rig schedule v2", kind: "rig" },
     ],
     history: [{ at: "2026-10-30T09:00:00+00:00", actor: "CUE readiness", action: "risk.opened", detail: "Power check failed for Glasgow." }],
@@ -557,7 +557,7 @@ export function createExamplePack(): Pack {
     suggestions: [],
     agentTrace: [],
     notifications: [
-      { id: "nt-ex-1", at: "2026-10-30T09:05:00+00:00", kind: "risk", severity: "critical", title: "Studio 4 cannot power the full look", detail: "20 kW supply vs 24.3 kW design.", riskId: "R-EX-01", read: false, channel: "in_app" },
+      { id: "nt-ex-1", at: "2026-10-30T09:05:00+00:00", kind: "risk", severity: "critical", title: "Studio 4 cannot power the full look", detail: "20 kW supply vs 27.3 kW design.", riskId: "R-EX-01", read: false, channel: "in_app" },
       { id: "nt-ex-2", at: "2026-10-30T09:05:00+00:00", kind: "rights", severity: "critical", title: "Video rights end before Manchester", detail: "The licence ends 2026-11-15.", riskId: "R-EX-03", read: false, channel: "in_app" },
     ],
     audits: [],

@@ -214,12 +214,21 @@ def create_app(db_path: str | None = None) -> FastAPI:
     def agent_ask(body: AskRequest, request: Request) -> dict[str, Any]:
         if not body.question.strip():
             raise HTTPException(400, "question is required")
+        pack_override = None
+        if body.pack is not None:
+            pack_override = body.pack
+            required = {"project", "looks", "cues", "venues", "dates", "budget", "rig"}
+            if not isinstance(pack_override, dict) or not required.issubset(pack_override):
+                raise HTTPException(400, detail="the workspace pack is missing required show keys")
+            if len(json.dumps(pack_override)) > 2_000_000:
+                raise HTTPException(413, detail="the workspace pack is too large (2 MB limit)")
         try:
             result = state(request).agent.ask(
                 body.question,
                 body.active_look_id,
                 body.rejected_looks,
                 tenant=tenant(),
+                pack=pack_override,
             )
         except AgentUnavailable as exc:
             raise HTTPException(502, detail=f"the configured agent backend is unavailable: {exc}") from exc

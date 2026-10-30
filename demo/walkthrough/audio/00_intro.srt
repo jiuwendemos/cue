@@ -1,0 +1,8 @@
+1
+00:00:00,050 --> 00:00:01,627
+This is not a tour of a demo.
+
+2
+00:00:01,627 --> 00:00:14,858
+It is a new tour, built from nothing in CUE: a blank workspace, a real venue list, imported files, a design decision, an agent that finds the problem, and a tour that ends checked, priced, signed and ready.
+

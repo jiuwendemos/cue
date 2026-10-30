@@ -1,0 +1,1 @@
+Sign the safety cues. The sheet the crew gets is the sheet the checks were reading. Export CSV, HTML or JSON.

@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:01,474
+Sign the safety cues.
+
+2
+00:00:01,474 --> 00:00:04,351
+The sheet the crew gets is the sheet the checks were reading.
+
+3
+00:00:04,351 --> 00:00:07,688
+Export CSV, HTML or JSON.
+

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-10-30T11:31:50.288Z",
+    "generated": "2026-10-30T12:22:24.374Z",
     "seed": 0,
     "version": "v1",
     "demoWindow": 0
@@ -13,7 +13,7 @@
     "leg": "europe",
     "venueId": "v-kade",
     "version": "v3",
-    "updatedAt": "2026-10-30T11:31:50.288Z",
+    "updatedAt": "2026-10-30T12:22:24.374Z",
     "designer": "Ines Duarte",
     "producer": "Tom Becker",
     "tourManager": "Sana Okafor",
@@ -1174,8 +1174,8 @@
     {
       "id": "R-EX-01",
       "kind": "power",
-      "title": "Studio 4 supplies 20 kW; the design draws 24.3 kW",
-      "detail": "Glasgow has a 32 A three-phase supply. The full beam look is 24.3 kW. The landing look draws 14.6 kW.",
+      "title": "Studio 4 supplies 20 kW; the design draws 27.3 kW",
+      "detail": "Glasgow has a 32 A three-phase supply. The full beam look is 27.3 kW. The warm look draws 17.3 kW.",
       "severity": "critical",
       "state": "new",
       "owner": "Sana Okafor",
@@ -1212,7 +1212,7 @@
       "evidence": [
         {
           "id": "cit-ex-power",
-          "label": "20 kW supply vs 24.3 kW design",
+          "label": "20 kW supply vs 27.3 kW design",
           "source": "Venue profile — Studio 4",
           "kind": "venue"
         },
@@ -1439,7 +1439,7 @@
       "kind": "risk",
       "severity": "critical",
       "title": "Studio 4 cannot power the full look",
-      "detail": "20 kW supply vs 24.3 kW design.",
+      "detail": "20 kW supply vs 27.3 kW design.",
       "riskId": "R-EX-01",
       "read": false,
       "channel": "in_app"

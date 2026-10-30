@@ -87,7 +87,8 @@ def look_stats(pack: dict[str, Any], look_id: str | None) -> dict[str, Any]:
         "glare": round(glare_for_look(look), 4),
         "fixture_count": load["fixtures"],
         "budget_total": total,
-        "budget_pct": round(total / pack["budget"]["approved"], 4),
+        # A brand-new workspace has no approved total yet. Do not divide by zero.
+        "budget_pct": round(total / pack["budget"]["approved"], 4) if pack["budget"].get("approved") else 0.0,
         "cost_delta": look.get("costDelta", 0),
     }
 
@@ -371,35 +372,54 @@ def checks_for(
 ) -> list[dict[str, Any]]:
     look = _look(pack, look_id)
     stats = look_stats(pack, look_id) if look else None
+    venue = _venue(pack, venue_id) or _venue(pack, pack["project"].get("venueId"))
     out: list[dict[str, Any]] = []
     if look and stats:
-        status = "fail" if stats["supply_pct"] > 1 else "warn" if stats["supply_pct"] > 0.9 else "pass"
+        supply_kw = float(venue["power"]["kw"]) if venue else float(pack["rig"]["power"]["kw"])
+        supply_pct = stats["power_kw"] / supply_kw if supply_kw else 0
+        status = "fail" if supply_pct > 1 else "warn" if supply_pct > 0.9 else "pass"
         out.append(
             _check(
                 "power",
                 "power",
                 status,
                 "The look exceeds the house supply" if status == "fail" else "Power is inside the house supply",
-                f"{stats['power_kw']:.1f} kW drawn of {pack['rig']['power']['kw']} kW ({stats['supply_pct'] * 100:.0f}%).",
-                stats["supply_pct"],
+                f"{stats['power_kw']:.1f} kW drawn of {supply_kw} kW{(' at ' + venue['name']) if venue else ''} ({supply_pct * 100:.0f}%).",
+                supply_pct,
                 1,
                 "×",
-                [{"id": "cit-power", "label": "63 A three-phase supply", "source": "Venue profile — Halcyon Hall", "kind": "venue"}],
+                [
+                    {
+                        "id": "cit-power",
+                        "label": f"{venue['power']['amps'] if venue else pack['rig']['power']['amps']} A three-phase supply",
+                        "source": f"Venue profile — {venue['name'] if venue else 'Home'}",
+                        "kind": "venue",
+                    }
+                ],
                 look["id"],
             )
         )
-        status = "fail" if stats["weight_pct"] > 1 else "warn" if stats["weight_pct"] > 0.9 else "pass"
+        rig_capacity = min(float(stats["front_capacity_kg"]), float(venue["rigCapacityKg"]) if venue else float("inf"))
+        weight_pct = stats["front_kg"] / rig_capacity if rig_capacity else 0
+        status = "fail" if weight_pct > 1 else "warn" if weight_pct > 0.9 else "pass"
         out.append(
             _check(
                 "weight",
                 "weight",
                 status,
                 "The front truss is over its rating" if status == "fail" else "Truss loads are inside the rating",
-                f"{stats['front_kg']} kg on the front truss of {stats['front_capacity_kg']} kg ({stats['weight_pct'] * 100:.0f}%). Cable included.",
-                stats["weight_pct"],
+                f"{stats['front_kg']} kg on the front truss of {rig_capacity:.0f} kg ({weight_pct * 100:.0f}%). Cable included.",
+                weight_pct,
                 1,
                 "×",
-                [{"id": "cit-rig", "label": "Front truss capacity", "source": "Rig schedule v3", "kind": "rig"}],
+                [
+                    {
+                        "id": "cit-rig",
+                        "label": f"Front truss capacity; venue rating {venue['rigCapacityKg']} kg" if venue else "Front truss capacity",
+                        "source": "Rig schedule v3",
+                        "kind": "rig",
+                    }
+                ],
                 look["id"],
             )
         )

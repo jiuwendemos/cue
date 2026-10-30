@@ -1,0 +1,1 @@
+Ask the agent. It reads this tour, calls the read-only tools and answers with the numbers: The Foundry, and a reduced look as the cheaper option. The tool trace is on the right. It proposes; it does not apply.

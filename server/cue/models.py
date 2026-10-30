@@ -29,6 +29,9 @@ class AskRequest(BaseModel):
     question: str
     active_look_id: str | None = None
     rejected_looks: list[str] = Field(default_factory=list)
+    # A workspace show pack. When present, the agent reads this show instead of
+    # the seeded demo. Read-only, size-capped, never persisted.
+    pack: dict | None = None
 
 
 class RenderSettings(BaseModel):
