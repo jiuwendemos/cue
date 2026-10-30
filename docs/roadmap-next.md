@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**483 checkboxes: 129 already in the demo, 354 to build.** The count is the point: this is the work,
+**510 checkboxes: 139 already in the demo, 371 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -639,6 +639,53 @@ the rest. Never live control.
 - [ ] Calendar and Slack/Teams (C7, C8)
 - [ ] One real tour, one venue, 90 days (C13)
 - [ ] The three gates: proactive, 2026, connected
+
+---
+
+## Track D — The manager demo (critique, 2026-10-30)
+
+The demo is the test. One buyer, one 90-second arc, one 10-minute cut, one proof page.
+
+### P0 — before the first manager demo
+
+- [x] 90-second stage cut with a physical 3D model and room audio
+- [x] The audience vote changes the cue sheet and the budget in the same scene
+- [x] The printed sheet matches the screen: drop row, look, show cost, approved delta
+- [x] One manager proof page: iterations avoided, rig cost avoided, rehearsal time, approvals on time
+- [x] The 10-minute manager cut: stage → studio → cue sheet → budget → readiness → proof
+- [x] One buyer chosen for the demo: the independent touring production company
+- [x] This repo's portfolio copy says “live demo, built”, not “concept only”
+- [ ] The external portfolio site updated (needs its path)
+- [x] A silent SVG fallback stage (`#/stage?fallback=1`)
+- [ ] A recorded fallback video for the venue laptop
+- [x] Reset drill and a venue check: WebGL, audio, offline shell, fonts, storage, reset
+- [x] Local instrumentation of the moments that create the manager reaction
+
+### P1 — next 90 days
+
+- [ ] Tour readiness as the daily home: approvals, versions, venue changes, calendar in one inbox
+- [ ] Daily tasks: venue fit, crew approvals, rights expiry, content delivery, budget drift, show-week brief
+- [ ] One previz integration and one console/video export, end to end
+- [ ] One tour pilot with a baseline: iterations, cue-sheet changes, rig cost, rehearsal time
+- [ ] Onboarding with a sample tour and a first-run path
+- [ ] A weekly demo cadence: one capability, one proof, one trust feature, one next
+
+### P2 — to become SD-level
+
+- [ ] Venue graph with rig, power and sightline profiles
+- [ ] Real-time collaboration and approvals across production, venue and crew
+- [ ] Marketplace for looks, video content and set templates
+- [ ] Festival / multi-stage and brand-experience packs
+- [ ] 2026 product experience and accessibility at the daily-desk level
+
+### The manager demo, as a gate
+
+- [ ] Five strangers: four can explain CUE in one sentence
+- [ ] First touch within 15 seconds; the drop lands by 30; the arc in 90
+- [ ] The vote changes the cue sheet and budget visibly; the printed sheet matches the screen
+- [ ] A manager can name the buyer and the ROI without prompting
+
+**Do not:** live console/DMX control, four buyers at once, “design tool”, or docs that say concept-only.
 
 ---
 

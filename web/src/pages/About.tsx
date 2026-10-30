@@ -123,7 +123,8 @@ export default function About() {
       <div className="section-label"><span>Status</span><span className="soft xsmall">what is built in this repository</span></div>
       <div className="pilot-grid">
         {[
-          ["0A", "Stage piece", "Built. Deterministic 90-second show with sound, trust beat, vote, cue-sheet reveal and R reset under five seconds."],
+          ["0A", "Stage piece", "Built. Deterministic 90-second show with sound, a physical 3D model, the trust beat, the room vote, a cue-sheet and budget consequence, print, and R reset under five seconds."],
+          ["0C", "Manager brief", "Built. Buyer, 10-minute cut, proof table, local demo funnel, venue check and a silent fallback stage."],
           ["0B", "Functional demo", "Built. Editable show, looks, video, blocking, cue sheet, budget, checks, offline pack."],
           ["1", "First pilot surface", "Built as software: venue profile, rights register, budget, cue export, approvals, audit. A real pilot still needs one production company."],
           ["4", "Tour readiness", "Built. Risk board, lifecycle, show-week brief, digests, dismissal taxonomy, kill switch, coverage and precision."],
@@ -149,7 +150,10 @@ export default function About() {
             track synthesised in the browser from the show energy curve. No commercial recording, no artist
             likeness and no venue data are used.
           </p>
-          <p className="xsmall soft mt12">Built as a demonstration of evidence-first live-show design. The designer owns the decision; CUE never runs the show.</p>
+          <p className="xsmall soft mt12">
+            Live demo, built: the stage piece, studio, cue sheet, budget, readiness, show watch and the
+            OpenJiuwen agent all run in this repository. The designer owns the decision; CUE never runs the show.
+          </p>
         </Panel>
       </div>
 

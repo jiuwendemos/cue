@@ -1,12 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { useUI } from "../lib/ui";
 import { showAudio } from "../lib/audio";
-import { energyAt, fmtClock, fmtMoney, songAt } from "../lib/engine";
+import { budgetTotal, energyAt, fmtClock, fmtMoney, songAt } from "../lib/engine";
+import { track } from "../lib/telemetry";
 import { StageCanvas } from "../components/StageCanvas";
 import { Timeline } from "../components/Timeline";
 import { Icon } from "../components/Icon";
+import type { Look, Pack } from "../types";
+
+const DROP_LOOKS = ["look-aerial-12", "look-six-beam", "look-video-drop"];
 
 type Phase = "cold" | "touch" | "agent" | "trust" | "choice" | "reveal";
 type Decision = "pending" | "rejected" | "kept";
@@ -37,8 +41,41 @@ export default function StagePiece() {
   const last = useRef(0);
   const decided = useRef(false);
   const voted = useRef(false);
+  const touched = useRef(false);
+  const [params] = useSearchParams();
+  const fallback = params.get("fallback") === "1";
+  // Rehearsal jump: #/stage?at=76 opens the choice beat without waiting 76 s.
+  const startAt = Number(params.get("at"));
+  // Kiosk: #/stage?autoplay=1&loop=1 runs the piece on a venue screen.
+  const autoplay = params.get("autoplay") === "1";
+  const loop = params.get("loop") === "1";
+  const [scene3d, setScene3d] = useState(false);
+  const [Scene3D, setScene3D] = useState<ComponentType<{ pack: Pack; look: Look; time: number; showGlare?: boolean }> | null>(null);
 
   const phase = phaseFor(elapsed);
+
+  /** The first deliberate interaction is the demo's real "first touch". */
+  const noteTouch = useCallback(() => {
+    if (touched.current) return;
+    touched.current = true;
+    track("stage.touch", phaseFor(elapsed));
+  }, [elapsed]);
+
+  const enable3d = useCallback(() => {
+    if (fallback) return;
+    noteTouch();
+    if (Scene3D) {
+      setScene3d(true);
+      return;
+    }
+    void import("../components/Stage3D")
+      .then((module) => {
+        setScene3D(() => module.Stage3D);
+        setScene3d(true);
+        track("stage.3d");
+      })
+      .catch(() => store.say("The 3D model could not load. The SVG stage is the fallback."));
+  }, [Scene3D, fallback, noteTouch, store]);
 
   const stageTime = useMemo(() => {
     if (elapsed < 10) return 12;
@@ -68,14 +105,14 @@ export default function StagePiece() {
   }, []);
 
   useEffect(() => {
-    if (!started || paused || finished) {
+    if (!started || paused || finished || fallback) {
       showAudio.stop();
       return;
     }
     showAudio.start(energyAt(pack, stageTime));
     return () => showAudio.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started, paused, finished]);
+  }, [started, paused, finished, fallback]);
 
   useEffect(() => {
     if (started && !paused && !finished) showAudio.setEnergy(energyAt(pack, stageTime));
@@ -97,8 +134,25 @@ export default function StagePiece() {
     if (elapsed >= DURATION && !finished) {
       setFinished(true);
       showAudio.stop();
+      track("stage.finish", decision === "rejected" ? "rejected" : "kept");
     }
-  }, [elapsed, finished]);
+  }, [decision, elapsed, finished]);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplay]);
+
+  useEffect(() => {
+    if (!loop || !finished) return;
+    const id = window.setTimeout(() => {
+      reset();
+      start();
+    }, 5000);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished, loop]);
 
   useEffect(() => {
     if (elapsed >= 58 && decision === "pending" && !decided.current) {
@@ -145,18 +199,24 @@ export default function StagePiece() {
 
   const reject = () => {
     if (decision !== "pending") return;
+    noteTouch();
     setDecision("rejected");
     store.rejectSuggestion("A-01", "44 kg over the truss, 1.6 kW over supply, blinds the front row.");
+    track("stage.reject", "AERIAL 12");
   };
   const keep = () => {
     if (decision !== "pending") return;
+    noteTouch();
     setDecision("kept");
     store.acceptSuggestion("A-01");
+    track("stage.keep", "AERIAL 12");
   };
   const choose = (v: "light" | "video") => {
     if (vote) return;
+    noteTouch();
     setVote(v);
     store.voteDrop(v);
+    track("stage.vote", v);
   };
   const reset = () => {
     showAudio.stop();
@@ -169,13 +229,18 @@ export default function StagePiece() {
     setStarted(false);
     decided.current = false;
     voted.current = false;
+    touched.current = false;
+    setScene3d(false);
+    track("stage.reset");
   };
   const start = () => {
-    void showAudio.ensure();
+    if (!fallback) void showAudio.ensure();
+    const jump = params.get("at") !== null && Number.isFinite(startAt) ? Math.min(DURATION - 1, Math.max(0, startAt)) : 0;
     setStarted(true);
     setPaused(false);
-    setElapsed(0);
+    setElapsed(jump);
     setFinished(false);
+    track("stage.start", fallback ? "fallback" : jump > 0 ? `jump:${jump}` : "sound");
   };
 
   const copy = useMemo(() => {
@@ -206,6 +271,31 @@ export default function StagePiece() {
   const song = songAt(pack, stageTime);
   const activeCue = pack.cues.filter((c) => c.at <= stageTime).slice(-1)[0];
 
+  // The vote is not a mood: it changes the drop cue and the show cost, and the
+  // printed sheet in this scene carries both.
+  const chosenLook = vote === "video" ? videoDrop : six;
+  // Same total the Budget screen shows, so the sheet and the budget agree.
+  const showCost = budgetTotal(pack, chosenLook.id);
+  const approved = store.budgetApproved ?? pack.budget.approved;
+  const delta = showCost - approved;
+  const printedLook = (lookId?: string) => {
+    if (!lookId) return "—";
+    if (DROP_LOOKS.includes(lookId)) return chosenLook.name;
+    return pack.looks.find((l) => l.id === lookId)?.name ?? "—";
+  };
+  // A sheet excerpt that actually contains the drop, so the vote is visible in
+  // the rows, not just in a headline.
+  const dropCue = pack.cues.find((c) => c.lookId === "look-aerial-12") ?? pack.cues[Math.min(14, pack.cues.length - 1)];
+  const sheetCues = dropCue
+    ? [...pack.cues.slice(0, 4), dropCue, ...pack.cues.filter((c) => c.at > dropCue.at).slice(0, 2)]
+    : pack.cues.slice(0, 8);
+  const printSheet = () => {
+    track("stage.sheet", chosenLook.name);
+    document.body.classList.add("cue-print-sheet");
+    window.print();
+    window.setTimeout(() => document.body.classList.remove("cue-print-sheet"), 800);
+  };
+
   return (
     <div className="stage-piece">
       <div className="sp-progress"><i style={{ width: `${(elapsed / DURATION) * 100}%` }} /></div>
@@ -219,12 +309,25 @@ export default function StagePiece() {
         <div className="sp-meta">
           <span>NOVA VALE · NIGHT SIGNAL</span>
           <span>{fmtClock(elapsed)} / 1:32</span>
+          {fallback && <span className="chip warn">FALLBACK</span>}
           <span>{phase.toUpperCase()}</span>
         </div>
         <div className="row gap6">
           {started && (
-            <button className="btn sm sp-exit" onClick={() => setPaused((p) => !p)} aria-label={paused ? "Resume" : "Pause"}>
+            <button
+              className="btn sm sp-exit"
+              onClick={() => {
+                noteTouch();
+                setPaused((p) => !p);
+              }}
+              aria-label={paused ? "Resume" : "Pause"}
+            >
               <Icon name={paused ? "play" : "pause"} size={12} /> {paused ? "Resume" : "Pause"}
+            </button>
+          )}
+          {!fallback && (
+            <button className={`btn sm sp-exit${scene3d ? " primary" : ""}`} onClick={enable3d} aria-pressed={scene3d} title="Physical 3D model of the room">
+              <Icon name="layers" size={12} /> {scene3d ? "3D" : "2D"}
             </button>
           )}
           <button className="btn sm sp-exit" onClick={reset}><Icon name="reset" size={12} /> Reset</button>
@@ -232,16 +335,20 @@ export default function StagePiece() {
         </div>
       </div>
 
-      <div className="sp-stage">
-        <StageCanvas
-          pack={pack}
-          look={previewLook}
-          time={stageTime}
-          layer="all"
-          showGlare={previewLook.audienceAim > 0 && phase !== "reveal"}
-          showLabels
-          presenter
-        />
+      <div className={`sp-stage${scene3d && Scene3D && !fallback ? " sp-stage-3d" : ""}`}>
+        {scene3d && Scene3D && !fallback ? (
+          <Scene3D pack={pack} look={previewLook} time={stageTime} showGlare={previewLook.audienceAim > 0 && phase !== "reveal"} />
+        ) : (
+          <StageCanvas
+            pack={pack}
+            look={previewLook}
+            time={stageTime}
+            layer="all"
+            showGlare={previewLook.audienceAim > 0 && phase !== "reveal"}
+            showLabels
+            presenter
+          />
+        )}
 
         <div className="sp-overlay">
           <div className="sp-copy sp-fadein" key={copy.line}>
@@ -269,8 +376,9 @@ export default function StagePiece() {
               {phase === "reveal" && (
                 <>
                   <Link to="/cues" className="btn primary lg"><Icon name="cue" size={14} /> Open the cue sheet</Link>
+                  <Link to="/budget" className="btn lg"><Icon name="budget" size={13} /> Budget</Link>
+                  <Link to="/manager" className="btn lg"><Icon name="target" size={13} /> Manager brief</Link>
                   <button className="btn lg" onClick={reset}><Icon name="reset" size={13} /> R · Reset</button>
-                  <Link to="/readiness" className="btn lg"><Icon name="readiness" size={13} /> Readiness board</Link>
                 </>
               )}
               {phase !== "trust" && phase !== "choice" && phase !== "reveal" && (
@@ -353,7 +461,7 @@ export default function StagePiece() {
           )}
 
           {phase === "reveal" && (
-            <div className="sp-card sp-fadein" style={{ background: "rgba(245,242,233,.96)", color: "#141610", borderColor: "rgba(20,22,16,.2)" }}>
+            <div className="sp-card sp-paper sp-fadein" style={{ background: "rgba(245,242,233,.96)", color: "#141610", borderColor: "rgba(20,22,16,.2)" }}>
               <div className="sp-paper-head">
                 <div>
                   <h4 style={{ color: "#555", letterSpacing: ".12em" }}>CUE SHEET · SHOW v5</h4>
@@ -363,23 +471,40 @@ export default function StagePiece() {
                   DESIGNER<br />Mara Voss
                 </div>
               </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderTop: "1px solid #bbb", borderBottom: "1px solid #bbb", padding: "6px 0", margin: "8px 0" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".1em", color: "#555" }}>
+                  THE DROP · {vote === "video" ? "VIDEO WON" : "LIGHT WON"}
+                </span>
+                <b style={{ fontSize: 14 }}>{chosenLook.name}</b>
+              </div>
               <table className="sp-paper-table">
                 <thead><tr><th>#</th><th>Cue</th><th>At</th><th>Action</th><th>Look</th></tr></thead>
                 <tbody>
-                  {pack.cues.slice(0, 8).map((c) => (
-                    <tr key={c.id} className={c.safety ? "warn" : ""}>
+                  {sheetCues.map((c) => (
+                    <tr key={c.id} className={c.id === dropCue?.id ? "drop" : c.safety ? "warn" : ""}>
                       <td>{c.number}</td>
                       <td>{c.id}</td>
                       <td>{fmtClock(c.at)}</td>
-                      <td>{c.title}</td>
-                      <td>{c.lookId ? pack.looks.find((l) => l.id === c.lookId)?.name : "—"}</td>
+                      <td>{c.title}{c.id === dropCue?.id ? " · the drop" : ""}</td>
+                      <td>{printedLook(c.lookId)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginTop: 8, fontFamily: "var(--font-mono)", fontSize: 10 }}>
+                <span>Show cost <b>{fmtMoney(showCost)}</b></span>
+                <span>Approved <b>{fmtMoney(approved)}</b></span>
+                <span style={{ color: delta <= 0 ? "#1f6b2a" : "#9a2b1f" }}>
+                  {delta <= 0 ? "Under" : "Over"} <b>{fmtMoney(Math.abs(delta))}</b>
+                </span>
+              </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 10 }}>
                 <span style={{ fontSize: 9, color: "#555" }}>Safety sign-off: Mara Voss · no cue released automatically.</span>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, border: "1px dashed #999", padding: "4px 7px" }}>MV-1030</span>
+              </div>
+              <div className="row between mt12 no-print">
+                <button className="btn sm" onClick={printSheet}><Icon name="print" size={11} /> Print this sheet</button>
+                <span style={{ fontSize: 9, color: "#555" }}>Same numbers on screen and on paper.</span>
               </div>
             </div>
           )}
@@ -397,7 +522,9 @@ export default function StagePiece() {
             <h1>The show is designed<br /><em>before the lights go down.</em></h1>
             <p>One lamp, one drop, one human decision. The AI proposes a spectacular look. It is also unsafe. You decide.</p>
             <button className="btn primary" onClick={start}><Icon name="play" size={16} /> {store.vote ? "Play again" : "Play the 90-second show"}</button>
-            <p className="xsmall soft" style={{ marginTop: 14 }}>Sound on. Deterministic. Press R to reset, ESC to exit.</p>
+            <p className="xsmall soft" style={{ marginTop: 14 }}>
+              {fallback ? "Silent fallback mode. Deterministic SVG stage." : "Sound on. Deterministic."} Press R to reset, ESC to exit.
+            </p>
             {ui.showDemoNotices && (
               <p className="xsmall soft" style={{ marginTop: 6 }}>
                 A synthetic show: Nova Vale, the venue and the track are invented for this demo.{" "}
@@ -417,8 +544,9 @@ export default function StagePiece() {
             <h2>The show is designed<br />before the lights go down.</h2>
             <p>
               {decision === "rejected" ? "The designer rejected the unsafe look. " : "The designer kept the rig; the risk stays open. "}
-              {vote === "video" ? "The room chose the video drop." : "The room chose the light drop."}
-              {" "}The cue sheet is signed. The show is ready — or it isn't, and the readiness board says why.
+              {vote === "video" ? "The room chose the video drop" : "The room chose the light drop"}
+              {` at ${fmtMoney(showCost)} — ${delta <= 0 ? "under" : "over"} the approved budget by ${fmtMoney(Math.abs(delta))}. `}
+              The cue sheet is signed. The show is ready — or it isn't, and the readiness board says why.
             </p>
             <div className="row gap8" style={{ justifyContent: "center", marginTop: 18 }}>
               <button className="btn primary" onClick={reset}><Icon name="reset" size={13} /> Reset · R</button>
@@ -426,8 +554,8 @@ export default function StagePiece() {
               <Link to="/readiness" className="btn">Readiness board</Link>
             </div>
             <div className="sp-finish-meta">
-              <span>{fmtMoney(27527)} landing look</span>
-              <span>{pack.cues.length} cues</span>
+              <span>{fmtMoney(showCost)} · {chosenLook.name}</span>
+              <span>{delta <= 0 ? `${fmtMoney(Math.abs(delta))} under` : `${fmtMoney(Math.abs(delta))} over`} approved</span>
               <span>{pack.project.version} · {pack.project.tour}</span>
             </div>
           </div>

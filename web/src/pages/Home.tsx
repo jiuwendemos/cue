@@ -43,6 +43,7 @@ export default function Home() {
           <>
             <Link to="/show" className="btn primary"><Icon name="stage" size={14} /> {ui.t("home.open_show")}</Link>
             <Link to="/stage" className="btn"><Icon name="play" size={13} /> {ui.t("home.play_stage")}</Link>
+            <Link to="/manager" className="btn"><Icon name="target" size={13} /> Manager brief</Link>
             <button className="btn ghost" onClick={() => downloadText("night-signal-poster.svg", showPosterSvg(pack), "image/svg+xml")} title="Download the show poster as SVG">
               <Icon name="download" size={13} /> Poster
             </button>
@@ -70,6 +71,7 @@ export default function Home() {
           </p>
           <div className="poster-actions">
             <Link to="/show?tab=looks" className="btn primary lg"><Icon name="look" size={15} /> Find the drop</Link>
+            <Link to="/manager" className="btn lg"><Icon name="target" size={15} /> The manager brief</Link>
             <Link to="/readiness?brief=1" className="btn lg"><Icon name="readiness" size={15} /> {riskCounts.open} things on the desk</Link>
           </div>
 

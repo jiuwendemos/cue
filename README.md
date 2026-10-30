@@ -102,7 +102,33 @@ local scan and clearly labels it. Nothing is sent anywhere from the static demo.
 ![WebGL previz of the show](docs/assets/studio3d.png)
 
 The studio keeps the fast SVG previz as the default and loads a WebGL stage on demand. The 3D chunk is
-not in the first load; the main bundle is about 167 kB gzip. If WebGL is unavailable, the SVG previz stays.
+not in the first load; the main bundle is about 176 kB gzip. If WebGL is unavailable, the SVG previz
+stays. The 90-second cut has the same physical model behind a `2D / 3D` toggle.
+
+### The manager demo
+
+**One buyer: the independent touring production company.** The daily user is the production office.
+CUE is where a tour is designed, priced, checked and signed before load-in — not a console and not a
+render farm.
+
+![The manager brief: buyer, proof, funnel and venue check](docs/assets/manager.png)
+
+The 10-minute cut lives at [`/#/manager`](https://jiuwendemos.github.io/cue/#/manager). It walks
+stage → studio → cue sheet → budget → readiness → pilot proof, and carries four things in one place:
+
+- **the proof table** — iterations avoided, rig cost avoided, rehearsal time, approvals on time — with
+  a method and a counter-claim on every row;
+- **the demo funnel** — local-only events for start, first touch, reject, vote, finish and print;
+- **a venue check** that tests WebGL, audio, the offline shell, fonts, storage, the connection and a
+  reset under five seconds, in the room;
+- **the printed consequence** — in the 90-second cut the room's vote changes the drop row, the show
+  cost and the approved delta, and `Print this sheet` prints exactly that.
+
+![The vote changes the drop row and the show cost; print prints the same numbers](docs/assets/stage-reveal.png)
+
+Full script: [manager demo](docs/manager-demo.md). Room runbook: [venue test](docs/venue-test.md).
+Fallback for a failed projector or GPU: `/#/stage?fallback=1` (silent SVG path). Kiosk mode:
+`/#/stage?autoplay=1&loop=1`.
 
 ---
 
@@ -270,7 +296,7 @@ The full, item-by-item status is in [docs/roadmap.md](docs/roadmap.md). The shor
 - **2–3 — production and scale:** adapters and UI surfaces exist; live vendor integrations and a multi-city network are pilot work.
 
 **The next three tracks** — [make it proactive, make it true 2026, make it connected](docs/roadmap-next.md) — are
-a detailed plan with 483 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
+a detailed plan with 510 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
 demo and a production system.
 
 ---

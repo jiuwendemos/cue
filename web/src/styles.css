@@ -855,6 +855,8 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13p
 .stage-piece .sp-stage .stage-canvas { position: absolute; inset: 0; border: 0; border-radius: 0; height: 100%; display: flex; flex-direction: column; }
 .stage-piece .sp-stage .stage-svg { flex: 1; min-height: 0; aspect-ratio: auto; height: 100%; }
 .stage-piece .sp-stage .stage-canvas-bar { background: transparent; border-bottom-color: rgba(255,255,255,.06); }
+.stage-piece .sp-stage .stage3d { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; }
+.stage-piece .sp-stage .stage3d canvas { width: 100%; height: 100%; }
 .stage-piece .sp-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px clamp(18px, 4vw, 56px) 24px; z-index: 2; }
 .stage-piece .sp-copy { max-width: 720px; }
 .stage-piece .sp-beat { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; color: #d7ff4f; text-transform: uppercase; }
@@ -1026,12 +1028,78 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13p
 .sp-paper-table th { text-align: left; text-transform: uppercase; font-size: 7px; letter-spacing: .07em; border-bottom: 1px solid #141610; padding: 2px; color: #555; }
 .sp-paper-table td { border-bottom: 1px solid #d0cbbe; padding: 2px; }
 .sp-paper-table tr.warn td { background: #fff1c7; }
+.sp-paper-table tr.drop td { background: #e9f4c9; font-weight: 600; }
 .sp-timeline { position: absolute; left: clamp(18px, 4vw, 56px); right: clamp(18px, 4vw, 56px); bottom: 96px; z-index: 2; opacity: .92; }
 .sp-timeline .timeline { background: rgba(5,6,5,.75); backdrop-filter: blur(8px); border-color: rgba(255,255,255,.12); }
 .sp-paused { position: absolute; inset: 0; z-index: 7; background: rgba(3,4,3,.68); display: grid; place-items: center; color: #e8ece2; cursor: pointer; }
 .sp-paused p { color: #9aa093; font-size: 12px; margin-top: 5px; }
 .sp-finish-meta { display: flex; gap: 14px; justify-content: center; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; color: #6f766b; flex-wrap: wrap; }
 .sp-finish .sp-brand { color: #d7ff4f; }
+
+/* ------------------------------------------------------------------ manager brief */
+.manager-buyer { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.manager-buyer-cell { background: var(--bg); padding: 12px 14px 12px 0; }
+.manager-buyer-cell p { font-size: var(--text-xs); color: var(--ink-2); line-height: 1.5; margin-top: 3px; }
+.manager-steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.manager-step { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 9px; display: flex; flex-direction: column; gap: 3px; color: var(--muted); }
+.manager-step:hover { border-color: var(--line-2); color: var(--ink-2); }
+.manager-step.on { border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.manager-step .mono { font-size: 9.5px; color: var(--accent); }
+.manager-step b { font-family: var(--font-display); font-weight: 500; font-size: 13px; line-height: 1.15; color: var(--ink-2); }
+.manager-step span.soft { font-size: 9px; }
+.manager-stage { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.6fr); gap: 18px; margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+.manager-stage h3 { font-size: var(--text-lg); margin: 4px 0 4px; }
+.manager-quote { font-family: var(--font-display); font-size: 17px; line-height: 1.35; color: var(--ink-2); border-left: 2px solid var(--accent); padding-left: 12px; }
+.manager-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr); gap: 18px; margin-top: 18px; align-items: start; }
+.manager-grid > .panel:nth-child(n + 3) { margin-top: 0; }
+.manager-funnel { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.manager-funnel div { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.manager-funnel b { font-family: var(--font-mono); font-size: var(--text-md); color: var(--accent); }
+.manager-funnel span { font-size: 9px; color: var(--soft); }
+.manager-event-list { display: flex; flex-direction: column; margin-top: 10px; }
+.manager-event { display: grid; grid-template-columns: 62px 1fr auto; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); font-size: 10px; }
+.manager-event b { color: var(--ink-2); font-family: var(--font-mono); font-weight: 500; }
+.manager-checks { display: flex; flex-direction: column; gap: 5px; }
+@media (max-width: 1100px) {
+  .manager-buyer { grid-template-columns: 1fr 1fr; }
+  .manager-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .manager-stage, .manager-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .manager-steps { grid-template-columns: 1fr 1fr; }
+  .manager-funnel { grid-template-columns: 1fr 1fr; }
+}
+
+/* Print the cue sheet from the reveal, in the same scene, with the same numbers. */
+@media print {
+  @page { margin: 12mm; }
+  body { background: #fff !important; }
+  body.cue-print-sheet * { visibility: hidden !important; }
+  body.cue-print-sheet .sp-paper, body.cue-print-sheet .sp-paper * { visibility: visible !important; }
+  body.cue-print-brief .topbar,
+  body.cue-print-brief .rail,
+  body.cue-print-brief .bottom-nav,
+  body.cue-print-brief .app-foot,
+  body.cue-print-brief .toast,
+  body.cue-print-brief .btn { display: none !important; }
+  body.cue-print-brief .main { margin: 0 !important; }
+  body.cue-print-brief .content { padding: 0 !important; max-width: none !important; }
+  body.cue-print-brief .panel, body.cue-print-brief .manager-buyer { break-inside: avoid; box-shadow: none !important; }
+  .sp-paper {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #111 !important;
+    padding: 0 !important;
+  }
+  .sp-paper .no-print { display: none !important; }
+}
 
 /* ------------------------------------------------------------------ studio poster */
 .gap18 { gap: 18px; }

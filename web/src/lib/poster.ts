@@ -1,5 +1,5 @@
 import type { Pack } from "../types";
-import { fmtDate, fmtMoney } from "./engine";
+import { budgetTotal, fmtDate, fmtMoney } from "./engine";
 
 const esc = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -39,7 +39,7 @@ export function showPosterSvg(pack: Pack): string {
   <line x1="110" y1="1270" x2="1090" y2="1270" stroke="#3b3b34" stroke-width="1"/>
   <text x="110" y="1340" fill="#f5f0e4" font-family="Georgia, 'Times New Roman', serif" font-size="44">${esc(show?.city ?? "One night")}</text>
   <text x="110" y="1390" fill="#9d978a" font-family="Inter, Arial, sans-serif" font-size="22" letter-spacing="3">${esc(venue?.name ?? "Venue to be confirmed")} · ${esc(show?.date ? fmtDate(show.date) : "Date to be confirmed")}</text>
-  <text x="110" y="1440" fill="#9d978a" font-family="Inter, Arial, sans-serif" font-size="18">Doors 19:30 · Curfew ${esc(show?.curfew ?? "—")} · Load-in ${venue?.loadInHours ?? "—"} h · ${fmtMoney(27527)} landing look</text>
+  <text x="110" y="1440" fill="#9d978a" font-family="Inter, Arial, sans-serif" font-size="18">Doors 19:30 · Curfew ${esc(show?.curfew ?? "—")} · Load-in ${venue?.loadInHours ?? "—"} h · ${fmtMoney(budgetTotal(pack, "look-six-beam"))} landing look</text>
   <text x="110" y="1518" fill="#d7ff4f" font-family="'JetBrains Mono', monospace" font-size="15" letter-spacing="4">CUE — THE LIVE SHOW DESIGN STUDIO</text>
   <text x="1090" y="1518" text-anchor="end" fill="#777167" font-family="'JetBrains Mono', monospace" font-size="13" letter-spacing="2">SYNTHETIC SHOW · ${esc(pack.project.version)}</text>
 </svg>`;

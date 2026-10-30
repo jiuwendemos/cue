@@ -25,6 +25,7 @@ const NAV: NavItem[] = [
   { to: "/budget", labelKey: "nav.budget", icon: "budget", roles: ["designer", "producer", "admin"] },
   { to: "/readiness", labelKey: "nav.readiness", icon: "readiness", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
   { to: "/watch", labelKey: "nav.watch", icon: "activity", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
+  { to: "/manager", labelKey: "nav.manager", icon: "target", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
   { to: "/agent", labelKey: "nav.agent", icon: "agent", roles: ["designer", "producer", "tour_manager"] },
 ];
 
@@ -34,7 +35,8 @@ const TITLES: Record<string, string> = {
   "/cues": "Cue sheet — CUE",
   "/budget": "Rig and budget — CUE",
   "/readiness": "Tour readiness — CUE",
-  "/watch": "Show watch — CUE",
+  "/watch": "Show watch - CUE",
+  "/manager": "Manager brief - CUE",
   "/agent": "Design agent — CUE",
   "/venues": "Venues — CUE",
   "/versions": "Versions — CUE",
