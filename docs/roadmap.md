@@ -8,6 +8,9 @@ with the reason rather than quietly deleted.
 Legend: `[x]` built in this repository · `[ ]` needs a real pilot, vendor, venue or hardware · **(S/M/L)**
 the original size estimate.
 
+**246 of 319 boxes are checked.** The 73 open boxes are the customer, venue, vendor-hardware, external-audit
+and 90-day-pilot gates. The software path for each is documented; see “What remains, and why” at the end.
+
 Live: <https://jiuwendemos.github.io/cue/> · Source: this repository · Tests: `server/tests`, `web` build.
 
 ---
