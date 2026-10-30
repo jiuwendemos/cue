@@ -200,7 +200,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const staticHost = location.hostname.endsWith("github.io") || location.protocol === "file:";
-    if (staticHost) return;
+    const viteDev = (location.hostname === "127.0.0.1" || location.hostname === "localhost") && (location.port === "5174" || location.port === "5173");
+    if (staticHost || viteDev) return;
     let cancelled = false;
     (async () => {
       try {
@@ -220,6 +221,66 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           }
         } catch {
           /* status is optional */
+        }
+
+        // Hydrate the human decisions from the on-site store. The public Pages
+        // build never reaches this block.
+        try {
+          const cuesRes = await fetch(apiUrl("cues"));
+          if (cuesRes.ok) {
+            const data = (await cuesRes.json()) as { signed?: Record<string, { actor: string; at: string; signature: string }> };
+            if (!cancelled && data.signed) {
+              setState((prev) => ({ ...prev, signedCues: { ...prev.signedCues, ...data.signed } }));
+            }
+          }
+        } catch {
+          /* keep local signatures */
+        }
+        try {
+          const readinessRes = await fetch(apiUrl("readiness"));
+          if (readinessRes.ok) {
+            const data = (await readinessRes.json()) as {
+              risks?: { id: string; state: RiskState; owner: string; dismissedReason?: string; verifiedAt?: string; checks?: { id: string; done: boolean }[] }[];
+            };
+            if (!cancelled && data.risks) {
+              setState((prev) => {
+                const riskStates = { ...prev.riskStates };
+                const riskOwners = { ...prev.riskOwners };
+                const dismissalReasons = { ...prev.dismissalReasons };
+                const riskChecks = { ...prev.riskChecks };
+                for (const risk of data.risks ?? []) {
+                  riskStates[risk.id] = risk.state;
+                  riskOwners[risk.id] = risk.owner;
+                  if (risk.dismissedReason) dismissalReasons[risk.id] = risk.dismissedReason;
+                  riskChecks[risk.id] = (risk.checks ?? []).filter((c) => c.done).map((c) => c.id);
+                }
+                return { ...prev, riskStates, riskOwners, dismissalReasons, riskChecks };
+              });
+            }
+          }
+        } catch {
+          /* keep local risks */
+        }
+        try {
+          const versionsRes = await fetch(apiUrl("versions"));
+          if (versionsRes.ok) {
+            const data = (await versionsRes.json()) as {
+              versions?: { id: string; status: string; approvedBy?: string; approvedAt?: string; signature?: string; note?: string }[];
+            };
+            if (!cancelled && data.versions) {
+              setState((prev) => {
+                const approvals = { ...prev.versionApprovals };
+                for (const v of data.versions ?? []) {
+                  if (v.status === "approved" && v.approvedBy) {
+                    approvals[v.id] = { actor: v.approvedBy, at: v.approvedAt ?? new Date().toISOString(), note: v.note ?? "", signature: v.signature ?? "" };
+                  }
+                }
+                return { ...prev, versionApprovals: approvals };
+              });
+            }
+          }
+        } catch {
+          /* keep local approvals */
         }
       } catch {
         /* offline-first */
