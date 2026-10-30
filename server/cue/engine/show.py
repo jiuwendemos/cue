@@ -107,9 +107,7 @@ def budget_addons(pack: dict[str, Any], look_id: str | None) -> list[dict[str, A
     for line in pack["budget"]["lines"]:
         if not line.get("optional"):
             continue
-        if look_id and look_id in (line.get("lookIds") or []):
-            out.append(line)
-        elif video_id and line.get("videoId") == video_id:
+        if (look_id and look_id in (line.get("lookIds") or [])) or (video_id and line.get("videoId") == video_id):
             out.append(line)
     return out
 

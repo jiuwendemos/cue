@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from .. import config
-from ..engine.show import budget_base, budget_for_look, look_stats, _venue
+from ..engine.show import _venue, budget_base, budget_for_look, look_stats
 
 GUARDRAILS = [
     "Cite the source record for every claim. If the evidence is missing, say so.",
