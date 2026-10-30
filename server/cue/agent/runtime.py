@@ -8,12 +8,18 @@ missing evidence, never change a cue, never sign safety.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import asdict, dataclass
 from typing import Any
+from urllib import error, request
 
 from .. import config
 from ..engine.show import _venue, budget_base, budget_for_look, look_stats
+
+
+class AgentUnavailable(RuntimeError):
+    """The configured agent backend is not reachable or returned an error."""
 
 GUARDRAILS = [
     "Cite the source record for every claim. If the evidence is missing, say so.",
@@ -52,23 +58,83 @@ class AgentRuntime:
         self.pack = pack
 
     def status(self) -> Status:
-        configured = bool(config.AGENT_BACKEND)
+        configured = bool(config.AGENT_ENDPOINT)
         return Status(
             configured=configured,
             available=True,
-            backend=config.AGENT_BACKEND or "deterministic-local",
+            backend=config.AGENT_BACKEND or ("remote" if config.AGENT_ENDPOINT else "deterministic-local"),
             model=config.AGENT_MODEL,
             detail=(
-                "JiuwenSwarm backend configured."
-                if configured
-                else "Deterministic local answers over the show pack. No cloud model call in the public demo."
+                f"Remote agent configured at {config.AGENT_ENDPOINT}."
+                if config.AGENT_ENDPOINT
+                else (
+                    "A backend is named but no endpoint is configured; using the deterministic local agent."
+                    if config.AGENT_BACKEND
+                    else "Deterministic local answers over the show pack. No cloud model call in the public demo."
+                )
             ),
         )
 
     def tools(self) -> list[dict[str, Any]]:
         return TOOLS
 
+    def _remote_ask(self, question: str, active_look_id: str | None, rejected_looks: list[str] | None) -> dict[str, Any]:
+        endpoint = config.AGENT_ENDPOINT
+        if not endpoint:
+            raise AgentUnavailable("no CUE_AGENT_ENDPOINT configured")
+        if endpoint.endswith("/chat/completions"):
+            payload: dict[str, Any] = {
+                "model": config.AGENT_MODEL,
+                "temperature": 0.1,
+                "messages": [
+                    {"role": "system", "content": "You are the CUE design agent. Cite show records, admit missing evidence, never change a cue, never sign safety."},
+                    {"role": "user", "content": question},
+                ],
+            }
+        else:
+            payload = {
+                "question": question,
+                "show": self.pack["project"],
+                "active_look_id": active_look_id or "look-aerial-12",
+                "rejected_looks": rejected_looks or [],
+                "tools": TOOLS,
+            }
+        req = request.Request(
+            endpoint,
+            data=json.dumps(payload).encode("utf-8"),
+            method="POST",
+            headers={"Content-Type": "application/json", **({"Authorization": f"Bearer {config.AGENT_API_KEY}"} if config.AGENT_API_KEY else {})},
+        )
+        try:
+            with request.urlopen(req, timeout=12) as response:
+                body = json.loads(response.read().decode("utf-8", "replace"))
+        except (error.URLError, TimeoutError, ValueError, OSError) as exc:
+            raise AgentUnavailable(str(exc)) from exc
+        if "choices" in body:
+            try:
+                content = body["choices"][0]["message"]["content"]
+            except (KeyError, IndexError, TypeError) as exc:
+                raise AgentUnavailable("the remote agent returned an unexpected chat shape") from exc
+            return {
+                "question": question,
+                "tool": "remote.chat",
+                "title": "Agent answer",
+                "body": content,
+                "citations": [],
+                "links": [{"label": "Readiness", "to": "/readiness"}],
+            }
+        return {
+            "question": question,
+            "tool": body.get("tool", "remote.agent"),
+            "title": body.get("title", "Agent answer"),
+            "body": body.get("body") or body.get("answer", ""),
+            "citations": body.get("citations", []),
+            "links": body.get("links", []),
+        }
+
     def ask(self, question: str, active_look_id: str | None = None, rejected_looks: list[str] | None = None) -> dict[str, Any]:
+        if config.AGENT_ENDPOINT:
+            return self._remote_ask(question, active_look_id, rejected_looks)
         q = question.lower().strip()
         pack = self.pack
         active = next((look for look in pack["looks"] if look["id"] == active_look_id), None) or pack["looks"][4]

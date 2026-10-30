@@ -47,6 +47,17 @@ Environment (see `.env.example`):
 | `CUE_STRICT_INTEGRATIONS` | `0` | refuse ready without agent + live connector |
 | `CUE_RENDER_DEVICE` | `gpu` | gpu, cpu or npu |
 | `CUE_NPU_ENDPOINT` | empty | optional local NPU broker |
+| `CUE_SCHEDULER` | `0` | start the proactive scan loop |
+| `CUE_SCAN_INTERVAL_MINUTES` | `1440` | scan cadence |
+| `CUE_PUBLIC_URL` | `http://127.0.0.1:8000` | base URL for signed links |
+| `CUE_SHARE_SECRET` | demo secret | HMAC key for signed links |
+| `CUE_SHARE_TTL_HOURS` | `72` | signed link lifetime |
+| `CUE_SLACK_WEBHOOK` | empty | Slack delivery |
+| `CUE_TEAMS_WEBHOOK` | empty | Teams delivery |
+| `CUE_WEBHOOK_URL` / `CUE_WEBHOOK_SECRET` | empty | signed generic webhook |
+| `CUE_SMTP_HOST` / `CUE_SMTP_USER` / `CUE_SMTP_PASSWORD` | empty | email delivery |
+| `CUE_SMS_URL` / `CUE_SMS_TOKEN` | empty | SMS gateway |
+| `CUE_AGENT_ENDPOINT` / `CUE_AGENT_API_KEY` | empty | real remote agent |
 
 ## Docker
 
@@ -56,7 +67,8 @@ docker compose up --build
 ```
 
 The image builds the web app, installs the API, serves the SPA and keeps SQLite in the `cue-data`
-volume. The healthcheck calls `/api/health`.
+volume. The healthcheck calls `/api/health`. `docker-compose.yml` enables the proactive scheduler
+(`CUE_SCHEDULER=1`) and sets a signed-link secret; replace it before a pilot.
 
 ## systemd
 

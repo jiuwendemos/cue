@@ -91,6 +91,21 @@ no analytics and no external call after load.
 | GET | `/api/readiness` | risks, stats, brief, coverage, metrics |
 | POST | `/api/readiness/{id}/{action}` | ack, assign, investigate, resolve, verify, reopen, dismiss |
 | POST | `/api/readiness/{id}/checks/{check}` | complete a suggested check |
+| GET | `/api/proactive` | scheduler, watchers, scans, inbox, delivery, digest, backtest |
+| POST | `/api/proactive/scan` | run the scanner now |
+| POST | `/api/proactive/settings` | mode, interval, channels, quiet hours |
+| POST | `/api/proactive/stop` / `start` | kill switch |
+| POST | `/api/proactive/digest` | build / send a digest |
+| GET | `/api/proactive/backtest` | synthetic pre-load-in backtest |
+| GET | `/api/notifications` | tenant inbox |
+| POST | `/api/share` | signed link with expiry |
+| GET | `/api/share/cue-sheet` | verify a signed link and print |
+| GET | `/api/export/ics` | iCalendar tour export |
+| GET | `/api/export/grandma3.csv` / `.xml` | console cue export |
+| GET | `/api/export/resolume.csv` | video clip list |
+| GET | `/api/export/vectorworks.csv` | fixture schedule |
+| GET | `/api/export/mvr.zip` | minimal MVR exchange package |
+| GET/POST | `/mcp` | MCP-compatible JSON-RPC read-only tools |
 | GET | `/api/versions` | versions + approvals |
 | POST | `/api/versions/{id}/approve` | human approval signature |
 | GET | `/api/audits` | append-only trail |

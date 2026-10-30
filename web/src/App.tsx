@@ -11,6 +11,7 @@ import Workspace from "./pages/Workspace";
 import CueSheet from "./pages/CueSheet";
 import Budget from "./pages/Budget";
 import Readiness from "./pages/Readiness";
+import Watch from "./pages/Watch";
 import Venues from "./pages/Venues";
 import Agent from "./pages/Agent";
 import Versions from "./pages/Versions";
@@ -57,6 +58,7 @@ function Routed() {
           <Route path="/cues" element={<CueSheet />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/readiness" element={<Readiness />} />
+          <Route path="/watch" element={<Watch />} />
           <Route path="/venues" element={<Venues />} />
           <Route path="/agent" element={<Agent />} />
           <Route path="/versions" element={<Versions />} />

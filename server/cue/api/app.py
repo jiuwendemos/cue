@@ -8,6 +8,7 @@ web app. No live control, no DMX, no automatic cue release.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 from contextlib import asynccontextmanager
@@ -22,7 +23,7 @@ from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from .. import config
-from ..agent.runtime import GUARDRAILS, AgentRuntime
+from ..agent.runtime import GUARDRAILS, AgentRuntime, AgentUnavailable
 from ..engine.show import (
     budget_addons,
     budget_base,
@@ -36,9 +37,14 @@ from ..engine.show import (
     look_stats,
     missing_asset_cues,
     risk_brief,
+    risk_open,
     risk_stats,
 )
+from ..integrations import exporters
+from ..mcp import server as mcp_server
 from ..models import ApproveVersionRequest, AskRequest, RenderSettings, RiskActionRequest, SignCueRequest, now_iso
+from ..proactive import scanner
+from ..proactive.signing import signed_link, verify_payload
 from ..store.db import Store
 
 TENANT_HEADER = "X-CUE-Tenant"
@@ -66,7 +72,7 @@ def merged_risks(pack: dict[str, Any], store: Store, tenant: str) -> list[dict[s
     states = store.risk_states(tenant)
     checks = store.risk_checks(tenant)
     out = []
-    for risk in pack["risks"]:
+    for risk in pack["risks"] + store.dynamic_risks(tenant):
         override = states.get(risk["id"], {})
         done = set(checks.get(risk["id"], []))
         out.append(
@@ -83,13 +89,36 @@ def merged_risks(pack: dict[str, Any], store: Store, tenant: str) -> list[dict[s
 
 
 def create_app(db_path: str | None = None) -> FastAPI:
+    async def scheduler_loop(app: FastAPI) -> None:
+        await asyncio.sleep(2)
+        while True:
+            try:
+                for tenant_id in config.TENANTS:
+                    settings = app.state.store.proactive_settings(tenant_id) or scanner.default_settings(app.state.pack)
+                    if settings.get("stopSwitch"):
+                        continue
+                    await asyncio.to_thread(scanner.run_scan, app.state.pack, app.state.store, tenant_id, settings)
+            except asyncio.CancelledError:
+                raise
+            except Exception:  # noqa: BLE001
+                # A scan failure must not take down the show. The next tick retries;
+                # the audit and the scan history keep the evidence.
+                await asyncio.sleep(60)
+            interval = max(5, int((app.state.store.proactive_settings(config.DEFAULT_TENANT) or scanner.default_settings(app.state.pack)).get("intervalMinutes", 1440)))
+            await asyncio.sleep(interval * 60)
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.pack = load_pack()
         app.state.store = Store(db_path or os.getenv("CUE_DB", str(config.DB_PATH)))
         app.state.agent = AgentRuntime(app.state.pack)
         app.state.render = {"device": config.RENDER_DEVICE, "quality": "high", "frame_ms": 8.2, "export_s": 2.4}
+        app.state.scheduler = None
+        if config.SCHEDULER_ENABLED:
+            app.state.scheduler = asyncio.create_task(scheduler_loop(app))
         yield
+        if app.state.scheduler:
+            app.state.scheduler.cancel()
         app.state.store.close()
 
     app = FastAPI(title="CUE", version="1.0.0", lifespan=lifespan)
@@ -167,7 +196,10 @@ def create_app(db_path: str | None = None) -> FastAPI:
     def agent_ask(body: AskRequest, request: Request) -> dict[str, Any]:
         if not body.question.strip():
             raise HTTPException(400, "question is required")
-        result = state(request).agent.ask(body.question, body.active_look_id, body.rejected_looks)
+        try:
+            result = state(request).agent.ask(body.question, body.active_look_id, body.rejected_looks)
+        except AgentUnavailable as exc:
+            raise HTTPException(502, detail=f"the configured agent backend is unavailable: {exc}") from exc
         state(request).store.audit(tenant(), "CUE agent", "agent.answer", body.active_look_id or "show", body.question[:240], ["agent"])
         return result
 
@@ -467,6 +499,298 @@ def create_app(db_path: str | None = None) -> FastAPI:
                 },
             )
         return {"ready": integrations_data["ready"], "strict": config.STRICT_INTEGRATIONS, "agent": state(request).agent.status().as_dict()}
+
+    # ---------------------------------------------------------------- proactive
+
+    @app.get("/api/proactive")
+    def proactive(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        risks = merged_risks(pack, store, tenant())
+        scans = store.scan_runs(tenant(), limit=30)
+        notifications = store.notifications(tenant(), limit=50)
+        if not notifications:
+            notifications = [
+                {
+                    "id": n["id"],
+                    "at": n["at"],
+                    "kind": n["kind"],
+                    "severity": n["severity"],
+                    "title": n["title"],
+                    "detail": n["detail"],
+                    "risk_id": n.get("riskId"),
+                    "channels": [n.get("channel", "in_app")],
+                    "delivered": True,
+                    "read": n.get("read", False),
+                    "dedup_key": n["id"],
+                }
+                for n in pack["notifications"]
+            ]
+        deliveries = store.deliveries(tenant(), limit=50)
+        watchers = [
+            {
+                "id": kind,
+                "label": {
+                    "venue": "Venue and stage",
+                    "rig": "Rig and power",
+                    "rights": "Music, video and likeness",
+                    "asset": "Content delivery",
+                    "budget": "Budget and approval",
+                    "schedule": "Load-in and rehearsal",
+                    "data": "Venue data freshness",
+                }.get(kind, kind),
+                "status": "watching" if not settings.get("stopSwitch") else "stopped",
+                "checked": len(risks),
+                "open": len([r for r in risks if r.get("kind") == kind and risk_open(r)]),
+                "last_scan": scans[0]["at"] if scans else None,
+            }
+            for kind in settings.get("watchTypes", [])
+        ]
+        return {
+            "settings": settings,
+            "scheduler": {
+                "enabled": config.SCHEDULER_ENABLED,
+                "interval_minutes": settings.get("intervalMinutes", 1440),
+                "last_scan": scans[0]["at"] if scans else None,
+                "next_scan": settings.get("nextScan"),
+                "mode": settings.get("mode", "shadow"),
+                "stop_switch": bool(settings.get("stopSwitch")),
+            },
+            "watchers": watchers,
+            "risks": risks,
+            "stats": risk_stats(risks),
+            "scans": scans,
+            "notifications": notifications,
+            "deliveries": deliveries,
+            "queue": {
+                "pending": len([d for d in deliveries if d["status"] == "error"]),
+                "simulated": len([d for d in deliveries if d["status"] == "simulated"]),
+                "offline": False,
+                "detail": "The queue is local to this tenant. A show-week outage retries on the next scan.",
+            },
+            "digest": scanner.build_digest(pack, risks, settings),
+            "backtest": proactive_backtest(request),
+            "coverage": [
+                {"venue_id": v["id"], "name": v["name"], "status": v["status"], "last_verified": v["lastVerified"], "verified_by": v["verifiedBy"]}
+                for v in pack["venues"]
+            ],
+        }
+
+    @app.post("/api/proactive/scan")
+    async def proactive_scan(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        try:
+            body = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            body = {}
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        if body.get("settings"):
+            settings.update(body["settings"])
+        mode = body.get("mode") or settings.get("mode", "shadow")
+        result = await asyncio.to_thread(scanner.run_scan, pack, store, tenant(), settings, mode=mode, active_look_id=body.get("look_id", "look-aerial-12"))
+        return result
+
+    @app.post("/api/proactive/settings")
+    async def proactive_settings(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        try:
+            body = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            body = {}
+        allowed = {"mode", "stopSwitch", "intervalMinutes", "channels", "quietHours", "digest", "coverageFloor", "watchTypes", "email_to", "sms_to", "riskBudget"}
+        settings.update({key: value for key, value in body.items() if key in allowed})
+        if settings.get("mode") not in {"shadow", "live"}:
+            settings["mode"] = "shadow"
+        settings["intervalMinutes"] = max(5, int(settings.get("intervalMinutes", 1440)))
+        store.save_proactive_settings(tenant(), settings)
+        store.audit(tenant(), body.get("actor", "Site Admin"), "proactive.settings", "tour", "Readiness settings updated.", ["settings"])
+        return settings
+
+    @app.post("/api/proactive/stop")
+    async def proactive_stop(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        try:
+            body = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            body = {}
+        settings["stopSwitch"] = True
+        settings.setdefault("stopReasons", []).append(f"{now_iso()}: {body.get('reason', 'Stopped by the production office')}")
+        store.save_proactive_settings(tenant(), settings)
+        store.audit(tenant(), body.get("actor", "Site Admin"), "proactive.stop", "tour", body.get("reason", "Stopped by the production office"), ["settings"])
+        return settings
+
+    @app.post("/api/proactive/start")
+    async def proactive_start(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        settings["stopSwitch"] = False
+        store.save_proactive_settings(tenant(), settings)
+        store.audit(tenant(), "Site Admin", "proactive.start", "tour", "Readiness resumed.", ["settings"])
+        return settings
+
+    @app.post("/api/proactive/digest")
+    async def proactive_digest(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        store = state(request).store
+        settings = store.proactive_settings(tenant()) or scanner.default_settings(pack)
+        digest = scanner.build_digest(pack, merged_risks(pack, store, tenant()), settings)
+        try:
+            body = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            body = {}
+        if body.get("send"):
+            for channel in settings.get("channels", []):
+                store.record_delivery(tenant(), f"DIGEST-{digest['at']}", channel, "simulated" if channel != "in_app" else "delivered", "Digest delivery.")
+        return digest
+
+    @app.get("/api/proactive/backtest")
+    def proactive_backtest(request: Request) -> dict[str, Any]:
+        pack = pack_of(request)
+        detected = scanner.detect_candidates(pack)
+        by_group = {r["groupKey"]: r for r in detected if r.get("groupKey")}
+        known = pack["risks"]
+        rows = []
+        for date in pack["dates"]:
+            known_for_date = [r for r in known if r.get("dateId") == date["id"]]
+            detected_for_date = [r for r in detected if r.get("dateId") == date["id"]]
+            known_keys = {r.get("groupKey") for r in known_for_date}
+            detected_keys = {r.get("groupKey") for r in detected_for_date}
+            matched = len(known_keys & detected_keys)
+            precision = matched / len(detected_for_date) if detected_for_date else 1.0
+            recall = matched / len(known_for_date) if known_for_date else 1.0
+            rows.append(
+                {
+                    "date_id": date["id"],
+                    "city": date["city"],
+                    "detected": len(detected_for_date),
+                    "known": len(known_for_date),
+                    "matched": matched,
+                    "precision_est": round(precision, 2),
+                    "recall_est": round(recall, 2),
+                    "would_have_fired": len(detected_for_date) > 0,
+                }
+            )
+        overall = {
+            "detected": len(detected),
+            "known": len(known),
+            "matched": len(set(by_group) & {r.get("groupKey") for r in known}),
+        }
+        overall["precision_est"] = round(overall["matched"] / overall["detected"], 2) if overall["detected"] else 1.0
+        overall["recall_est"] = round(overall["matched"] / overall["known"], 2) if overall["known"] else 1.0
+        return {"rows": rows, "overall": overall, "note": "Synthetic backtest over the demo pack. A real backtest uses past tours and confirmed issues."}
+
+    @app.get("/api/notifications")
+    def notifications(request: Request) -> dict[str, Any]:
+        store = state(request).store
+        items = store.notifications(tenant(), limit=100)
+        return {"notifications": items, "unread": len([n for n in items if not n.get("read")])}
+
+    @app.post("/api/notifications/{notification_id}/read")
+    def read_notification(notification_id: str, request: Request) -> dict[str, Any]:
+        state(request).store.mark_notification(tenant(), notification_id, True)
+        return {"id": notification_id, "read": True}
+
+    @app.post("/api/notifications/read-all")
+    def read_all_notifications(request: Request) -> dict[str, Any]:
+        state(request).store.mark_all_notifications(tenant())
+        return {"read": True}
+
+    @app.post("/api/share")
+    async def share(request: Request) -> dict[str, Any]:
+        try:
+            body = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            body = {}
+        path = body.get("path", "/#/cues")
+        return signed_link(path, actor=body.get("actor", "Mara Voss"), risk_id=body.get("risk_id"), ttl_hours=body.get("ttl_hours"))
+
+    @app.get("/api/share/cue-sheet", response_class=HTMLResponse)
+    def shared_cue_sheet(request: Request, token: str = "") -> str:
+        if not token:
+            raise HTTPException(401, "a signed token is required")
+        payload = verify_payload(token)
+        if not payload:
+            raise HTTPException(401, "the signed link is invalid or expired")
+        return cue_sheet_html(pack_of(request), [], None, signed_by=payload.get("actor", "Mara Voss"))
+
+    # ---------------------------------------------------------------- exports & MCP
+
+    @app.get("/api/export/ics")
+    def export_ics(request: Request) -> Response:
+        return Response(
+            exporters.ics(pack_of(request)),
+            media_type="text/calendar; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="night-signal.ics"'},
+        )
+
+    @app.get("/api/export/grandma3.csv")
+    def export_grandma3_csv(request: Request) -> Response:
+        return Response(
+            exporters.grandma3_csv(pack_of(request)),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="night-signal-grandma3.csv"'},
+        )
+
+    @app.get("/api/export/grandma3.xml")
+    def export_grandma3_xml(request: Request) -> Response:
+        return Response(
+            exporters.grandma3_xml(pack_of(request)),
+            media_type="application/xml; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="night-signal-grandma3.xml"'},
+        )
+
+    @app.get("/api/export/resolume.csv")
+    def export_resolume(request: Request) -> Response:
+        return Response(
+            exporters.resolume_csv(pack_of(request)),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="night-signal-resolume.csv"'},
+        )
+
+    @app.get("/api/export/vectorworks.csv")
+    def export_vectorworks(request: Request) -> Response:
+        return Response(
+            exporters.vectorworks_csv(pack_of(request)),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="night-signal-vectorworks.csv"'},
+        )
+
+    @app.get("/api/export/mvr.zip")
+    def export_mvr(request: Request) -> Response:
+        return Response(
+            exporters.mvr_zip(pack_of(request)),
+            media_type="application/zip",
+            headers={"Content-Disposition": 'attachment; filename="night-signal-exchange.mvr.zip"'},
+        )
+
+    @app.get("/api/export/bundle")
+    def export_bundle(request: Request) -> dict[str, Any]:
+        return exporters.export_bundle(pack_of(request))
+
+    @app.get("/mcp")
+    def mcp_info() -> dict[str, Any]:
+        return {
+            "name": "cue",
+            "protocol": mcp_server.PROTOCOL,
+            "transport": "json-rpc over POST /mcp",
+            "tools": [tool["name"] for tool in mcp_server.TOOLS],
+            "note": "Read-only tools. No cue change, no safety signature, no release.",
+        }
+
+    @app.post("/mcp")
+    async def mcp(request: Request) -> dict[str, Any]:
+        try:
+            payload = await request.json()
+        except (json.JSONDecodeError, ValueError):
+            raise HTTPException(400, "a JSON-RPC body is required") from None
+        return mcp_server.handle(pack_of(request), state(request).store, tenant(), state(request).agent, payload)
 
     @app.post("/api/reset")
     def reset(request: Request) -> dict[str, Any]:

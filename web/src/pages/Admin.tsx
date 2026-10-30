@@ -67,6 +67,31 @@ export default function Admin() {
             </div>
           </Panel>
 
+          <Panel title="Exports and MCP" sub="Real files when the on-site service is running. Read-only tools; no live control.">
+            {store.live ? (
+              <div className="col gap6">
+                {[
+                  ["iCalendar — tour dates", "api/export/ics"],
+                  ["grandMA3 cue list — CSV", "api/export/grandma3.csv"],
+                  ["grandMA3 cue list — XML", "api/export/grandma3.xml"],
+                  ["Resolume clip list — CSV", "api/export/resolume.csv"],
+                  ["Vectorworks fixture schedule — CSV", "api/export/vectorworks.csv"],
+                  ["MVR exchange package — ZIP", "api/export/mvr.zip"],
+                ].map(([label, path]) => (
+                  <a key={path} href={new URL(path, document.baseURI).toString()} target="_blank" rel="noreferrer" className="rail-link">
+                    {label} <Icon name="external" size={11} />
+                  </a>
+                ))}
+                <div className="provenance-item mt8"><span>MCP endpoint</span><b>POST /mcp · initialize · tools/list · tools/call · show_summary / checks / budget / readiness / cue_sheet / ask</b></div>
+              </div>
+            ) : (
+              <div className="prose">
+                <p>These exports are served by the on-site API. The public demo exports the cue sheet locally as CSV, HTML and JSON.</p>
+                <p className="xsmall soft">Start the server and open this page on <span className="mono">127.0.0.1:8000</span> to see the live links and the MCP endpoint.</p>
+              </div>
+            )}
+          </Panel>
+
           <Panel title="Render and inference" sub="GPU/CPU is the core. NPU is optional and never sold as the hero.">
             <div className="setting-row">
               <span className="label">Render device<span className="note">The pilot laptop renders the previz and exports the cue sheet.</span></span>

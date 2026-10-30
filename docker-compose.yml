@@ -8,6 +8,10 @@ services:
       CUE_TENANTS: halcyon
       CUE_STRICT_INTEGRATIONS: "0"
       CUE_RENDER_DEVICE: gpu
+      CUE_SCHEDULER: "1"
+      CUE_SCAN_INTERVAL_MINUTES: "1440"
+      CUE_PUBLIC_URL: http://127.0.0.1:8000
+      CUE_SHARE_SECRET: change-me-before-a-pilot
     volumes:
       - cue-data:/data
     restart: unless-stopped

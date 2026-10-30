@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ComponentType } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { showAudio } from "../lib/audio";
@@ -14,7 +14,7 @@ import {
   songAt,
   trussLoads,
 } from "../lib/engine";
-import type { Look } from "../types";
+import type { Look, Pack } from "../types";
 import { StageCanvas } from "../components/StageCanvas";
 import { Timeline } from "../components/Timeline";
 import { Icon } from "../components/Icon";
@@ -104,6 +104,24 @@ export default function Workspace() {
   const [rejecting, setRejecting] = useState<Look | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [muted, setMuted] = useState(false);
+  const [scene3d, setScene3d] = useState(false);
+  const [sceneLoading, setSceneLoading] = useState(false);
+  const [Scene3DComponent, setScene3DComponent] = useState<ComponentType<{ pack: Pack; look: Look; time: number; showGlare?: boolean }> | null>(null);
+
+  const enable3d = useCallback(() => {
+    if (Scene3DComponent) {
+      setScene3d(true);
+      return;
+    }
+    setSceneLoading(true);
+    void import("../components/Stage3D")
+      .then((module) => {
+        setScene3DComponent(() => module.Stage3D);
+        setScene3d(true);
+      })
+      .catch(() => store.say("The 3D previz could not load. The SVG previz is still here."))
+      .finally(() => setSceneLoading(false));
+  }, [Scene3DComponent, store]);
 
   const { pack, activeLook, rejectedLooks, cues, checks } = store;
   const summary = checkSummary(checks);
@@ -125,6 +143,10 @@ export default function Workspace() {
   }, []);
 
   useEffect(() => {
+    if (params.get("view") === "3d") enable3d();
+  }, [enable3d, params]);
+
+  useEffect(() => {
     if (playing) {
       showAudio.start(energyAt(pack, time));
     } else {
@@ -136,6 +158,14 @@ export default function Workspace() {
   useEffect(() => {
     if (playing) showAudio.setEnergy(energyAt(pack, time));
   }, [pack, playing, time]);
+
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => {
+      setTime((current) => (current >= 439.9 ? 0 : current + 0.1));
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [playing]);
 
   const setTab = (next: Tab) => {
     const p = new URLSearchParams(params);
@@ -206,6 +236,16 @@ export default function Workspace() {
             <button className={`btn sm${showGlare ? " danger" : ""}`} onClick={() => setShowGlare((v) => !v)} aria-pressed={showGlare}>
               <Icon name="eye" size={12} /> Glare
             </button>
+            <button
+              className={`btn sm${scene3d ? " primary" : " ghost"}`}
+              aria-pressed={scene3d}
+              onClick={() => {
+                if (scene3d) setScene3d(false);
+                else enable3d();
+              }}
+            >
+              <Icon name="layers" size={12} /> {sceneLoading ? "Loading…" : scene3d ? "3D" : "2D"}
+            </button>
             <button className="btn sm ghost" onClick={() => setTime(225)}><Icon name="reset" size={12} /> Drop</button>
             <button
               className="btn sm ghost"
@@ -243,15 +283,19 @@ export default function Workspace() {
             ))}
           </div>
 
-          <StageCanvas
-            pack={pack}
-            look={previewLook}
-            time={time}
-            layer={layer}
-            showGlare={showGlare && previewLook.audienceAim > 0}
-            selectedFixture={selectedFixture}
-            onSelectFixture={setSelectedFixture}
-          />
+          {scene3d && Scene3DComponent ? (
+            <Scene3DComponent pack={pack} look={previewLook} time={time} showGlare={showGlare && previewLook.audienceAim > 0} />
+          ) : (
+            <StageCanvas
+              pack={pack}
+              look={previewLook}
+              time={time}
+              layer={layer}
+              showGlare={showGlare && previewLook.audienceAim > 0}
+              selectedFixture={selectedFixture}
+              onSelectFixture={setSelectedFixture}
+            />
+          )}
 
           <Timeline
             pack={pack}

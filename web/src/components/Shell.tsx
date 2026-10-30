@@ -24,6 +24,7 @@ const NAV: NavItem[] = [
   { to: "/cues", labelKey: "nav.cues", icon: "cue", roles: ["designer", "producer", "crew", "tour_manager"] },
   { to: "/budget", labelKey: "nav.budget", icon: "budget", roles: ["designer", "producer", "admin"] },
   { to: "/readiness", labelKey: "nav.readiness", icon: "readiness", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
+  { to: "/watch", labelKey: "nav.watch", icon: "activity", roles: ["designer", "producer", "crew", "tour_manager", "admin"] },
   { to: "/agent", labelKey: "nav.agent", icon: "agent", roles: ["designer", "producer", "tour_manager"] },
 ];
 
@@ -33,6 +34,7 @@ const TITLES: Record<string, string> = {
   "/cues": "Cue sheet — CUE",
   "/budget": "Rig and budget — CUE",
   "/readiness": "Tour readiness — CUE",
+  "/watch": "Show watch — CUE",
   "/agent": "Design agent — CUE",
   "/venues": "Venues — CUE",
   "/versions": "Versions — CUE",
@@ -227,12 +229,14 @@ export function Shell({ children }: { children: ReactNode }) {
       </nav>
 
       <nav className="bottom-nav" aria-label="Primary mobile">
-        {nav.slice(0, 4).map((item) => (
-          <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `rail-item${isActive ? " active" : ""}`}>
-            <Icon name={item.icon} size={19} />
-            <span>{ui.t(item.labelKey)}</span>
-          </NavLink>
-        ))}
+        {nav
+          .filter((item) => ["/", "/show", "/cues", "/watch"].includes(item.to))
+          .map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `rail-item${isActive ? " active" : ""}`}>
+              <Icon name={item.icon} size={19} />
+              <span>{ui.t(item.labelKey)}</span>
+            </NavLink>
+          ))}
         <button className="rail-item" onClick={() => setCmdOpen(true)}>
           <Icon name="grid" size={19} />
           <span>{ui.t("nav.more")}</span>

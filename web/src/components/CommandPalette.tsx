@@ -29,6 +29,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: "r-cues", group: "Go", label: t("nav.cues"), hint: "The technical score", to: "/cues", icon: "cue" },
       { id: "r-budget", group: "Go", label: t("nav.budget"), hint: "Rig, crew, power, content", to: "/budget", icon: "budget" },
       { id: "r-readiness", group: "Go", label: t("nav.readiness"), hint: "Tour risk board", to: "/readiness", icon: "readiness" },
+      { id: "r-watch", group: "Go", label: t("nav.watch"), hint: "Live proactive control room", to: "/watch", icon: "activity" },
       { id: "r-agent", group: "Go", label: t("nav.agent"), hint: "Ask the show", to: "/agent", icon: "agent" },
       { id: "r-venues", group: "Go", label: t("nav.venues"), hint: "Venue profiles", to: "/venues", icon: "venue" },
       { id: "r-versions", group: "Go", label: t("nav.versions"), hint: "Diffs and approvals", to: "/versions", icon: "versions" },

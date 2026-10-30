@@ -28,11 +28,12 @@ browser. Nothing is uploaded, and there is no cloud model call. Read the
 | Surface | What it is | Try it |
 |---|---|---|
 | **The 90-second show** | One lamp, one unsafe AI proposal, one human decision, one vote, one printed cue sheet. Deterministic, sound, reset with `R`. | [`/#/stage`](https://jiuwendemos.github.io/cue/#/stage) |
-| **The studio** | Stage previz, looks, video, blocking, timeline, checks and the look rail. Drag a look onto the build. | [`/#/show`](https://jiuwendemos.github.io/cue/#/show) |
+| **The studio** | Stage previz (SVG and on-demand WebGL 3D), looks, video, blocking, timeline, checks and the look rail. Drag a look onto the build. | [`/#/show`](https://jiuwendemos.github.io/cue/#/show) |
 | **Concept board** | The mood, references, rules, palette and the setlist as a design board. | [`/#/show?tab=concept`](https://jiuwendemos.github.io/cue/#/show?tab=concept) |
 | **Cue sheet** | 26 cues across LX/VID/STG/AUD/SFX/CAM, safety signatures, conflicts, missing assets, print and CSV/HTML/JSON. | [`/#/cues`](https://jiuwendemos.github.io/cue/#/cues) |
 | **Rig and budget** | Cost per look, power, truss load, contingency and the over/under against the approved budget. | [`/#/budget`](https://jiuwendemos.github.io/cue/#/budget) |
 | **Tour readiness** | Risk board, lifecycle, evidence, show-week brief, digests, coverage, precision and a kill switch. | [`/#/readiness`](https://jiuwendemos.github.io/cue/#/readiness) |
+| **Show watch** | Scheduler, watchers, scan history, backtest, delivery, inbox and kill switch. Real on-site; deterministic local stand-in on the public build. | [`/#/watch`](https://jiuwendemos.github.io/cue/#/watch) |
 | **Design agent** | Ranked proposals with citations, an inspectable tool trace, guardrails and a human reject/re-rank. | [`/#/agent`](https://jiuwendemos.github.io/cue/#/agent) |
 | **Venues** | Seven rooms with stage, rig, power, sightlines, freshness and a fit check against the design. | [`/#/venues`](https://jiuwendemos.github.io/cue/#/venues) |
 | **Versions** | Version history, diffs, approvals, signatures and an immutable audit. | [`/#/versions`](https://jiuwendemos.github.io/cue/#/versions) |
@@ -44,6 +45,35 @@ browser. Nothing is uploaded, and there is no cloud model call. Read the
 
 The public site is a **static, offline build** of the same product UI. The API and the pilot workflow
 live in [`server/`](server/) and serve the same pack, with SQLite for the human decisions.
+
+### Connected surfaces
+
+The on-site service now ships:
+
+- a **durable-shaped scheduler** (`CUE_SCHEDULER=1`) with 7 watcher classes, scan history, dedupe, quiet hours, digest and a kill switch;
+- **delivery adapters** for in-app, email, Slack, Teams, SMS and signed webhooks; missing credentials are reported as `simulated`, never silent;
+- **real export files**: iCalendar, grandMA3 CSV/XML, Resolume CSV, Vectorworks fixture CSV and a minimal MVR exchange ZIP;
+- a **signed share link** for the cue sheet with expiry;
+- an **MCP-compatible JSON-RPC server** at `POST /mcp` with read-only show, checks, budget, readiness, cue-sheet and ask tools;
+- an **optional remote agent adapter** for a DeepAgent/OpenAI-compatible endpoint, with an explicit 502 when the backend is unavailable.
+
+The public demo still answers locally and makes no external call. Configure the environment to point
+any of these at a real service. See [production wiring](docs/production-wiring.md).
+
+### Show watch
+
+![Show watch — the proactive readiness desk](docs/assets/watch.png)
+
+The on-site build runs the scheduler (`CUE_SCHEDULER=1`), the watchers, the scan history, the delivery
+adapters, the signed inbox and the backtest. The public build shows the same surface with a deterministic
+local scan and clearly labels it. Nothing is sent anywhere from the static demo.
+
+### 3D previz
+
+![WebGL previz of the show](docs/assets/studio3d.png)
+
+The studio keeps the fast SVG previz as the default and loads a WebGL stage on demand. The 3D chunk is
+not in the first load; the main bundle is about 167 kB gzip. If WebGL is unavailable, the SVG previz stays.
 
 ---
 
@@ -211,7 +241,7 @@ The full, item-by-item status is in [docs/roadmap.md](docs/roadmap.md). The shor
 - **2–3 — production and scale:** adapters and UI surfaces exist; live vendor integrations and a multi-city network are pilot work.
 
 **The next three tracks** — [make it proactive, make it true 2026, make it connected](docs/roadmap-next.md) — are
-a detailed plan with 472 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
+a detailed plan with 477 checkboxes, gates and a 30/60/90-day sequence. They are the honest gap between this
 demo and a production system.
 
 ---

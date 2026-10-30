@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**472 checkboxes: 49 already in the demo, 423 to build.** The count is the point: this is the work,
+**477 checkboxes: 114 already in the demo, 363 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -34,9 +34,9 @@ Safety stays human.
 - [ ] **P0** Timezone- and DST-safe windows for every city on the tour
 - [ ] **P0** 14 / 7 / 3-day readiness checks before each show
 - [ ] **P0** Daily show-week scan at a fixed local time
-- [ ] **P0** Manual **Scan now** that writes the same audit as the scheduler
-- [ ] **P0** Pause / resume / kill switch per tour, visible to the production office
-- [ ] **P0** Scan history with lag, duration, count and outcome
+- [x] **P0** Manual **Scan now** that writes the same audit as the scheduler
+- [x] **P0** Pause / resume / kill switch per tour, visible to the production office
+- [x] **P0** Scan history with lag, duration, count and outcome
 - [ ] **P0** Offline / air-gapped queue for a show week with no network
 - [ ] **P0** Scheduler heartbeat and a “last scan” badge in the UI
 - [ ] **P1** Per-venue scan cadence, not only per-tour
@@ -70,18 +70,18 @@ Safety stays human.
 
 - [ ] **P0** Tour watcher: dates, gaps, travel, curfew
 - [ ] **P0** Show watcher: cue sheet, setlist, versions
-- [ ] **P0** Venue watcher: stage, rig, power, sightlines, freshness
-- [ ] **P0** Rig watcher: truss load, supply, distro, fixture count
-- [ ] **P0** Rights watcher: music, video, likeness, territory, expiry
-- [ ] **P0** Asset watcher: missing, stale, broken link, wrong version
-- [ ] **P0** Budget watcher: approved vs current, add-ons, contingency
+- [x] **P0** Venue watcher: stage, rig, power, sightlines, freshness
+- [x] **P0** Rig watcher: truss load, supply, distro, fixture count
+- [x] **P0** Rights watcher: music, video, likeness, territory, expiry
+- [x] **P0** Asset watcher: missing, stale, broken link, wrong version
+- [x] **P0** Budget watcher: approved vs current, add-ons, contingency
 - [ ] **P0** Crew watcher: owner, confirmation, travel, call time
-- [ ] **P0** Schedule watcher: cue complexity vs load-in and rehearsal
+- [x] **P0** Schedule watcher: cue complexity vs load-in and rehearsal
 - [ ] **P0** Safety watcher: glare, strobe, structure, rigging, laser
-- [ ] **P0** Data watcher: stale venue profile, missing power survey
-- [ ] **P0** Coverage watcher: which venues are watched and which are blind
+- [x] **P0** Data watcher: stale venue profile, missing power survey
+- [x] **P0** Coverage watcher: which venues are watched and which are blind
 - [ ] **P0** Every watcher has a version, an owner and a false-alarm budget
-- [ ] **P0** Shadow mode: no customer-facing alert until the producer validates
+- [x] **P0** Shadow mode: no customer-facing alert until the producer validates
 - [ ] **P1** Adaptive thresholds per venue, tour leg and show type
 - [ ] **P1** Multi-show confirmation before raising a cross-tour pattern
 - [ ] **P1** Watcher dry-run with a fixture set
@@ -92,13 +92,13 @@ Safety stays human.
 - [ ] **P0** “Why now?” pack: the factor, the source, the delta, the window
 - [ ] **P0** Source diff: the actual before/after record, not just a sentence
 - [ ] **P0** Confidence calibrated against confirmed issues
-- [ ] **P0** Suggested check/fix with effort, owner and cost impact
-- [ ] **P0** Owner routing by tour, venue and role
-- [ ] **P0** SLA timer for load-in, rehearsal and approval deadlines
+- [x] **P0** Suggested check/fix with effort, owner and cost impact
+- [x] **P0** Owner routing by tour, venue and role
+- [x] **P0** SLA timer for load-in, rehearsal and approval deadlines
 - [ ] **P0** Escalation path for a critical show-week risk
 - [ ] **P0** “No action” as a recorded, valid outcome
 - [x] **P0** Dismissal taxonomy, visible in reporting
-- [ ] **P0** Reopen on recurrence, with the previous decision attached
+- [x] **P0** Reopen on recurrence, with the previous decision attached
 - [ ] **P0** “Fixed but not verified” on the show-week brief
 - [x] **P0** Human override log: who disagreed, with what evidence, why
 - [x] **P1** Risk grouping and dedupe by group key
@@ -108,15 +108,15 @@ Safety stays human.
 
 ## A5 · Delivery
 
-- [ ] **P0** In-app inbox with read/acknowledge
-- [ ] **P0** Email with a signed deep link and expiry
-- [ ] **P0** Slack / Teams with acknowledge and assign
-- [ ] **P0** SMS / pager for critical show-week only
-- [ ] **P0** Quiet hours with a digest fallback
-- [ ] **P0** Daily / weekly digest for the production office
-- [ ] **P0** Per-tenant notification isolation
-- [ ] **P0** Generic webhook with HMAC and retry
-- [ ] **P0** Delivery dashboard: sent, opened, acknowledged, failed
+- [x] **P0** In-app inbox with read/acknowledge
+- [x] **P0** Email with a signed deep link and expiry
+- [x] **P0** Slack / Teams with acknowledge and assign
+- [x] **P0** SMS / pager for critical show-week only
+- [x] **P0** Quiet hours with a digest fallback
+- [x] **P0** Daily / weekly digest for the production office
+- [x] **P0** Per-tenant notification isolation
+- [x] **P0** Generic webhook with HMAC and retry
+- [x] **P0** Delivery dashboard: sent, opened, acknowledged, failed
 - [ ] **P0** Notification preferences per role, venue and severity
 - [ ] **P1** Calendar sync for dates, load-in and rehearsal
 - [ ] **P1** Mobile push / PWA notification
@@ -126,17 +126,17 @@ Safety stays human.
 
 ## A6 · Anticipation
 
-- [ ] **P0** Rights expiry countdown per date and territory
-- [ ] **P0** Content delivery countdown with a fallback plan
+- [x] **P0** Rights expiry countdown per date and territory
+- [x] **P0** Content delivery countdown with a fallback plan
 - [ ] **P0** Crew confirmation and travel deadline tracker
 - [ ] **P0** Rehearsal hours vs cue complexity
 - [ ] **P0** Load-in hours vs rig and set complexity
 - [ ] **P0** “What changed since your last look” per tour
-- [ ] **P0** Show-week brief: top risks, approvals due, open items
+- [x] **P0** Show-week brief: top risks, approvals due, open items
 - [ ] **P0** Three-day final check with a stop-work list
-- [ ] **P1** Backtest readiness checks over past tours
+- [x] **P1** Backtest readiness checks over past tours
 - [ ] **P1** False-alarm trend by venue, tour and reason
-- [ ] **P1** Risk-fatigue budget per producer per week
+- [x] **P1** Risk-fatigue budget per producer per week
 - [ ] **P1** “If nothing changes, what happens next?” forecast
 - [ ] **P2** Seasonal and festival readiness templates
 - [ ] **P2** Cross-tour pattern library with a human owner
@@ -178,15 +178,15 @@ Safety stays human.
 ## A9 · Proactive definition of done
 
 - [ ] **P0** A new date or venue triggers a scan without a click
-- [ ] **P0** A stale venue profile raises a risk with the last-verified date
-- [ ] **P0** A rights expiry creates a countdown and a fallback
-- [ ] **P0** A missing clip blocks the cue and names the asset
-- [ ] **P0** A budget drift shows the delta and the owner
-- [ ] **P0** A producer can acknowledge, assign and dismiss in one minute
-- [ ] **P0** A dismissal records a reason and does not silence the pattern
-- [ ] **P0** The show-week brief is generated, not hand-written
-- [ ] **P0** The system stays quiet when nothing changed
-- [ ] **P0** The kill switch stops readiness without hiding the show
+- [x] **P0** A stale venue profile raises a risk with the last-verified date
+- [x] **P0** A rights expiry creates a countdown and a fallback
+- [x] **P0** A missing clip blocks the cue and names the asset
+- [x] **P0** A budget drift shows the delta and the owner
+- [x] **P0** A producer can acknowledge, assign and dismiss in one minute
+- [x] **P0** A dismissal records a reason and does not silence the pattern
+- [x] **P0** The show-week brief is generated, not hand-written
+- [x] **P0** The system stays quiet when nothing changed
+- [x] **P0** The kill switch stops readiness without hiding the show
 
 ---
 
@@ -253,11 +253,11 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 
 ## B4 · Canvas and timeline craft
 
-- [ ] **P0** Real 3D previz path (WebGL/WebGPU), not only SVG
+- [x] **P0** Real 3D previz path (WebGL/WebGPU), not only SVG
 - [ ] **P0** Fixture models and a fixture library
 - [ ] **P0** Volumetric beams with a quality setting
 - [ ] **P0** Camera paths and shot presets
-- [ ] **P0** Screen mapping preview with content
+- [x] **P0** Screen mapping preview with content
 - [ ] **P0** Performer blocking and paths
 - [ ] **P0** Video scrub with audio
 - [ ] **P0** Solo, compare and A/B two looks
@@ -266,21 +266,21 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 - [ ] **P0** Reduced-motion and low-quality fallback
 - [ ] **P0** Export a still and a short sequence
 - [ ] **P0** Legibility at 10 metres
-- [ ] **P0** Presenter mode: large type, keyboard-only
+- [x] **P0** Presenter mode: large type, keyboard-only
 - [ ] **P1** Camera-move authoring
 - [ ] **P1** Video mapping on non-planar screens
 - [ ] **P2** Real-time remote previz session
 
 ## B5 · AI-native interaction
 
-- [ ] **P0** Natural-language commands: “make the drop warmer”
+- [x] **P0** Natural-language commands: “make the drop warmer”
 - [ ] **P0** “Show rig conflicts on this leg”
-- [ ] **P0** Intent parser with clarification and safe fallback
+- [x] **P0** Intent parser with clarification and safe fallback
 - [x] **P0** Tool calls as inspectable steps, not magic
 - [x] **P0** Citations to the source asset, cue or risk
 - [x] **P0** Confidence and missing-evidence language
 - [ ] **P0** “Why this look?” and “why this risk?” drawers
-- [ ] **P0** Propose vs apply, with an explicit confirm
+- [x] **P0** Propose vs apply, with an explicit confirm
 - [ ] **P0** Undo for any applied suggestion
 - [x] **P0** Human approval for every change
 - [ ] **P0** Multilingual answers, not only chrome
@@ -325,6 +325,7 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 ## B8 · Performance
 
 - [ ] **P0** Route-level code splitting that works in this environment
+- [x] **P0** On-demand WebGL chunk: the 3D previz is not in the first load
 - [ ] **P0** Bundle budget in CI
 - [ ] **P0** LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1
 - [ ] **P0** 3D frame time ≤ 16 ms
@@ -359,7 +360,8 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 - [ ] **P0** Share card for a finished cue sheet
 - [ ] **P0** Export a show poster / zine page
 - [ ] **P0** Designer’s notes on every look
-- [x] **P0** A moodboard the designer can add to
+- [ ] **P0** A moodboard the designer can add to
+- [x] **P0** A moodboard is part of the concept board
 - [ ] **P0** Palette extraction from a reference
 - [ ] **P0** A “scratch” look that is not in the cue sheet
 - [ ] **P0** A show reset that feels like a blackout
@@ -389,20 +391,21 @@ the rest. Never live control.
 
 ## C1 · OpenJiuwen / DeepAgent
 
+- [x] **P0** HTTP adapter for a DeepAgent/OpenAI-compatible endpoint, with an explicit 502 on failure
 - [ ] **P0** Real DeepAgent/JiuwenSwarm client, not a status-only seam
 - [ ] **P0** Model configuration per tenant
 - [ ] **P0** Auth and secret handling
-- [ ] **P0** Typed tool schemas and a tool registry
+- [x] **P0** Typed tool schemas and a tool registry
 - [ ] **P0** Streaming answers and tool steps
 - [ ] **P0** Citation coverage on every claim
 - [ ] **P0** Eval set of 50 show questions
-- [ ] **P0** Offline deterministic fallback
+- [x] **P0** Offline deterministic fallback
 - [ ] **P0** Timeout, retry and a clear error surface
 - [ ] **P0** Rate limits and cost caps
-- [ ] **P0** Audit of every ask and answer
+- [x] **P0** Audit of every ask and answer
 - [ ] **P0** Model version and prompt version pinned
-- [ ] **P0** No autonomous change, approval or signature
-- [ ] **P0** MCP server exposing the show tools
+- [x] **P0** No autonomous change, approval or signature
+- [x] **P0** MCP server exposing the show tools
 - [ ] **P0** MCP client for an external design tool
 - [ ] **P1** Local model path for unreleased content
 - [ ] **P1** Agent evaluation dashboard
@@ -443,12 +446,14 @@ the rest. Never live control.
 
 ## C4 · Previz and CAD
 
+- [x] **P0** Vectorworks fixture schedule CSV export
 - [ ] **P0** Vectorworks Spotlight import
 - [ ] **P0** Vectorworks Spotlight export
 - [ ] **P0** WYSIWYG exchange
 - [ ] **P0** Capture exchange
 - [ ] **P0** Depence² exchange
-- [ ] **P0** MVR import/export
+- [x] **P0** MVR exchange package export (minimal, not vendor-certified)
+- [ ] **P0** MVR import
 - [ ] **P0** glTF / USD handoff
 - [ ] **P0** Fixture library and patch
 - [ ] **P0** Stage geometry round-trip
@@ -459,8 +464,8 @@ the rest. Never live control.
 ## C5 · Console and video
 
 - [ ] **P0** grandMA3 cue import
-- [ ] **P0** grandMA3 cue export
-- [ ] **P0** Resolume clip/layer export
+- [x] **P0** grandMA3 cue export
+- [x] **P0** Resolume clip/layer export
 - [ ] **P0** disguise mapping export
 - [ ] **P0** Notch block export
 - [ ] **P0** Media-server clip list
@@ -490,7 +495,7 @@ the rest. Never live control.
 
 - [ ] **P0** Google Calendar
 - [ ] **P0** Microsoft Outlook
-- [ ] **P0** ICS fallback
+- [x] **P0** ICS fallback
 - [ ] **P0** Load-in, show, curfew and rehearsal events
 - [ ] **P0** Travel and accommodation
 - [ ] **P0** Crew assignment and confirmation
@@ -501,14 +506,14 @@ the rest. Never live control.
 
 ## C8 · Chat, tasks and alerts
 
-- [ ] **P0** Slack
+- [x] **P0** Slack
 - [ ] **P0** Microsoft Teams
-- [ ] **P0** Email
-- [ ] **P0** SMS / pager
+- [x] **P0** Email
+- [x] **P0** SMS / pager
 - [ ] **P0** Jira
 - [ ] **P0** Asana
 - [ ] **P0** Linear
-- [ ] **P0** HMAC webhook and retry
+- [x] **P0** HMAC webhook and retry
 - [ ] **P0** Acknowledge and assign from chat
 - [ ] **P0** Signed deep links
 - [ ] **P1** Task status sync back to a risk
@@ -546,9 +551,9 @@ the rest. Never live control.
 - [ ] **P0** Model registry and versioning
 - [ ] **P0** Frame-time budget
 - [ ] **P0** Export-time budget
-- [ ] **P0** Explicit failure when the model or GPU is missing
-- [ ] **P0** Local-only path for unreleased content
-- [ ] **P0** Privacy review and telemetry off
+- [x] **P0** Explicit failure when the model or GPU is missing
+- [x] **P0** Local-only path for unreleased content
+- [x] **P0** Privacy review and telemetry off
 - [ ] **P1** Beat/stem analysis on site
 - [ ] **P1** Pose/blocking from rehearsal footage
 - [ ] **P2** Look/video suggestions on the edge box
@@ -559,7 +564,7 @@ the rest. Never live control.
 - [ ] **P0** Penetration test
 - [ ] **P0** Least-privilege service accounts
 - [ ] **P0** Key rotation
-- [ ] **P0** Signed links with expiry
+- [x] **P0** Signed links with expiry
 - [ ] **P0** DPA and sub-processor list
 - [ ] **P0** Data-rights annex signed
 - [ ] **P0** Incident response and notification

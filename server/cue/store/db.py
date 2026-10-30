@@ -69,6 +69,57 @@ CREATE TABLE IF NOT EXISTS risk_checks (
   at TEXT NOT NULL,
   PRIMARY KEY (tenant, risk_id, check_id)
 );
+CREATE TABLE IF NOT EXISTS dynamic_risks (
+  tenant TEXT NOT NULL,
+  risk_id TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (tenant, risk_id)
+);
+CREATE TABLE IF NOT EXISTS scan_runs (
+  id TEXT NOT NULL,
+  tenant TEXT NOT NULL,
+  at TEXT NOT NULL,
+  mode TEXT NOT NULL,
+  checked INTEGER NOT NULL,
+  raised INTEGER NOT NULL,
+  suppressed INTEGER NOT NULL,
+  duration_ms INTEGER NOT NULL,
+  status TEXT NOT NULL,
+  note TEXT NOT NULL,
+  PRIMARY KEY (tenant, id)
+);
+CREATE TABLE IF NOT EXISTS notifications (
+  id TEXT NOT NULL,
+  tenant TEXT NOT NULL,
+  at TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  severity TEXT NOT NULL,
+  title TEXT NOT NULL,
+  detail TEXT NOT NULL,
+  risk_id TEXT,
+  channels TEXT NOT NULL,
+  delivered INTEGER NOT NULL,
+  read INTEGER NOT NULL,
+  dedup_key TEXT NOT NULL,
+  PRIMARY KEY (tenant, id)
+);
+CREATE TABLE IF NOT EXISTS deliveries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant TEXT NOT NULL,
+  notification_id TEXT NOT NULL,
+  channel TEXT NOT NULL,
+  status TEXT NOT NULL,
+  detail TEXT NOT NULL,
+  at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_delivery_tenant ON deliveries(tenant, id DESC);
+CREATE TABLE IF NOT EXISTS proactive_settings (
+  tenant TEXT PRIMARY KEY,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
 """
 
 
@@ -244,9 +295,157 @@ class Store:
             out.setdefault(r["risk_id"], []).append(r["check_id"])
         return out
 
+    # ---------------------------------------------------------------- proactive
+
+    def dynamic_risks(self, tenant: str) -> list[dict[str, Any]]:
+        with self._lock:
+            rows = self._conn.execute("SELECT payload FROM dynamic_risks WHERE tenant = ?", (tenant,)).fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def save_dynamic_risk(self, tenant: str, risk: dict[str, Any]) -> dict[str, Any]:
+        at = now_iso()
+        with self._lock:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO dynamic_risks(tenant, risk_id, payload, created_at, updated_at) VALUES (?,?,?,COALESCE((SELECT created_at FROM dynamic_risks WHERE tenant=? AND risk_id=?),?),?)",
+                (tenant, risk["id"], json.dumps(risk, ensure_ascii=False), tenant, risk["id"], at, at),
+            )
+            self._conn.commit()
+        return risk
+
+    def save_scan_run(self, tenant: str, run: dict[str, Any]) -> dict[str, Any]:
+        with self._lock:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO scan_runs(id, tenant, at, mode, checked, raised, suppressed, duration_ms, status, note) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (
+                    run["id"],
+                    tenant,
+                    run["at"],
+                    run["mode"],
+                    run["checked"],
+                    run["raised"],
+                    run["suppressed"],
+                    run["duration_ms"],
+                    run["status"],
+                    run.get("note", ""),
+                ),
+            )
+            self._conn.commit()
+        return run
+
+    def scan_runs(self, tenant: str, limit: int = 20) -> list[dict[str, Any]]:
+        with self._lock:
+            rows = self._conn.execute("SELECT * FROM scan_runs WHERE tenant = ? ORDER BY at DESC LIMIT ?", (tenant, limit)).fetchall()
+        return [
+            {
+                "id": r["id"],
+                "at": r["at"],
+                "mode": r["mode"],
+                "checked": r["checked"],
+                "raised": r["raised"],
+                "suppressed": r["suppressed"],
+                "duration_ms": r["duration_ms"],
+                "status": r["status"],
+                "note": r["note"],
+            }
+            for r in rows
+        ]
+
+    def save_notification(self, tenant: str, notification: dict[str, Any]) -> dict[str, Any]:
+        with self._lock:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO notifications(id, tenant, at, kind, severity, title, detail, risk_id, channels, delivered, read, dedup_key) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                (
+                    notification["id"],
+                    tenant,
+                    notification["at"],
+                    notification["kind"],
+                    notification["severity"],
+                    notification["title"],
+                    notification["detail"],
+                    notification.get("risk_id"),
+                    json.dumps(notification.get("channels", [])),
+                    1 if notification.get("delivered") else 0,
+                    1 if notification.get("read") else 0,
+                    notification.get("dedup_key", ""),
+                ),
+            )
+            self._conn.commit()
+        return notification
+
+    def notifications(self, tenant: str, limit: int = 50) -> list[dict[str, Any]]:
+        with self._lock:
+            rows = self._conn.execute("SELECT * FROM notifications WHERE tenant = ? ORDER BY at DESC LIMIT ?", (tenant, limit)).fetchall()
+        return [
+            {
+                "id": r["id"],
+                "at": r["at"],
+                "kind": r["kind"],
+                "severity": r["severity"],
+                "title": r["title"],
+                "detail": r["detail"],
+                "risk_id": r["risk_id"],
+                "channels": json.loads(r["channels"]),
+                "delivered": bool(r["delivered"]),
+                "read": bool(r["read"]),
+                "dedup_key": r["dedup_key"],
+            }
+            for r in rows
+        ]
+
+    def mark_notification(self, tenant: str, notification_id: str, read: bool = True) -> None:
+        with self._lock:
+            self._conn.execute("UPDATE notifications SET read = ? WHERE tenant = ? AND id = ?", (1 if read else 0, tenant, notification_id))
+            self._conn.commit()
+
+    def mark_all_notifications(self, tenant: str) -> None:
+        with self._lock:
+            self._conn.execute("UPDATE notifications SET read = 1 WHERE tenant = ?", (tenant,))
+            self._conn.commit()
+
+    def record_delivery(self, tenant: str, notification_id: str, channel: str, status: str, detail: str = "") -> dict[str, Any]:
+        at = now_iso()
+        with self._lock:
+            cur = self._conn.execute(
+                "INSERT INTO deliveries(tenant, notification_id, channel, status, detail, at) VALUES (?,?,?,?,?,?)",
+                (tenant, notification_id, channel, status, detail, at),
+            )
+            self._conn.commit()
+        return {"id": cur.lastrowid, "notification_id": notification_id, "channel": channel, "status": status, "detail": detail, "at": at}
+
+    def deliveries(self, tenant: str, limit: int = 50) -> list[dict[str, Any]]:
+        with self._lock:
+            rows = self._conn.execute("SELECT * FROM deliveries WHERE tenant = ? ORDER BY id DESC LIMIT ?", (tenant, limit)).fetchall()
+        return [dict(r) for r in rows]
+
+    def proactive_settings(self, tenant: str) -> dict[str, Any] | None:
+        with self._lock:
+            row = self._conn.execute("SELECT payload FROM proactive_settings WHERE tenant = ?", (tenant,)).fetchone()
+        return json.loads(row["payload"]) if row else None
+
+    def save_proactive_settings(self, tenant: str, settings: dict[str, Any]) -> dict[str, Any]:
+        at = now_iso()
+        with self._lock:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO proactive_settings(tenant, payload, updated_at) VALUES (?,?,?)",
+                (tenant, json.dumps(settings, ensure_ascii=False), at),
+            )
+            self._conn.commit()
+        return settings
+
     def reset(self, tenant: str) -> None:
         with self._lock:
-            for table in ("audit", "cue_signatures", "version_approvals", "risk_states", "risk_checks"):
+            for table in (
+                "audit",
+                "cue_signatures",
+                "version_approvals",
+                "risk_states",
+                "risk_checks",
+                "dynamic_risks",
+                "scan_runs",
+                "notifications",
+                "deliveries",
+                "proactive_settings",
+            ):
                 self._conn.execute(f"DELETE FROM {table} WHERE tenant = ?", (tenant,))
             self._conn.commit()
 

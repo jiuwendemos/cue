@@ -80,6 +80,35 @@ curl -s -X POST http://127.0.0.1:8000/api/readiness/R-001/dismiss \
   -H 'content-type: application/json' -d '{"actor":"Mara Voss"}'   # 400
 ```
 
+## Proactive runtime
+
+- `CUE_SCHEDULER=1` starts an in-process asyncio scanner loop. It is intentionally small; a production
+  deployment replaces it with a durable queue and a worker process.
+- The scanner watches venue fit, rig/power, rights, assets, budget, schedule and data freshness. It
+  groups risks, deduplicates by `groupKey` and does not re-raise an open risk in the same room.
+- Scan history, notifications, deliveries, dynamic risks and settings are tenant-scoped in SQLite.
+- Delivery: in-app, email, Slack, Teams, SMS and HMAC-signed webhook. Missing credentials are recorded
+  as `simulated`; a failed call is recorded as `error` and never crashes the scan.
+- `POST /api/proactive/scan` is the manual path; `POST /api/proactive/stop` is the kill switch.
+
+## Exports and MCP
+
+- Real files: `iCalendar`, grandMA3 CSV/XML, Resolume CSV, Vectorworks fixture CSV and a minimal MVR
+  exchange ZIP. These are not vendor-certified; a pilot replaces a reference adapter with the vendor's
+  schema and a round-trip test.
+- `POST /mcp` is an MCP-compatible JSON-RPC surface: `initialize`, `tools/list`, `tools/call`, `ping`.
+  Tools: `show_summary`, `checks`, `budget`, `readiness`, `cue_sheet`, `ask`. Every tool is read-only.
+- Signed share links use HMAC-SHA256 and expire; `/api/share/cue-sheet` verifies the token before it
+  prints.
+
+## Remote agent
+
+- Set `CUE_AGENT_ENDPOINT` to a DeepAgent or OpenAI-compatible endpoint. The adapter sends the show,
+  the active look, rejected looks and the tool list; it accepts a CUE answer shape or a chat completion.
+- `CUE_AGENT_API_KEY` is sent as a Bearer token.
+- A configured but unreachable endpoint returns **502**, not a silent local answer.
+- Without an endpoint, the deterministic local agent remains the default.
+
 ## Production gate
 
 - [x] Agent status and ask endpoint.
@@ -88,6 +117,12 @@ curl -s -X POST http://127.0.0.1:8000/api/readiness/R-001/dismiss \
 - [x] Signed cue sheet and version approval.
 - [x] Explicit missing-NPU error.
 - [x] Offline/air-gapped posture.
+- [x] Proactive scheduler, watchers, scan history and kill switch.
+- [x] Delivery adapters with simulated/real status.
+- [x] MCP-compatible read-only tools.
+- [x] Real iCalendar, console, video, fixture and MVR exchange exports.
+- [x] Remote agent adapter with explicit failure.
+- [ ] Durable queue/worker (the current loop is in-process).
 - [ ] One live previz adapter.
 - [ ] One live console export.
 - [ ] OIDC/SSO.
@@ -95,4 +130,5 @@ curl -s -X POST http://127.0.0.1:8000/api/readiness/R-001/dismiss \
 - [ ] One real tour, one venue, 90 days.
 - [ ] Designer, producer and crew acceptance.
 
-The last six are customer and vendor work. The code is ready to be pointed at them.
+The remaining items are customer, hardware and deployment work. The code paths are ready to be pointed
+at them.

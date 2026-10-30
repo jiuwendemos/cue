@@ -46,6 +46,7 @@ interface Persisted {
   localVersions: ShowVersion[];
   budgetApproved: number | null;
   briefSeen: boolean;
+  extraRisks: ReadinessRisk[];
 }
 
 const EMPTY: Persisted = {
@@ -68,6 +69,7 @@ const EMPTY: Persisted = {
   localVersions: [],
   budgetApproved: null,
   briefSeen: false,
+  extraRisks: [],
 };
 
 function load(): Persisted {
@@ -142,6 +144,7 @@ interface StoreValue {
   dismissRisk: (id: string, reason: string) => void;
   completeRiskCheck: (riskId: string, checkId: string) => void;
   runReadinessCheck: () => void;
+  refreshLive: () => Promise<void>;
   approveVersion: (id: string, actor: string, note: string) => void;
   createVersion: (label: string, note: string) => string;
   setBudgetApproved: (value: number) => void;
@@ -255,7 +258,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
                   if (risk.dismissedReason) dismissalReasons[risk.id] = risk.dismissedReason;
                   riskChecks[risk.id] = (risk.checks ?? []).filter((c) => c.done).map((c) => c.id);
                 }
-                return { ...prev, riskStates, riskOwners, dismissalReasons, riskChecks };
+                const extraRisks = (data.risks ?? []).filter((risk) => risk.id.startsWith("D-")) as unknown as ReadinessRisk[];
+                return { ...prev, riskStates, riskOwners, dismissalReasons, riskChecks, extraRisks };
               });
             }
           }
@@ -374,7 +378,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const risks = useMemo(
     () =>
-      PACK.risks.map((risk) => {
+      [...PACK.risks, ...state.extraRisks].map((risk) => {
         const done = state.riskChecks[risk.id] ?? [];
         return {
           ...risk,
@@ -384,7 +388,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           dismissedReason: state.dismissalReasons[risk.id] ?? risk.dismissedReason,
         };
       }),
-    [state.dismissalReasons, state.riskChecks, state.riskOwners, state.riskStates],
+    [state.dismissalReasons, state.extraRisks, state.riskChecks, state.riskOwners, state.riskStates],
   );
 
   const openRisks = useMemo(() => risks.filter(riskOpen), [risks]);
@@ -683,6 +687,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, [call, checks, pushAudit, say]);
 
+  const refreshLive = useCallback(async () => {
+    if (!liveRef.current) return;
+    try {
+      const response = await fetch(apiUrl("readiness"));
+      if (!response.ok) return;
+      const data = (await response.json()) as {
+        risks?: { id: string; state: RiskState; owner: string; dismissedReason?: string; checks?: { id: string; done: boolean }[] }[];
+      };
+      if (!data.risks) return;
+      setState((prev) => {
+        const riskStates = { ...prev.riskStates };
+        const riskOwners = { ...prev.riskOwners };
+        const dismissalReasons = { ...prev.dismissalReasons };
+        const riskChecks = { ...prev.riskChecks };
+        for (const risk of data.risks ?? []) {
+          riskStates[risk.id] = risk.state;
+          riskOwners[risk.id] = risk.owner;
+          if (risk.dismissedReason) dismissalReasons[risk.id] = risk.dismissedReason;
+          riskChecks[risk.id] = (risk.checks ?? []).filter((c) => c.done).map((c) => c.id);
+        }
+        const extraRisks = (data.risks ?? []).filter((risk) => risk.id.startsWith("D-")) as unknown as ReadinessRisk[];
+        return { ...prev, riskStates, riskOwners, dismissalReasons, riskChecks, extraRisks };
+      });
+    } catch {
+      /* offline-first */
+    }
+  }, [apiUrl]);
+
   const approveVersion = useCallback(
     (id: string, actor: string, note: string) => {
       const at = new Date().toISOString();
@@ -776,7 +808,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const markBriefSeen = useCallback(() => setState((prev) => ({ ...prev, briefSeen: true })), []);
 
   const reset = useCallback(() => {
-    setState({ ...EMPTY, settings: { ...PACK.readiness } });
+    setState({ ...EMPTY, settings: { ...PACK.readiness }, extraRisks: [] });
     say("Demo reset — the show is back to v5");
   }, [say]);
 
@@ -830,6 +862,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       dismissRisk,
       completeRiskCheck,
       runReadinessCheck,
+      refreshLive,
       approveVersion,
       createVersion,
       setBudgetApproved,
@@ -848,7 +881,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ranked, activeLook, activeLookId, checks, cues, state.signedCues, risks, openRisks, riskCounts, notifications, unread,
       state.settings, state.stopReasons, state.audits, versions, currentVersion, budgetApproved, state.briefSeen, nextDateId,
       activeSuggestion, acceptSuggestion, rejectSuggestion, selectLook, rejectLook, clearDrop, voteDrop, patchCue, signCue, signSafetyCues,
-      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck, runReadinessCheck,
+      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck, runReadinessCheck, refreshLive,
       approveVersion, createVersion, setBudgetApproved, setReadinessMode, patchSettings, setStopSwitch, readNotification,
       readAllNotifications, markBriefSeen, reset, toast, say,
     ],
