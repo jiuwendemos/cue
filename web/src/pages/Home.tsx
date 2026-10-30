@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { useUI } from "../lib/ui";
-import { daysUntil, fmtDate, fmtMoney, fmtPct, fmtShortDate, songAt, timeAgo } from "../lib/engine";
+import { daysUntil, downloadText, fmtDate, fmtMoney, fmtPct, fmtShortDate, songAt, timeAgo } from "../lib/engine";
+import { showPosterSvg } from "../lib/poster";
 import { Donut, Meter, PageHead, Panel, Sparkline } from "../components/UI";
 import { StageCanvas } from "../components/StageCanvas";
 import { Icon } from "../components/Icon";
@@ -42,6 +43,9 @@ export default function Home() {
           <>
             <Link to="/show" className="btn primary"><Icon name="stage" size={14} /> {ui.t("home.open_show")}</Link>
             <Link to="/stage" className="btn"><Icon name="play" size={13} /> {ui.t("home.play_stage")}</Link>
+            <button className="btn ghost" onClick={() => downloadText("night-signal-poster.svg", showPosterSvg(pack), "image/svg+xml")} title="Download the show poster as SVG">
+              <Icon name="download" size={13} /> Poster
+            </button>
             <Link to="/booth" className="btn ghost"><Icon name="shows" size={13} /> {ui.t("nav.booth")}</Link>
           </>
         }

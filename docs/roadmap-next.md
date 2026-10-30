@@ -9,7 +9,7 @@
 Legend: `[x]` exists in the demo today · `[ ]` to build · **P0** prove in the next pilot · **P1** next
 90 days · **P2** after the first paid tour.
 
-**479 checkboxes: 116 already in the demo, 363 to build.** The count is the point: this is the work,
+**479 checkboxes: 118 already in the demo, 361 to build.** The count is the point: this is the work,
 not a slogan.
 
 The current demo status is in [roadmap.md](roadmap.md). The public app is
@@ -228,7 +228,7 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 - [ ] **P0** AI-generated asset label and attribution
 - [ ] **P0** Partner co-brand rules
 - [ ] **P0** Brand guidelines with anti-patterns
-- [ ] **P1** Show-poster generator from the setlist and palette
+- [x] **P1** Show-poster generator from the setlist and palette
 - [ ] **P2** Artist-specific skins with designer control
 
 ## B3 · Design system, for real
@@ -358,7 +358,7 @@ mobile review and a PWA shell. This is what closes the gap to a product people l
 - [x] **P0** A stage-piece intro that earns the first 10 seconds
 - [x] **P0** Micro-interactions on look selection and cue commit
 - [ ] **P0** Share card for a finished cue sheet
-- [ ] **P0** Export a show poster / zine page
+- [x] **P0** Export a show poster / zine page
 - [ ] **P0** Designer’s notes on every look
 - [ ] **P0** A moodboard the designer can add to
 - [x] **P0** A moodboard is part of the concept board
