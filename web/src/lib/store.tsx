@@ -141,6 +141,7 @@ interface StoreValue {
   reopenRisk: (id: string) => void;
   dismissRisk: (id: string, reason: string) => void;
   completeRiskCheck: (riskId: string, checkId: string) => void;
+  runReadinessCheck: () => void;
   approveVersion: (id: string, actor: string, note: string) => void;
   createVersion: (label: string, note: string) => string;
   setBudgetApproved: (value: number) => void;
@@ -652,6 +653,35 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [pushAudit, say],
   );
 
+  const runReadinessCheck = useCallback(() => {
+    const relevant = checks.filter((c) => ["power", "weight", "glare"].includes(c.id));
+    const failing = relevant.filter((c) => c.status === "fail");
+    if (failing.length === 0) {
+      setState((prev) => {
+        const riskStates = { ...prev.riskStates };
+        for (const id of ["R-001", "R-002", "R-003"]) riskStates[id] = "resolved";
+        return { ...prev, riskStates };
+      });
+      pushAudit({
+        actor: "CUE readiness",
+        action: "readiness.check",
+        object: "tour",
+        detail: "Re-check passed on power, weight and glare. Three risks marked resolved; verification is still required before the show-week brief clears them.",
+        sources: ["rig", "venue", "sightline-model"],
+      });
+      say("Re-check passed — power, weight and glare resolved, verification pending");
+    } else {
+      pushAudit({
+        actor: "CUE readiness",
+        action: "readiness.check",
+        object: "tour",
+        detail: `Re-check still fails: ${failing.map((c) => c.id).join(", ")}.`,
+        sources: ["rig", "venue", "sightline-model"],
+      });
+      say(`Re-check still fails on ${failing.map((c) => c.id).join(", ")}`);
+    }
+  }, [checks, pushAudit, say]);
+
   const approveVersion = useCallback(
     (id: string, actor: string, note: string) => {
       const at = new Date().toISOString();
@@ -798,6 +828,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       reopenRisk,
       dismissRisk,
       completeRiskCheck,
+      runReadinessCheck,
       approveVersion,
       createVersion,
       setBudgetApproved,
@@ -816,7 +847,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ranked, activeLook, activeLookId, checks, cues, state.signedCues, risks, openRisks, riskCounts, notifications, unread,
       state.settings, state.stopReasons, state.audits, versions, currentVersion, budgetApproved, state.briefSeen, nextDateId,
       activeSuggestion, acceptSuggestion, rejectSuggestion, selectLook, rejectLook, clearDrop, voteDrop, patchCue, signCue, signSafetyCues,
-      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck,
+      acknowledgeRisk, assignRisk, investigateRisk, resolveRisk, verifyRisk, reopenRisk, dismissRisk, completeRiskCheck, runReadinessCheck,
       approveVersion, createVersion, setBudgetApproved, setReadinessMode, patchSettings, setStopSwitch, readNotification,
       readAllNotifications, markBriefSeen, reset, toast, say,
     ],

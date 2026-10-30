@@ -202,7 +202,7 @@ export default function Readiness() {
           <>
             <button className="btn" onClick={() => setBriefOpen(true)}><Icon name="file" size={13} /> {ui.t("readiness.show_week")}</button>
             <button className="btn" onClick={exportRisks}><Icon name="download" size={13} /> CSV</button>
-            <button className="btn primary" onClick={() => { setFilter("open"); store.say("Readiness check run — 14 checks, 4 new, 1 reopened."); }}><Icon name="refresh" size={13} /> Run check</button>
+            <button className="btn primary" onClick={() => { setFilter("open"); store.runReadinessCheck(); }}><Icon name="refresh" size={13} /> Run check</button>
           </>
         }
       />

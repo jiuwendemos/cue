@@ -398,7 +398,12 @@ export default function StagePiece() {
             <p>One lamp, one drop, one human decision. The AI proposes a spectacular look. It is also unsafe. You decide.</p>
             <button className="btn primary" onClick={start}><Icon name="play" size={16} /> {store.vote ? "Play again" : "Play the 90-second show"}</button>
             <p className="xsmall soft" style={{ marginTop: 14 }}>Sound on. Deterministic. Press R to reset, ESC to exit.</p>
-            {ui.showDemoNotices && <p className="xsmall soft" style={{ marginTop: 6 }}>A synthetic show: Nova Vale, the venue and the track are invented for this demo.</p>}
+            {ui.showDemoNotices && (
+              <p className="xsmall soft" style={{ marginTop: 6 }}>
+                A synthetic show: Nova Vale, the venue and the track are invented for this demo.{" "}
+                <Link to="/glossary" style={{ color: "#d7ff4f" }}>How to read it →</Link>
+              </p>
+            )}
           </div>
         </div>
       )}
