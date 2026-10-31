@@ -12,7 +12,7 @@ dependencies = [
   "uvicorn[standard]>=0.27",
   "pydantic>=2.6",
   "python-multipart>=0.0.9",
-  "laix @ git+https://github.com/michaelatamuk/laix.git@v0.1.1#subdirectory=python/laix",
+  "laix @ git+https://github.com/michaelatamuk/laix.git@v0.2.0#subdirectory=python/laix",
 ]
 
 [project.optional-dependencies]
@@ -34,3 +34,8 @@ markers = [
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+
+[tool.ruff.lint.isort]
+# Keep import grouping stable whether LAIX is installed from the tag or as an
+# editable checkout. Without this, ruff classifies it by install location.
+known-third-party = ["laix"]

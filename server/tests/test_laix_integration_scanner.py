@@ -14,8 +14,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
-
-
 from laix import DecisionRequest, Layer
 
 from cue.proactive import scanner
