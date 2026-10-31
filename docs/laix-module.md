@@ -9,7 +9,7 @@ calls it through a small adapter.
 
 | Question | Answer |
 |---|---|
-| Where is the decision engine? | `laix` v0.2.0, pinned in `server/pyproject.toml` |
+| Where is the decision engine? | `laix` v0.2.1, pinned in `server/pyproject.toml` |
 | Where is the adapter? | [`server/laix_integration/`](../server/laix_integration/) |
 | Where does CUE call it? | `cue/proactive/scanner.py`, one `Layer.decide()` per scan |
 | Is there a local fallback? | No. There is one decision path |

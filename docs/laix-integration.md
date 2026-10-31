@@ -53,7 +53,7 @@ severity levels, the score formula and the `deliver` / `record` flags.
 LAIX is a normal pinned dependency, not an extra:
 
 ```toml
-"laix @ git+https://github.com/michaelatamuk/laix.git@v0.2.0#subdirectory=python/laix"
+"laix @ git+https://github.com/michaelatamuk/laix.git@v0.2.1#subdirectory=python/laix"
 ```
 
 Install:
@@ -72,9 +72,11 @@ py -m pip install -e C:\Workspace\laix\python\laix
 
 There is no `main` URL in this repository. The tag is the contract.
 
-v0.2.0 adds policy plugins (`Layer(policy=...)`, `register_policy`, `use_policy`,
-`Layer.explain`). CUE uses the built-in attention policy and registers nothing, so
-the upgrade changed no behaviour; the parity fixture still passes unchanged.
+The pin is v0.2.1. v0.2.0 added policy plugins (`Layer(policy=...)`,
+`register_policy`, `use_policy`, `Layer.explain`); v0.2.1 scopes the approval flag
+to `act` in the action-selection policy and forwards an execution context through
+`Layer.execute`. CUE uses the built-in attention policy and never calls `execute`,
+so neither release changed a decision; the parity fixture still passes unchanged.
 
 ## Upgrading LAIX
 
