@@ -9,22 +9,14 @@ cue, a look or a signature.
 from __future__ import annotations
 
 import hashlib
-import json
-import logging
-import os
 import time
 from datetime import datetime, timedelta
 from typing import Any
 
-from laix_attention import (
-    SEVERITY_RANK,
-    Context,
-    Signal,
-    decide,
-    is_quiet,
-    parse_range,
-    rollup,
-)
+from laix import DecisionRequest, Layer, Signal
+from laix.attention import SEVERITY_RANK, rollup
+
+from laix_integration.mapper import to_context, to_cue_decision, to_signal
 
 from ..engine.show import (
     _venue,
@@ -40,11 +32,6 @@ from ..engine.show import (
 from ..store.db import Store, now_iso
 from .delivery import CueSink
 from .history import learned_adjustments
-
-#: off | shadow. Read once at import; shadow never changes a native decision and
-#: never imports LAIX when off.
-LAIX_MODE = os.environ.get("CUE_LAIX_MODE", "off").strip().lower()
-LOGGER = logging.getLogger("cue.laix.shadow")
 
 
 def default_settings(pack: dict[str, Any]) -> dict[str, Any]:
@@ -404,28 +391,6 @@ def detect_candidates(pack: dict[str, Any], active_look_id: str = "look-aerial-1
     return list(by_key.values())
 
 
-def _quiet(settings: dict[str, Any], now: datetime) -> bool:
-    """Kept for callers that already import it; the rule lives in the package."""
-    return is_quiet(now, settings.get("quietHours", "22:00-06:00"))
-
-
-def _signal(candidate: dict[str, Any]) -> Signal:
-    """Translate one app candidate into the generic signal the policy sees."""
-    return Signal(
-        id=str(candidate["id"]),
-        kind=str(candidate["kind"]),
-        title=str(candidate["title"]),
-        detail=str(candidate["detail"]),
-        severity=str(candidate["severity"]),
-        confidence=float(candidate.get("confidence", 0.5)),
-        due=candidate.get("due"),
-        evidence_refs=tuple(str(item.get("id", "")) for item in candidate.get("evidence", [])),
-        group_key=candidate.get("groupKey"),
-        interruption_cost=0.0,
-        requires_approval=bool(candidate.get("requiresApproval", False)),
-    )
-
-
 def build_digest(pack: dict[str, Any], risks: list[dict[str, Any]], settings: dict[str, Any]) -> dict[str, Any]:
     open_risks = [risk for risk in risks if risk.get("state") not in {"resolved", "dismissed"}]
     # The selection rule is generic; the wording below is the app's.
@@ -465,45 +430,6 @@ def build_digest(pack: dict[str, Any], risks: list[dict[str, Any]], settings: di
         "generated_by": "CUE proactive scheduler",
         "at": now_iso(),
     }
-
-
-def _shadow_compare(
-    *,
-    candidates: list[dict[str, Any]],
-    settings: dict[str, Any],
-    now: datetime,
-    native_decisions: list[Any],
-    sent: frozenset[str],
-    learned: dict[str, float],
-    scan: dict[str, Any],
-) -> None:
-    """Ask LAIX for the same decision, log both, and change nothing.
-
-    Every failure is contained here: the scan, its notifications and its
-    deliveries are already decided before this runs.
-    """
-    try:
-        from laix_integration.mapper import to_context, to_signal
-        from laix_integration.shadow import emit, run_shadow
-
-        signals = [to_signal(candidate, now) for candidate in candidates]
-        context = to_context({**settings, "sent": sent, "learned": learned}, now)
-        report = run_shadow(native_decisions, signals, context, scan_id=scan["id"], at=scan["at"])
-        emit(report)
-    except Exception as exc:  # noqa: BLE001 - shadow must never break a scan
-        LOGGER.info(
-            json.dumps(
-                {
-                    "event": "laix.shadow.scan",
-                    "scan_id": scan.get("id"),
-                    "at": scan.get("at"),
-                    "signal_id": None,
-                    "error": f"{type(exc).__name__}: {exc}",
-                },
-                sort_keys=True,
-                default=str,
-            )
-        )
 
 
 def run_scan(
@@ -555,21 +481,19 @@ def run_scan(
     for candidate in new:
         store.save_dynamic_risk(tenant, candidate)
 
-    # The decision layer is generic: CUE translates candidate -> signal and
-    # decision -> notification. Policy, timing, dedupe and trace ids live in
-    # laix_attention so another app can use the same rules.
+    # LAIX is the only decision engine: CUE detects, LAIX decides, CUE delivers.
     recent = store.notifications(tenant, limit=100)
     dedupe = {n.get("dedup_key") for n in recent}
     learned = learned_adjustments(pack["risks"] + store.dynamic_risks(tenant))
-    context = Context(
-        now=now,
-        quiet_hours=parse_range(settings.get("quietHours", "22:00-06:00")),
-        mode=mode,
-        min_severity="high",
-        sent=frozenset(key for key in dedupe if key),
-        learned=learned,
+    signals = [to_signal(candidate, now) for candidate in new]
+    context = to_context({**settings, "mode": mode, "sent": dedupe, "learned": learned}, now)
+    request = DecisionRequest(
+        subject="CUE readiness scan",
+        at=now.isoformat(),
+        signals=tuple(signals),
+        context=context,
     )
-    decisions = decide([_signal(candidate) for candidate in new], context)
+    decisions = [to_cue_decision(item, signal.id) for item, signal in zip(Layer().decide(request), signals)]
     by_id = {candidate["id"]: candidate for candidate in new}
     sink = CueSink(store, tenant, settings)
 
@@ -615,16 +539,6 @@ def run_scan(
         "status": "ok",
         "note": f"{len(new)} new · {max(0, len(candidates) - len(new))} already known · {len(notifications)} notified.",
     }
-    if LAIX_MODE == "shadow":
-        _shadow_compare(
-            candidates=new,
-            settings=settings,
-            now=now,
-            native_decisions=decisions,
-            sent=context.sent,
-            learned=context.learned,
-            scan=run,
-        )
     store.save_scan_run(tenant, run)
     settings["lastScan"] = run["at"]
     settings["scanCount"] = int(settings.get("scanCount", 0)) + 1

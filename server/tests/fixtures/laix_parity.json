@@ -1,0 +1,124 @@
+{
+  "capturedFrom": "cue@7ff8d86 (local engine path, before the switch)",
+  "note": "Decision rows use a frozen clock and no due date so the capture is stable. Do not edit to force agreement.",
+  "decisions": [
+    {
+      "signal_id": "D-1944A7E3",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 76.4,
+      "requires_approval": false,
+      "evidence_refs": [
+        "cit-power",
+        "cit-venues"
+      ]
+    },
+    {
+      "signal_id": "D-68514643",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 61.4,
+      "requires_approval": false,
+      "evidence_refs": [
+        "cit-glare"
+      ]
+    },
+    {
+      "signal_id": "D-7DD7CEDD",
+      "action": "wait",
+      "reason": "below_floor",
+      "deliver": false,
+      "record": false,
+      "score": 46.4,
+      "requires_approval": false,
+      "evidence_refs": [
+        "v-fabrik"
+      ]
+    },
+    {
+      "signal_id": "D-9DB0B6A3",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 63.0,
+      "requires_approval": false,
+      "evidence_refs": [
+        "v-pier9"
+      ]
+    },
+    {
+      "signal_id": "D-92137FC2",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 61.4,
+      "requires_approval": false,
+      "evidence_refs": [
+        "d-rtm"
+      ]
+    },
+    {
+      "signal_id": "D-79559456",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 76.4,
+      "requires_approval": false,
+      "evidence_refs": [
+        "right-monolith"
+      ]
+    },
+    {
+      "signal_id": "D-ADAD0DFD",
+      "action": "notify",
+      "reason": "notify",
+      "deliver": true,
+      "record": true,
+      "score": 64.2,
+      "requires_approval": false,
+      "evidence_refs": [
+        "cit-asset"
+      ]
+    },
+    {
+      "signal_id": "D-4118128C",
+      "action": "wait",
+      "reason": "below_floor",
+      "deliver": false,
+      "record": false,
+      "score": 48.0,
+      "requires_approval": false,
+      "evidence_refs": [
+        "cit-budget"
+      ]
+    }
+  ],
+  "run": {
+    "checked": 22,
+    "raised": 1,
+    "suppressed": 7,
+    "status": "ok",
+    "note": "1 new · 7 already known · 1 notified."
+  },
+  "notifications": [
+    {
+      "risk_id": "D-9DB0B6A3",
+      "severity": "high",
+      "title": "The leg needs venue variants",
+      "detail": "5 room(s) are smaller than the home stage: Sala Apolo, Fabrik, La Trabendo, Electric Ballroom, VEGA. Venue 14 × 9 m / 7 m trim vs design 18 × 12 m / 9 m.",
+      "delivered": true,
+      "channels": [
+        "in_app",
+        "email",
+        "slack"
+      ]
+    }
+  ]
+}

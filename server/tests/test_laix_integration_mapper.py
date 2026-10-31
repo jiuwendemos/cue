@@ -8,7 +8,7 @@ import pytest
 
 pytest.importorskip("laix")
 
-from laix_integration.mapper import to_context, to_signal
+from laix_integration.mapper import to_context, to_cue_decision, to_signal
 
 NOW = datetime(2026, 11, 1, 10, 0, tzinfo=UTC)
 
@@ -156,3 +156,97 @@ def test_an_unreadable_quiet_window_is_never_quiet() -> None:
 
     context = to_context({"quietHours": "not-a-window"}, NOW)
     assert is_quiet(NOW.replace(hour=23), context.quiet_hours) is False
+
+
+# --------------------------------------------------------------------------- LAIX -> CUE
+
+
+def laix_decision(signals, context):
+    from laix import DecisionRequest, Layer
+
+    return Layer().decide(DecisionRequest(subject="mapper test", at=NOW.isoformat(), signals=tuple(signals), context=context))
+
+
+def test_a_guide_decision_becomes_cue_notify() -> None:
+    from laix import Context, Signal
+
+    decision = laix_decision([Signal(id="s-1", kind="power", severity="critical", confidence=0.9)], Context(now=NOW))[0]
+    cue = to_cue_decision(decision, "s-1")
+
+    assert (cue.action, cue.reason, cue.signal_id) == ("notify", "notify", "s-1")
+    assert cue.deliver is True
+    assert cue.record is True
+    assert cue.score == pytest.approx(decision.score)
+    assert cue.confidence == pytest.approx(decision.confidence)
+    assert cue.trace_id == decision.trace_id
+    assert cue.breakdown.total == pytest.approx(decision.breakdown.total)
+    assert cue.evidence_refs == ()
+
+
+def test_a_wait_decision_keeps_its_reason() -> None:
+    from laix import Context, Signal
+
+    decision = laix_decision([Signal(id="s-2", kind="data", severity="medium", confidence=0.8)], Context(now=NOW))[0]
+    cue = to_cue_decision(decision, "s-2")
+
+    assert (cue.action, cue.reason) == ("wait", "below_floor")
+    assert cue.deliver is False
+    assert cue.record is False
+
+
+def test_an_act_decision_carries_approval_and_intent() -> None:
+    from laix import Context, Signal
+    from laix.attention import Intent
+
+    signal = Signal(
+        id="s-3",
+        kind="rights",
+        severity="high",
+        confidence=0.9,
+        intent=Intent("extend_licence", {"asset": "rain-02"}),
+        reversible=True,
+        requires_approval=True,
+    )
+    decision = laix_decision([signal], Context(now=NOW, allow_act=True))[0]
+    cue = to_cue_decision(decision, "s-3")
+
+    assert (cue.action, cue.requires_approval) == ("act", True)
+    assert cue.intent is not None and cue.intent.capability == "extend_licence"
+    assert cue.reversible is True
+    assert cue.undo_hint == "cancel"
+
+
+def test_an_escalation_is_carried_through() -> None:
+    from laix import Context, Signal
+    from laix.attention import Escalation
+
+    signal = Signal(
+        id="s-4",
+        kind="safety",
+        severity="critical",
+        confidence=0.95,
+        due="2026-10-30T10:00:00+00:00",
+        escalation=Escalation("tour_manager", "stop-work item"),
+    )
+    decision = laix_decision([signal], Context(now=NOW, escalate_after_hours=24))[0]
+    cue = to_cue_decision(decision, "s-4")
+
+    assert cue.action == "escalate"
+    assert cue.escalation is not None
+    assert cue.escalation.target == "tour_manager"
+    assert cue.cost_of_waiting > 0
+
+
+def test_evidence_refs_are_flattened_to_ids() -> None:
+    from laix import Context, Signal
+
+    signal = Signal(
+        id="s-5",
+        kind="power",
+        severity="high",
+        confidence=0.9,
+        evidence_refs=("cit-power", "cit-venues"),
+    )
+    cue = to_cue_decision(laix_decision([signal], Context(now=NOW))[0], "s-5")
+
+    assert cue.evidence_refs == ("cit-power", "cit-venues")

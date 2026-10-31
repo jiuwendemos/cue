@@ -119,10 +119,11 @@ The on-site build runs the scheduler (`CUE_SCHEDULER=1`), the watchers, the scan
 adapters, the signed inbox and the backtest. The public build shows the same surface with a deterministic
 local scan and clearly labels it. Nothing is sent anywhere from the static demo.
 
-The *when to interrupt* part is not in the app any more. It is a dependency-free
-package, [`server/laix_attention/`](server/laix_attention/), with a written contract and
-12 behavioural vectors — extractable into LAIX as-is. See
-[the module note](docs/laix-module.md).
+The *when to interrupt* decision is not CUE's any more. It is made by
+[LAIX](https://github.com/michaelatamuk/laix), a pinned dependency, through the small
+adapter in [`server/laix_integration/`](server/laix_integration/). CUE keeps detection,
+the show store, the cue sheet, notification copy, delivery and outcome labels. See
+[the integration note](docs/laix-integration.md).
 
 ### 3D previz
 

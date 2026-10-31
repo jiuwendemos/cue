@@ -10,6 +10,7 @@ CUE notification, and nothing here writes to the show store.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
@@ -150,4 +151,99 @@ def to_context(settings: Mapping[str, Any], now: datetime) -> Context:
         escalate_after_hours=settings.get("escalateAfterHours"),
         learned={str(kind): float(points) for kind, points in learned.items()},
         allow_act=bool(settings.get("allowAct", False)),
+    )
+
+
+#: LAIX's word for "show it to the user".
+VERB_TO_ACTION: dict[str, str] = {"guide": "notify"}
+#: LAIX's name for the rule that says the signal is worth showing.
+REASON_TO_CUE: dict[str, str] = {"worth_surfacing": "notify"}
+
+
+@dataclass(frozen=True, slots=True)
+class CueBreakdown:
+    """The six score terms CUE's scanner has always exposed."""
+
+    severity: float = 0.0
+    due: float = 0.0
+    confidence: float = 0.0
+    interruption: float = 0.0
+    learned: float = 0.0
+    total: float = 0.0
+
+    def as_dict(self) -> dict[str, float]:
+        return {
+            "severity": round(self.severity, 2),
+            "due": round(self.due, 2),
+            "confidence": round(self.confidence, 2),
+            "interruption": round(self.interruption, 2),
+            "learned": round(self.learned, 2),
+            "total": round(self.total, 2),
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class CueDecision:
+    """The decision shape the scanner consumes. Field names are CUE's."""
+
+    signal_id: str
+    action: str
+    reason: str
+    score: float
+    confidence: float
+    deliver: bool
+    record: bool
+    requires_approval: bool
+    evidence_refs: tuple[str, ...]
+    breakdown: CueBreakdown
+    trace_id: str
+    intent: Any = None
+    escalation: Any = None
+    cost_of_waiting: float = 0.0
+    reversible: bool = False
+    undo_hint: str | None = None
+
+
+def _cue_breakdown(value: Any) -> CueBreakdown:
+    if value is None:
+        return CueBreakdown()
+    return CueBreakdown(
+        severity=float(getattr(value, "severity", 0.0)),
+        due=float(getattr(value, "due", 0.0)),
+        confidence=float(getattr(value, "confidence", 0.0)),
+        interruption=float(getattr(value, "interruption", 0.0)),
+        learned=float(getattr(value, "learned", 0.0)),
+        total=float(getattr(value, "total", 0.0)),
+    )
+
+
+def to_cue_decision(decision: Any, signal_id: str = "") -> CueDecision:
+    """Map one LAIX decision back to the shape the scanner already used.
+
+    LAIX is the only decision engine now. The two vocabulary differences are
+    applied here, so the rest of CUE keeps its own words: LAIX says ``guide``
+    where CUE says ``notify``, and ``worth_surfacing`` where CUE says ``notify``.
+    """
+    verb = str(getattr(decision, "verb", "") or "")
+    reason = str(getattr(decision, "reason_code", "") or "")
+    evidence = tuple(str(getattr(ref, "id", ref)) for ref in (getattr(decision, "evidence", ()) or ()))
+    score = getattr(decision, "score", None)
+
+    return CueDecision(
+        signal_id=signal_id,
+        action=VERB_TO_ACTION.get(verb, verb),
+        reason=REASON_TO_CUE.get(reason, reason),
+        score=float(score) if score is not None else 0.0,
+        confidence=float(getattr(decision, "confidence", 0.0)),
+        deliver=bool(getattr(decision, "deliver", False)),
+        record=bool(getattr(decision, "record", False)),
+        requires_approval=bool(getattr(decision, "requires_approval", False)),
+        evidence_refs=evidence,
+        breakdown=_cue_breakdown(getattr(decision, "breakdown", None)),
+        trace_id=str(getattr(decision, "trace_id", "") or ""),
+        intent=getattr(decision, "intent", None),
+        escalation=getattr(decision, "escalation", None),
+        cost_of_waiting=float(getattr(decision, "cost_of_waiting", 0.0) or 0.0),
+        reversible=bool(getattr(decision, "reversible", False)),
+        undo_hint=getattr(decision, "undo_hint", None),
     )

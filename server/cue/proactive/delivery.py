@@ -126,7 +126,7 @@ def deliver(store: Store, tenant: str, notification: dict[str, Any], settings: d
 
 
 class CueSink:
-    """The app side of ``laix_attention.ports.Sink``.
+    """The app side of the decision layer's delivery port.
 
     The decision layer decides; this class owns the channels, the credentials and
     the delivery log. A different app implements the same two-line interface.

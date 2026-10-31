@@ -1,7 +1,7 @@
 """Characterization tests for the proactive scanner.
 
-These describe what the scanner does *today*, so the extraction of
-``laix_attention`` can move code without changing behaviour. They are
+These describe what the scanner does, so the switch to LAIX can be checked
+without changing behaviour. They are
 deliberately written against observable output (notifications, counters) and a
 frozen clock, not against internals.
 """
