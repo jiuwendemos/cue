@@ -9,7 +9,7 @@ frozen clock, not against internals.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from pathlib import Path
 
 from cue.proactive import scanner
@@ -19,19 +19,30 @@ PACK = json.loads((Path(__file__).resolve().parents[1] / "cue" / "data" / "show.
 
 
 class FrozenDateTime(datetime):
-    """A datetime whose ``now()`` is fixed, so quiet hours and dedupe are testable."""
+    """A datetime whose ``now()`` is fixed, so quiet hours and dedupe are testable.
+
+    The moment is naive and is read as *local* wall-clock time, exactly like
+    ``datetime.now().astimezone()`` in the scanner. That keeps the test independent
+    of the runner's timezone.
+    """
 
     fixed: datetime | None = None
 
     @classmethod
     def now(cls, tz=None):  # type: ignore[no-untyped-def]
-        moment = cls.fixed or datetime(2026, 10, 30, 10, 0, tzinfo=timezone(timedelta(hours=2)))
-        return moment.astimezone(tz) if tz else moment
+        moment = (cls.fixed or datetime(2026, 10, 30, 10, 0)).replace(tzinfo=None)
+        return moment.astimezone(tz) if tz else moment.astimezone()
 
 
 def freeze(monkeypatch, moment: datetime) -> None:
     FrozenDateTime.fixed = moment
     monkeypatch.setattr(scanner, "datetime", FrozenDateTime)
+
+
+def test_the_frozen_clock_is_timezone_independent() -> None:
+    FrozenDateTime.fixed = datetime(2026, 10, 30, 23, 30)
+    assert FrozenDateTime.now().hour == 23
+    assert FrozenDateTime.now().astimezone().hour == 23
 
 
 def settings(**overrides):
@@ -47,7 +58,7 @@ def test_notifications_only_for_critical_and_high() -> None:
 
 
 def test_quiet_hours_hold_non_critical_but_let_critical_through(monkeypatch) -> None:
-    freeze(monkeypatch, datetime(2026, 10, 30, 23, 30, tzinfo=timezone(timedelta(hours=2))))
+    freeze(monkeypatch, datetime(2026, 10, 30, 23, 30))
     result = scanner.run_scan(PACK, Store(":memory:"), "halcyon", settings(mode="live", quietHours="22:00-06:00"))
     assert result["notifications"]
     for notification in result["notifications"]:
@@ -61,10 +72,10 @@ def test_quiet_hours_hold_non_critical_but_let_critical_through(monkeypatch) -> 
 def test_quiet_hours_boundaries_are_inclusive(monkeypatch) -> None:
     store = Store(":memory:")
     for moment, expected_quiet in [
-        (datetime(2026, 10, 30, 21, 59, tzinfo=timezone(timedelta(hours=2))), False),
-        (datetime(2026, 10, 30, 22, 0, tzinfo=timezone(timedelta(hours=2))), True),
-        (datetime(2026, 10, 30, 6, 0, tzinfo=timezone(timedelta(hours=2))), True),
-        (datetime(2026, 10, 30, 6, 1, tzinfo=timezone(timedelta(hours=2))), False),
+        (datetime(2026, 10, 30, 21, 59), False),
+        (datetime(2026, 10, 30, 22, 0), True),
+        (datetime(2026, 10, 30, 6, 0), True),
+        (datetime(2026, 10, 30, 6, 1), False),
     ]:
         freeze(monkeypatch, moment)
         fresh = Store(":memory:")
@@ -76,7 +87,7 @@ def test_quiet_hours_boundaries_are_inclusive(monkeypatch) -> None:
 
 
 def test_a_second_scan_notifies_nothing_new(monkeypatch) -> None:
-    freeze(monkeypatch, datetime(2026, 10, 30, 10, 0, tzinfo=timezone(timedelta(hours=2))))
+    freeze(monkeypatch, datetime(2026, 10, 30, 10, 0))
     store = Store(":memory:")
     first = scanner.run_scan(PACK, store, "halcyon", settings(mode="live"))
     assert first["notifications"]
@@ -87,7 +98,7 @@ def test_a_second_scan_notifies_nothing_new(monkeypatch) -> None:
 
 
 def test_a_held_notification_is_not_repeated_same_day(monkeypatch) -> None:
-    freeze(monkeypatch, datetime(2026, 10, 30, 23, 30, tzinfo=timezone(timedelta(hours=2))))
+    freeze(monkeypatch, datetime(2026, 10, 30, 23, 30))
     store = Store(":memory:")
     first = scanner.run_scan(PACK, store, "halcyon", settings(mode="live", quietHours="22:00-06:00"))
     assert first["notifications"]
