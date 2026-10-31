@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -30,8 +30,10 @@ class _FixedDateTime(datetime):
 
     @classmethod
     def now(cls, tz=None):
-        base = datetime(2026, 10, 31, 12, 0, tzinfo=timezone.utc).astimezone()
+        base = datetime(2026, 10, 31, 12, 0, tzinfo=UTC).astimezone()
         return base if tz is None else base.astimezone(tz)
+
+
 NOW = datetime(2026, 11, 1, 10, 0, tzinfo=timezone(timedelta(hours=2)))
 
 NOTIFICATION_KEYS = {
