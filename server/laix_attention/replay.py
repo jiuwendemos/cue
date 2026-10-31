@@ -16,7 +16,7 @@ from .model import ACTIONS, FEEDBACK_STATES, SEVERITY_RANK, Context, Escalation,
 from .policy import REASONS, decide
 from .timing import parse_range
 
-FIELDS = ("action", "reason", "deliver", "record", "score")
+FIELDS = ("action", "reason", "deliver", "record", "score", "cost_of_waiting", "undo_hint", "reversible")
 
 
 def context_from(payload: Mapping[str, Any]) -> Context:
