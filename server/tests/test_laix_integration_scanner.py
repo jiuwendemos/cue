@@ -23,6 +23,15 @@ from laix_integration.mapper import to_context, to_cue_decision, to_signal
 SERVER = Path(__file__).resolve().parents[1]
 FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "laix_parity.json").read_text(encoding="utf-8"))
 PACK = json.loads((SERVER / "cue" / "data" / "show.json").read_text(encoding="utf-8"))
+
+
+class _FixedDateTime(datetime):
+    """Freeze the scan clock so the parity fixture is not time-of-day dependent."""
+
+    @classmethod
+    def now(cls, tz=None):
+        base = datetime(2026, 10, 31, 12, 0, tzinfo=timezone.utc).astimezone()
+        return base if tz is None else base.astimezone(tz)
 NOW = datetime(2026, 11, 1, 10, 0, tzinfo=timezone(timedelta(hours=2)))
 
 NOTIFICATION_KEYS = {
@@ -73,7 +82,8 @@ def test_the_laix_path_reproduces_the_native_decisions() -> None:
     assert cue_rows(decisions, signals) == FIXTURE["decisions"]
 
 
-def test_a_scan_produces_the_same_notifications_and_counters() -> None:
+def test_a_scan_produces_the_same_notifications_and_counters(monkeypatch) -> None:
+    monkeypatch.setattr(scanner, "datetime", _FixedDateTime)
     settings = scanner.default_settings(PACK)
     settings.update(mode="live", quietHours="22:00-06:00")
 
