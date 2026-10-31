@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from laix import DecisionRequest, Layer, Signal
-from laix.attention import SEVERITY_RANK, rollup
+from laix.attention import SEVERITY_RANK, dedupe_key, rollup
 
 from laix_integration.mapper import to_context, to_cue_decision, to_signal
 
@@ -486,6 +486,7 @@ def run_scan(
     dedupe = {n.get("dedup_key") for n in recent}
     learned = learned_adjustments(pack["risks"] + store.dynamic_risks(tenant))
     signals = [to_signal(candidate, now) for candidate in new]
+    signal_by_id = {signal.id: signal for signal in signals}
     context = to_context({**settings, "mode": mode, "sent": dedupe, "learned": learned}, now)
     request = DecisionRequest(
         subject="CUE readiness scan",
@@ -503,7 +504,7 @@ def run_scan(
         if not decision.record:
             continue
         candidate = by_id[decision.signal_id]
-        dedup_key = f"{candidate['id']}:{now.date().isoformat()}"
+        dedup_key = dedupe_key(signal_by_id[candidate["id"]], now)
         notification = {
             "id": f"NT-{candidate['id']}-{now.strftime('%H%M%S')}",
             "at": now_iso(),
