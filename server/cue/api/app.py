@@ -47,6 +47,7 @@ from ..engine.show import (
 from ..integrations import dam, exporters
 from ..mcp import server as mcp_server
 from ..models import ApproveVersionRequest, AskRequest, RenderSettings, RiskActionRequest, SignCueRequest, now_iso
+from ..proactive import history as proactive_history
 from ..proactive import scanner
 from ..proactive.signing import signed_link, verify_payload
 from ..store.db import Store
@@ -616,6 +617,7 @@ def create_app(db_path: str | None = None) -> FastAPI:
             },
             "digest": scanner.build_digest(pack, risks, settings),
             "backtest": proactive_backtest(request),
+            "outcomes": proactive_history.outcomes_summary(risks),
             "coverage": [
                 {"venue_id": v["id"], "name": v["name"], "status": v["status"], "last_verified": v["lastVerified"], "verified_by": v["verifiedBy"]}
                 for v in pack["venues"]

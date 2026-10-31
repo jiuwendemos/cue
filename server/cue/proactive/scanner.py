@@ -36,6 +36,7 @@ from ..engine.show import (
 )
 from ..store.db import Store, now_iso
 from .delivery import CueSink
+from .history import learned_adjustments
 
 
 def default_settings(pack: dict[str, Any]) -> dict[str, Any]:
@@ -512,12 +513,14 @@ def run_scan(
     # laix_attention so another app can use the same rules.
     recent = store.notifications(tenant, limit=100)
     dedupe = {n.get("dedup_key") for n in recent}
+    learned = learned_adjustments(pack["risks"] + store.dynamic_risks(tenant))
     context = Context(
         now=now,
         quiet_hours=parse_range(settings.get("quietHours", "22:00-06:00")),
         mode=mode,
         min_severity="high",
         sent=frozenset(key for key in dedupe if key),
+        learned=learned,
     )
     decisions = decide([_signal(candidate) for candidate in new], context)
     by_id = {candidate["id"]: candidate for candidate in new}
@@ -543,6 +546,7 @@ def run_scan(
             "read": False,
             "dedup_key": dedup_key,
             "trace_id": decision.trace_id,
+            "score": round(decision.score, 2),
         }
         if decision.reason == "quiet_hours":
             notification["detail"] += " Held for the quiet-hours digest."

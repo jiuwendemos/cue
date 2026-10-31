@@ -45,6 +45,13 @@ Nothing else changed. `tests/test_proactive_characterization.py` was written
 against the old code first; the same tests pass after the move, and a captured
 scan output from both versions is byte-identical apart from a created-at timestamp.
 
+The loop is closed in the other direction too. `cue/proactive/history.py` turns
+closed risks into outcomes — a resolved risk is `helped`, a dismissed risk is
+labelled from its reason sentence — and reports precision, hazard rate and
+calibration at `GET /api/proactive → outcomes`. The same labels feed
+`Context.learned`, so a kind that is dismissed repeatedly loses score. Score does
+not gate in v1, so notification behaviour is unchanged; the measurement is live.
+
 ## Why it is shaped this way
 
 LAIX's own interface note (in `agentic-desk`, `projects/middleware/laix/interfaces.md`)
