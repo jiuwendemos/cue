@@ -13,6 +13,16 @@ import time
 from datetime import datetime, timedelta
 from typing import Any
 
+from laix_attention import (
+    SEVERITY_RANK,
+    Context,
+    Signal,
+    decide,
+    is_quiet,
+    parse_range,
+    rollup,
+)
+
 from ..engine.show import (
     _venue,
     budget_for_look,
@@ -25,9 +35,7 @@ from ..engine.show import (
     venue_fit_check,
 )
 from ..store.db import Store, now_iso
-from .delivery import deliver
-
-SEVERITY_RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
+from .delivery import CueSink
 
 
 def default_settings(pack: dict[str, Any]) -> dict[str, Any]:
@@ -388,24 +396,44 @@ def detect_candidates(pack: dict[str, Any], active_look_id: str = "look-aerial-1
 
 
 def _quiet(settings: dict[str, Any], now: datetime) -> bool:
-    raw = str(settings.get("quietHours", "22:00-06:00"))
-    try:
-        start, end = raw.split("-")
-        start_h, start_min = [int(part) for part in start.split(":")]
-        end_h, end_min = [int(part) for part in end.split(":")]
-        minutes = now.hour * 60 + now.minute
-        start_minutes = start_h * 60 + start_min
-        end_minutes = end_h * 60 + end_min
-        if start_minutes <= end_minutes:
-            return start_minutes <= minutes <= end_minutes
-        return minutes >= start_minutes or minutes <= end_minutes
-    except (ValueError, IndexError):
-        return False
+    """Kept for callers that already import it; the rule lives in the package."""
+    return is_quiet(now, settings.get("quietHours", "22:00-06:00"))
+
+
+def _signal(candidate: dict[str, Any]) -> Signal:
+    """Translate one app candidate into the generic signal the policy sees."""
+    return Signal(
+        id=str(candidate["id"]),
+        kind=str(candidate["kind"]),
+        title=str(candidate["title"]),
+        detail=str(candidate["detail"]),
+        severity=str(candidate["severity"]),
+        confidence=float(candidate.get("confidence", 0.5)),
+        due=candidate.get("due"),
+        evidence_refs=tuple(str(item.get("id", "")) for item in candidate.get("evidence", [])),
+        group_key=candidate.get("groupKey"),
+        interruption_cost=0.0,
+        requires_approval=bool(candidate.get("requiresApproval", False)),
+    )
 
 
 def build_digest(pack: dict[str, Any], risks: list[dict[str, Any]], settings: dict[str, Any]) -> dict[str, Any]:
     open_risks = [risk for risk in risks if risk.get("state") not in {"resolved", "dismissed"}]
-    top = sorted(open_risks, key=lambda r: (SEVERITY_RANK.get(r.get("severity", "low"), 9), r.get("due", "")))[:5]
+    # The selection rule is generic; the wording below is the app's.
+    ordered = rollup(
+        [
+            Signal(
+                id=str(risk.get("id", "")),
+                kind=str(risk.get("kind", "risk")),
+                severity=str(risk.get("severity", "low")),
+                due=risk.get("due"),
+            )
+            for risk in open_risks
+        ],
+        limit=5,
+    )
+    by_id = {str(risk.get("id", "")): risk for risk in open_risks}
+    top = [by_id[item.id] for item in ordered if item.id in by_id]
     next_date = pack["dates"][0]
     lines = [
         f"# CUE readiness digest · {next_date['city']} · {next_date['date']}",
@@ -479,16 +507,29 @@ def run_scan(
     for candidate in new:
         store.save_dynamic_risk(tenant, candidate)
 
-    notifications: list[dict[str, Any]] = []
-    deliveries: list[dict[str, Any]] = []
+    # The decision layer is generic: CUE translates candidate -> signal and
+    # decision -> notification. Policy, timing, dedupe and trace ids live in
+    # laix_attention so another app can use the same rules.
     recent = store.notifications(tenant, limit=100)
     dedupe = {n.get("dedup_key") for n in recent}
-    for candidate in new:
-        if candidate["severity"] not in {"critical", "high"}:
+    context = Context(
+        now=now,
+        quiet_hours=parse_range(settings.get("quietHours", "22:00-06:00")),
+        mode=mode,
+        min_severity="high",
+        sent=frozenset(key for key in dedupe if key),
+    )
+    decisions = decide([_signal(candidate) for candidate in new], context)
+    by_id = {candidate["id"]: candidate for candidate in new}
+    sink = CueSink(store, tenant, settings)
+
+    notifications: list[dict[str, Any]] = []
+    deliveries: list[dict[str, Any]] = []
+    for decision in decisions:
+        if not decision.record:
             continue
+        candidate = by_id[decision.signal_id]
         dedup_key = f"{candidate['id']}:{now.date().isoformat()}"
-        if dedup_key in dedupe:
-            continue
         notification = {
             "id": f"NT-{candidate['id']}-{now.strftime('%H%M%S')}",
             "at": now_iso(),
@@ -498,20 +539,18 @@ def run_scan(
             "detail": candidate["detail"],
             "risk_id": candidate["id"],
             "channels": settings.get("channels", ["in_app"]),
-            "delivered": bool(settings.get("channels")),
+            "delivered": decision.deliver and bool(settings.get("channels")),
             "read": False,
             "dedup_key": dedup_key,
+            "trace_id": decision.trace_id,
         }
-        if _quiet(settings, now) and candidate["severity"] != "critical":
-            notification["delivered"] = False
+        if decision.reason == "quiet_hours":
             notification["detail"] += " Held for the quiet-hours digest."
-            store.save_notification(tenant, notification)
-            notifications.append(notification)
-            continue
         store.save_notification(tenant, notification)
         notifications.append(notification)
-        deliveries.extend(deliver(store, tenant, notification, settings))
-        dedupe.add(dedup_key)
+        if decision.deliver:
+            deliveries.extend(sink.emit(notification))
+            dedupe.add(dedup_key)
 
     duration = int((time.perf_counter() - started) * 1000)
     run = {

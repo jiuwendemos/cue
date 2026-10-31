@@ -115,6 +115,11 @@ no analytics and no external call after load.
 | GET | `/api/tenants` | tenant header and isolation note |
 | GET | `/api/ready` | strict production gate |
 
+The readiness scan keeps its domain rules in `cue/proactive/scanner.py`; **when** a
+candidate becomes a notification is decided by the dependency-free
+[`laix_attention`](../server/laix_attention/) package — gates, quiet hours, digests,
+dedupe, trace ids and outcome measurement. See [the module note](laix-module.md).
+
 ## Deliberate non-goals
 
 No DMX, no live console control, no automatic cue release, no music generation, no full CAD, no

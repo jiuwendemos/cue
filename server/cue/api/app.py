@@ -24,6 +24,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from laix_attention import precision_recall
+
 from .. import config
 from ..agent.runtime import GUARDRAILS, AgentRuntime, AgentUnavailable
 from ..engine.show import (
@@ -697,37 +699,42 @@ def create_app(db_path: str | None = None) -> FastAPI:
     def proactive_backtest(request: Request) -> dict[str, Any]:
         pack = pack_of(request)
         detected = scanner.detect_candidates(pack)
-        by_group = {r["groupKey"]: r for r in detected if r.get("groupKey")}
         known = pack["risks"]
         rows = []
         for date in pack["dates"]:
             known_for_date = [r for r in known if r.get("dateId") == date["id"]]
             detected_for_date = [r for r in detected if r.get("dateId") == date["id"]]
-            known_keys = {r.get("groupKey") for r in known_for_date}
-            detected_keys = {r.get("groupKey") for r in detected_for_date}
-            matched = len(known_keys & detected_keys)
-            precision = matched / len(detected_for_date) if detected_for_date else 1.0
-            recall = matched / len(known_for_date) if known_for_date else 1.0
+            stats = precision_recall(
+                [str(r.get("groupKey")) for r in detected_for_date if r.get("groupKey")],
+                [str(r.get("groupKey")) for r in known_for_date if r.get("groupKey")],
+            )
             rows.append(
                 {
                     "date_id": date["id"],
                     "city": date["city"],
                     "detected": len(detected_for_date),
                     "known": len(known_for_date),
-                    "matched": matched,
-                    "precision_est": round(precision, 2),
-                    "recall_est": round(recall, 2),
+                    "matched": stats["matched"],
+                    "precision_est": stats["precision"],
+                    "recall_est": stats["recall"],
                     "would_have_fired": len(detected_for_date) > 0,
                 }
             )
-        overall = {
-            "detected": len(detected),
-            "known": len(known),
-            "matched": len(set(by_group) & {r.get("groupKey") for r in known}),
+        overall = precision_recall(
+            [str(r.get("groupKey")) for r in detected if r.get("groupKey")],
+            [str(r.get("groupKey")) for r in known if r.get("groupKey")],
+        )
+        return {
+            "rows": rows,
+            "overall": {
+                "detected": overall["detected"],
+                "known": len(known),
+                "matched": overall["matched"],
+                "precision_est": overall["precision"],
+                "recall_est": overall["recall"],
+            },
+            "note": "Synthetic backtest over the demo pack. A real backtest uses past tours and confirmed issues.",
         }
-        overall["precision_est"] = round(overall["matched"] / overall["detected"], 2) if overall["detected"] else 1.0
-        overall["recall_est"] = round(overall["matched"] / overall["known"], 2) if overall["known"] else 1.0
-        return {"rows": rows, "overall": overall, "note": "Synthetic backtest over the demo pack. A real backtest uses past tours and confirmed issues."}
 
     @app.get("/api/notifications")
     def notifications(request: Request) -> dict[str, Any]:

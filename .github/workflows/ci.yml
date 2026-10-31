@@ -48,6 +48,23 @@ jobs:
         run: pytest -q
         working-directory: server
 
+  laix-module:
+    # The decision layer must stand alone: no FastAPI, no pydantic, no app code.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only the test tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest ruff
+      - name: Lint the module
+        run: ruff check server/laix_attention
+      - name: Contract, gates and a second consumer
+        run: PYTHONPATH=server pytest -q server/tests/test_laix_attention.py server/tests/test_laix_attention_reuse.py
+
   pack-drift:
     runs-on: ubuntu-latest
     steps:

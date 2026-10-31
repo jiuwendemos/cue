@@ -12,6 +12,7 @@ import hmac
 import json
 import smtplib
 import time
+from collections.abc import Mapping
 from email.message import EmailMessage
 from typing import Any
 from urllib import request
@@ -122,3 +123,19 @@ def deliver(store: Store, tenant: str, notification: dict[str, Any], settings: d
             record("webhook", "simulated", "CUE_WEBHOOK_URL is not configured.")
 
     return results
+
+
+class CueSink:
+    """The app side of ``laix_attention.ports.Sink``.
+
+    The decision layer decides; this class owns the channels, the credentials and
+    the delivery log. A different app implements the same two-line interface.
+    """
+
+    def __init__(self, store: Store, tenant: str, settings: dict[str, Any]) -> None:
+        self.store = store
+        self.tenant = tenant
+        self.settings = settings
+
+    def emit(self, notification: Mapping[str, Any]) -> list[dict[str, Any]]:
+        return deliver(self.store, self.tenant, dict(notification), self.settings)

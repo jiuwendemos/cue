@@ -1,0 +1,196 @@
+{
+  "contract": "laix-attention",
+  "version": "1.0.0",
+  "note": "Behavioural contract. Any implementation that passes every case is a valid LAIX attention runtime. Scores are part of the contract in v1.0; changing a weight is a version bump.",
+  "cases": [
+    {
+      "id": "critical_at_night_still_reaches_a_human",
+      "context": {
+        "now": "2026-11-01T23:30:00+02:00",
+        "quietHours": "22:00-06:00",
+        "minSeverity": "high"
+      },
+      "signals": [
+        {
+          "id": "risk-1",
+          "kind": "power",
+          "severity": "critical",
+          "confidence": 0.9,
+          "due": "2026-11-02T09:00:00+02:00",
+          "evidenceRefs": ["ev-1"],
+          "interruptionCost": 0.2
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-1", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 94.0 }
+      ]
+    },
+    {
+      "id": "high_waits_for_the_digest_at_night",
+      "context": {
+        "now": "2026-11-01T23:30:00+02:00",
+        "quietHours": "22:00-06:00",
+        "minSeverity": "high"
+      },
+      "signals": [
+        {
+          "id": "risk-2",
+          "kind": "schedule",
+          "severity": "high",
+          "confidence": 0.8,
+          "due": "2026-11-02T09:00:00+02:00"
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-2", "action": "wait", "reason": "quiet_hours", "deliver": false, "record": true, "score": 81.0 }
+      ]
+    },
+    {
+      "id": "medium_is_below_the_floor",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": "22:00-06:00",
+        "minSeverity": "high"
+      },
+      "signals": [
+        { "id": "risk-3", "kind": "data", "severity": "medium", "confidence": 0.7 }
+      ],
+      "expected": [
+        { "signalId": "risk-3", "action": "wait", "reason": "below_floor", "deliver": false, "record": false, "score": 44.0 }
+      ]
+    },
+    {
+      "id": "low_confidence_is_not_raised",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "minSeverity": "high",
+        "minConfidence": 0.6
+      },
+      "signals": [
+        { "id": "risk-4", "kind": "glare", "severity": "high", "confidence": 0.3 }
+      ],
+      "expected": [
+        { "signalId": "risk-4", "action": "wait", "reason": "low_confidence", "deliver": false, "record": false, "score": 51.0 }
+      ]
+    },
+    {
+      "id": "a_muted_kind_is_silent",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "mutedKinds": ["glare"]
+      },
+      "signals": [
+        { "id": "risk-5", "kind": "glare", "severity": "high", "confidence": 0.9 }
+      ],
+      "expected": [
+        { "signalId": "risk-5", "action": "wait", "reason": "muted", "deliver": false, "record": false, "score": 63.0 }
+      ]
+    },
+    {
+      "id": "the_same_signal_is_not_repeated_the_same_day",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "sent": ["risk-6:2026-11-01"]
+      },
+      "signals": [
+        { "id": "risk-6", "kind": "budget", "severity": "high", "confidence": 0.9 }
+      ],
+      "expected": [
+        { "signalId": "risk-6", "action": "wait", "reason": "already_sent", "deliver": false, "record": false, "score": 63.0 }
+      ]
+    },
+    {
+      "id": "the_kill_switch_wins_over_everything",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "stopped": true
+      },
+      "signals": [
+        { "id": "risk-7", "kind": "power", "severity": "critical", "confidence": 0.99 }
+      ],
+      "expected": [
+        { "signalId": "risk-7", "action": "wait", "reason": "kill_switch", "deliver": false, "record": false, "score": 79.8 }
+      ]
+    },
+    {
+      "id": "the_interruption_budget_is_a_hard_cap",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "interruptionBudget": 1
+      },
+      "signals": [
+        { "id": "risk-8a", "kind": "power", "severity": "critical", "confidence": 0.9 },
+        { "id": "risk-8b", "kind": "rights", "severity": "critical", "confidence": 0.9 }
+      ],
+      "expected": [
+        { "signalId": "risk-8a", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 78.0 },
+        { "signalId": "risk-8b", "action": "wait", "reason": "budget", "deliver": false, "record": false, "score": 78.0 }
+      ]
+    },
+    {
+      "id": "a_critical_that_stayed_overdue_escalates",
+      "context": {
+        "now": "2026-11-04T10:00:00+02:00",
+        "quietHours": "22:00-06:00",
+        "escalateAfterHours": 48
+      },
+      "signals": [
+        {
+          "id": "risk-9",
+          "kind": "safety",
+          "severity": "critical",
+          "confidence": 0.95,
+          "due": "2026-11-01T10:00:00+02:00",
+          "requiresApproval": true
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-9", "action": "escalate", "reason": "overdue_escalation", "deliver": true, "record": true, "score": 109.0 }
+      ]
+    },
+    {
+      "id": "quiet_hours_end_is_inclusive",
+      "context": {
+        "now": "2026-11-02T06:00:00+02:00",
+        "quietHours": "22:00-06:00"
+      },
+      "signals": [
+        { "id": "risk-10", "kind": "asset", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-10", "action": "wait", "reason": "quiet_hours", "deliver": false, "record": true, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "one_minute_after_quiet_hours_notifies",
+      "context": {
+        "now": "2026-11-02T06:01:00+02:00",
+        "quietHours": "22:00-06:00"
+      },
+      "signals": [
+        { "id": "risk-11", "kind": "asset", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-11", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "learned_adjustment_is_added_to_the_score",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "learned": { "schedule": 8.0 }
+      },
+      "signals": [
+        { "id": "risk-12", "kind": "schedule", "severity": "high", "confidence": 0.9 }
+      ],
+      "expected": [
+        { "signalId": "risk-12", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 71.0 }
+      ]
+    }
+  ]
+}
