@@ -9,6 +9,9 @@ cue, a look or a signature.
 from __future__ import annotations
 
 import hashlib
+import json
+import logging
+import os
 import time
 from datetime import datetime, timedelta
 from typing import Any
@@ -37,6 +40,11 @@ from ..engine.show import (
 from ..store.db import Store, now_iso
 from .delivery import CueSink
 from .history import learned_adjustments
+
+#: off | shadow. Read once at import; shadow never changes a native decision and
+#: never imports LAIX when off.
+LAIX_MODE = os.environ.get("CUE_LAIX_MODE", "off").strip().lower()
+LOGGER = logging.getLogger("cue.laix.shadow")
 
 
 def default_settings(pack: dict[str, Any]) -> dict[str, Any]:
@@ -459,6 +467,45 @@ def build_digest(pack: dict[str, Any], risks: list[dict[str, Any]], settings: di
     }
 
 
+def _shadow_compare(
+    *,
+    candidates: list[dict[str, Any]],
+    settings: dict[str, Any],
+    now: datetime,
+    native_decisions: list[Any],
+    sent: frozenset[str],
+    learned: dict[str, float],
+    scan: dict[str, Any],
+) -> None:
+    """Ask LAIX for the same decision, log both, and change nothing.
+
+    Every failure is contained here: the scan, its notifications and its
+    deliveries are already decided before this runs.
+    """
+    try:
+        from laix_integration.mapper import to_context, to_signal
+        from laix_integration.shadow import emit, run_shadow
+
+        signals = [to_signal(candidate, now) for candidate in candidates]
+        context = to_context({**settings, "sent": sent, "learned": learned}, now)
+        report = run_shadow(native_decisions, signals, context, scan_id=scan["id"], at=scan["at"])
+        emit(report)
+    except Exception as exc:  # noqa: BLE001 - shadow must never break a scan
+        LOGGER.info(
+            json.dumps(
+                {
+                    "event": "laix.shadow.scan",
+                    "scan_id": scan.get("id"),
+                    "at": scan.get("at"),
+                    "signal_id": None,
+                    "error": f"{type(exc).__name__}: {exc}",
+                },
+                sort_keys=True,
+                default=str,
+            )
+        )
+
+
 def run_scan(
     pack: dict[str, Any],
     store: Store,
@@ -568,6 +615,16 @@ def run_scan(
         "status": "ok",
         "note": f"{len(new)} new · {max(0, len(candidates) - len(new))} already known · {len(notifications)} notified.",
     }
+    if LAIX_MODE == "shadow":
+        _shadow_compare(
+            candidates=new,
+            settings=settings,
+            now=now,
+            native_decisions=decisions,
+            sent=context.sent,
+            learned=context.learned,
+            scan=run,
+        )
     store.save_scan_run(tenant, run)
     settings["lastScan"] = run["at"]
     settings["scanCount"] = int(settings.get("scanCount", 0)) + 1

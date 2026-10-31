@@ -1,0 +1,12 @@
+# LAIX is optional. CUE's native decision path (server/laix_attention) runs without it.
+#
+# CI / stable use — pinned tag, never a branch:
+#     py -m pip install -r server/requirements-laix.txt
+#
+# Local development against a checkout — editable, so source edits are picked up
+# on the next Python process without reinstalling:
+#     py -m pip install -e C:\Workspace\laix\python\laix
+#
+# Upgrading LAIX is a separate, deliberate change: move the tag here, reinstall,
+# and re-run the shadow replay so the recorded differences are updated on purpose.
+laix @ git+https://github.com/michaelatamuk/laix.git@v0.1.1#subdirectory=python/laix
