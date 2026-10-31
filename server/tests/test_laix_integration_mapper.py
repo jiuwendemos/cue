@@ -6,8 +6,6 @@ from datetime import UTC, datetime
 
 import pytest
 
-pytest.importorskip("laix")
-
 from laix_integration.mapper import to_context, to_cue_decision, to_signal
 
 NOW = datetime(2026, 11, 1, 10, 0, tzinfo=UTC)

@@ -50,7 +50,7 @@ def build_outcome_log(risks: list[dict[str, Any]]) -> OutcomeLog:
                 Outcome(
                     signal_id=str(risk.get("id", "")),
                     kind=str(risk.get("kind", "risk")),
-                    action="notify",
+                    action="guide",
                     result=HELPED,
                     score=risk.get("score"),
                     at=str(risk.get("due") or "") or None,
@@ -64,7 +64,7 @@ def build_outcome_log(risks: list[dict[str, Any]]) -> OutcomeLog:
             Outcome(
                 signal_id=str(risk.get("id", "")),
                 kind=str(risk.get("kind", "risk")),
-                action="notify",
+                action="guide",
                 result=result_for_reason(code),
                 reason_code=code,
                 score=risk.get("score"),

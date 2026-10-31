@@ -15,11 +15,7 @@ from datetime import datetime
 from typing import Any
 
 from laix import Context, Feedback, Signal
-from laix.attention import Escalation, Intent
-
-#: LAIX and CUE use the same five levels. The mapping is identity, kept explicit
-#: so an unknown value is visible instead of silently passed through.
-SEVERITY_LEVELS: tuple[str, ...] = ("critical", "high", "medium", "low", "info")
+from laix.attention import SEVERITY_RANK, Escalation, Intent, parse_range
 
 
 def _field(source: Any, name: str, default: Any = None) -> Any:
@@ -31,7 +27,7 @@ def _field(source: Any, name: str, default: Any = None) -> Any:
 
 def _severity(value: Any) -> str:
     text = str(value or "low").strip().lower()
-    return text if text in SEVERITY_LEVELS else "low"
+    return text if text in SEVERITY_RANK else "low"
 
 
 def _evidence_refs(candidate: Any) -> tuple[str, ...]:
@@ -105,26 +101,12 @@ def to_signal(candidate: Any, now: datetime) -> Signal:
     )
 
 
-def _quiet_hours(raw: Any) -> tuple[str, str] | None:
-    if raw is None:
-        return None
-    if isinstance(raw, (tuple, list)) and len(raw) == 2:
-        return str(raw[0]), str(raw[1])
-    text = str(raw).strip()
-    if "-" not in text:
-        return None
-    start, _, end = text.partition("-")
-    start, end = start.strip(), end.strip()
-    return (start, end) if start and end else None
-
-
 def to_context(settings: Mapping[str, Any], now: datetime) -> Context:
     """CUE's scan settings to a LAIX context.
 
-    The scanner maps only what its native path applies (quiet hours, mode, stop
+    The scanner maps only what the CUE path applies (quiet hours, mode, stop
     switch, severity floor, already-sent keys, learned points). The optional
-    limits are passed through when present — the replay fixture uses them — and
-    left at LAIX's defaults otherwise.
+    limits are passed through when present and left at LAIX's defaults otherwise.
     """
     sent = settings.get("sent") or ()
     learned = settings.get("learned") or {}
@@ -139,7 +121,7 @@ def to_context(settings: Mapping[str, Any], now: datetime) -> Context:
     }
     return Context(
         now=now,
-        quiet_hours=_quiet_hours(settings.get("quietHours", "22:00-06:00")),
+        quiet_hours=parse_range(settings.get("quietHours", "22:00-06:00")),
         mode=str(settings.get("mode", "shadow")),
         stopped=bool(settings.get("stopSwitch", False)),
         min_severity=_severity(settings.get("minSeverity", "high")),

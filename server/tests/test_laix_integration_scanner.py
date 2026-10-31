@@ -15,7 +15,6 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("laix")
 
 from laix import DecisionRequest, Layer
 
