@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import ast
 import re
+import tokenize
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -150,19 +152,127 @@ def test_compare_reports_a_mismatch() -> None:
     assert problems and "tampered" in problems[0]
 
 
-def test_the_package_does_not_know_the_app() -> None:
-    offenders: list[str] = []
-    banned = re.compile(r"^\s*(from|import)\s+cue\b", re.MULTILINE)
-    nouns = re.compile(r"\b(venue|rig|look_id|show_pack|cue_sheet)\b")
-    for path in PACKAGE.rglob("*.py"):
+APP_NOUNS = ("cue", "show", "venue", "tour", "risk")
+#: Docstrings and comments may describe the app, but only where named here.
+#: Each entry is (file name, noun). Empty today; keep it that way unless prose
+#: genuinely needs the word, and record the exception in LAIX-HANDOFF.md.
+DOCSTRING_ALLOWLIST: frozenset[tuple[str, str]] = frozenset()
+#: The only file allowed to read the clock: the clock port the app supplies.
+CLOCK_ALLOWED = {"ports.py"}
+
+
+def _docstrings(tree: ast.AST) -> list[str]:
+    found: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
+                value = body[0].value.value
+                if isinstance(value, str):
+                    found.append(value)
+    return found
+
+
+def _executable_tokens(tree: ast.AST) -> list[str]:
+    """Identifiers and string literals that run. Docstrings are excluded by identity."""
+    docstrings: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
+                docstrings.add(id(body[0].value))
+
+    out: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            out.append(node.id)
+        elif isinstance(node, ast.Attribute):
+            out.append(node.attr)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            out.append(node.name)
+        elif isinstance(node, ast.arg):
+            out.append(node.arg)
+        elif isinstance(node, ast.keyword):
+            if node.arg:
+                out.append(node.arg)
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings:
+            out.append(node.value)
+        elif isinstance(node, ast.Import):
+            out.extend(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            if node.module:
+                out.append(node.module)
+            out.extend(alias.name for alias in node.names)
+    return out
+
+
+def _comments(path: Path) -> list[str]:
+    with path.open(encoding="utf-8") as handle:
+        return [token.string for token in tokenize.generate_tokens(handle.readline) if token.type == tokenize.COMMENT]
+
+
+def _mentions(text: str) -> list[str]:
+    return [noun for noun in APP_NOUNS if re.search(rf"\b{noun}\b", text, re.IGNORECASE)]
+
+
+def guard_violations(root: Path) -> list[str]:
+    """Everything that would couple the package to the app, a clock or a domain."""
+    problems: list[str] = []
+    for path in sorted(root.rglob("*.py")):
         text = path.read_text(encoding="utf-8")
-        if banned.search(text):
-            offenders.append(f"{path.name}: imports cue")
-        if nouns.search(text):
-            offenders.append(f"{path.name}: knows an app noun")
-        if path.name != "ports.py" and "datetime.now(" in text:
-            offenders.append(f"{path.name}: reads the clock directly")
-    assert offenders == []
+        if re.search(r"^\s*(from|import)\s+cue\b", text, re.MULTILINE):
+            problems.append(f"{path.name}: imports cue")
+        if path.name not in CLOCK_ALLOWED and "datetime.now(" in text:
+            problems.append(f"{path.name}: reads the clock directly")
+        if re.search(r"\b(venue|rig|look_id|show_pack|cue_sheet)\b", text):
+            problems.append(f"{path.name}: knows an app noun")
+
+        tree = ast.parse(text)
+        for token in _executable_tokens(tree):
+            for noun in _mentions(token):
+                problems.append(f"{path.name}: executable `{token[:40]}` contains {noun!r}")
+
+        for docstring in _docstrings(tree):
+            for noun in _mentions(docstring):
+                if (path.name, noun) not in DOCSTRING_ALLOWLIST:
+                    problems.append(f"{path.name}: docstring mentions {noun!r} (not allowlisted)")
+        for comment in _comments(path):
+            for noun in _mentions(comment):
+                if (path.name, noun) not in DOCSTRING_ALLOWLIST:
+                    problems.append(f"{path.name}: comment mentions {noun!r} (not allowlisted)")
+    return problems
+
+
+def test_the_package_does_not_know_the_app() -> None:
+    assert guard_violations(PACKAGE) == []
+
+
+def test_the_guard_catches_an_app_import(tmp_path: Path) -> None:
+    module = tmp_path / "laix_attention"
+    module.mkdir()
+    (module / "__init__.py").write_text("from cue import config\n", encoding="utf-8")
+    assert any("imports cue" in problem for problem in guard_violations(module))
+
+
+def test_the_guard_catches_a_direct_clock_read(tmp_path: Path) -> None:
+    module = tmp_path / "laix_attention"
+    module.mkdir()
+    (module / "now.py").write_text("from datetime import datetime\nVALUE = datetime.now()\n", encoding="utf-8")
+    assert any("reads the clock" in problem for problem in guard_violations(module))
+
+
+def test_the_guard_catches_an_app_noun_in_code(tmp_path: Path) -> None:
+    module = tmp_path / "laix_attention"
+    module.mkdir()
+    (module / "app.py").write_text("def show(venue, tour, risk):\n    return 'cue'\n", encoding="utf-8")
+    problems = guard_violations(module)
+    assert any("executable" in problem for problem in problems)
+
+
+def test_docstring_exceptions_are_explicit() -> None:
+    for filename, noun in DOCSTRING_ALLOWLIST:
+        assert noun in APP_NOUNS
+        assert (PACKAGE / filename).is_file()
 
 
 def test_the_contract_file_ships_with_the_package() -> None:

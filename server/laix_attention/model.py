@@ -100,7 +100,7 @@ class Context:
     muted_kinds: tuple[str, ...] = ()
     # Deliver at most this many signals per decision cycle. None means no cap.
     interruption_budget: int | None = None
-    # Dedupe keys already delivered in this period, for example "risk-1:2026-11-14".
+    # Dedupe keys already delivered in this period, for example "signal-1:2026-11-14".
     sent: frozenset[str] = frozenset()
     # What the user already said, keyed by signal id.
     feedback: dict[str, Feedback] = field(default_factory=dict)

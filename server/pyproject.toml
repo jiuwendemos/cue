@@ -22,7 +22,7 @@ include = ["cue*", "laix_attention*"]
 
 [tool.setuptools.package-data]
 cue = ["data/*.json"]
-laix_attention = ["contract/*.json"]
+laix_attention = ["contract/*.json", "fixtures/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
