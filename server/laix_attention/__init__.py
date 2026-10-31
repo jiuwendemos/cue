@@ -11,12 +11,16 @@ from __future__ import annotations
 
 from .model import (
     ACTIONS,
+    FEEDBACK_STATES,
     REASON_CODES,
     RESULTS,
     SEVERITY_RANK,
     Breakdown,
     Context,
     Decision,
+    Escalation,
+    Feedback,
+    Intent,
     Outcome,
     Signal,
 )
@@ -29,19 +33,33 @@ from .outcomes import (
     label_for_feedback,
     result_for_reason,
 )
-from .policy import GATES, decide, dedupe_key, rollup, score, trace_id
+from .policy import GATES, REASONS, cost_of_waiting, decide, dedupe_key, rollup, score, trace_id, undo_hint
 from .ports import Clock, NullSink, Recorder, Sink, SystemClock
-from .replay import compare, context_from, load_vectors, precision_recall, run_case, run_vectors, signal_from
+from .replay import (
+    POLICIES,
+    benchmark,
+    compare,
+    context_from,
+    load_vectors,
+    precision_recall,
+    run_case,
+    run_vectors,
+    signal_from,
+    validate_document,
+)
 from .timing import hours_until, is_quiet, parse_range
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "ACTIONS",
+    "FEEDBACK_STATES",
     "GATES",
     "HELPED",
     "HURT",
     "NO_EFFECT",
+    "POLICIES",
+    "REASONS",
     "REASON_CODES",
     "RESULTS",
     "SEVERITY_RANK",
@@ -50,6 +68,9 @@ __all__ = [
     "Clock",
     "Context",
     "Decision",
+    "Escalation",
+    "Feedback",
+    "Intent",
     "NullSink",
     "Outcome",
     "OutcomeLog",
@@ -57,8 +78,10 @@ __all__ = [
     "Signal",
     "Sink",
     "SystemClock",
+    "benchmark",
     "compare",
     "context_from",
+    "cost_of_waiting",
     "decide",
     "dedupe_key",
     "hours_until",
@@ -74,4 +97,6 @@ __all__ = [
     "score",
     "signal_from",
     "trace_id",
+    "undo_hint",
+    "validate_document",
 ]

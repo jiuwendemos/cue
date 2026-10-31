@@ -11,22 +11,46 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Iterable, Sequence
+from datetime import datetime
 
-from .model import SEVERITY_RANK, Breakdown, Context, Decision, Signal
+from .model import SEVERITY_RANK, Breakdown, Context, Decision, Feedback, Signal
 from .timing import hours_until, is_quiet
 
 SEVERITY_POINTS = {"critical": 60.0, "high": 45.0, "medium": 30.0, "low": 15.0, "info": 5.0}
+#: How much an hour of silence costs, relative to severity.
+WAIT_FACTOR = {"critical": 2.0, "high": 1.5, "medium": 1.0, "low": 0.5, "info": 0.25}
 
 #: Order in which the gates are applied. The first gate that fires decides.
 GATES: tuple[str, ...] = (
     "kill_switch",
     "muted",
+    "feedback",
     "low_confidence",
     "below_floor",
     "already_sent",
     "quiet_hours",
     "budget",
     "overdue_escalation",
+)
+
+
+#: Every reason a decision can carry. A contract file may not invent one.
+REASONS: tuple[str, ...] = (
+    "notify",
+    "kill_switch",
+    "muted",
+    "snoozed",
+    "wrong",
+    "assigned",
+    "dismissed",
+    "low_confidence",
+    "below_floor",
+    "already_sent",
+    "quiet_hours",
+    "budget",
+    "overdue_escalation",
+    "act",
+    "ask_approval",
 )
 
 
@@ -40,7 +64,7 @@ def trace_id(signal: Signal, now, action: str) -> str:
     return "tr-" + hashlib.sha1(raw).hexdigest()[:12]
 
 
-def _due_points(now, due: str | None) -> float:
+def _due_points(now: datetime, due: str | None) -> float:
     hours = hours_until(now, due)
     if hours is None:
         return 0.0
@@ -55,6 +79,35 @@ def _due_points(now, due: str | None) -> float:
     return 0.0
 
 
+def _rank(severity: str) -> int:
+    return SEVERITY_RANK.get(severity, 9)
+
+
+def _snoozed_until_future(until: str | None, now: datetime) -> bool:
+    """A snooze with no expiry, or one we cannot read, keeps the signal silent."""
+    if not until:
+        return True
+    try:
+        moment = datetime.fromisoformat(until)
+    except (TypeError, ValueError):
+        return True
+    if moment.tzinfo is None and now.tzinfo is not None:
+        moment = moment.replace(tzinfo=now.tzinfo)
+    return moment > now
+
+
+FEEDBACK_REASONS = {"snoozed": "snoozed", "wrong": "wrong", "assigned": "assigned", "dismissed": "dismissed"}
+
+
+def _feedback_blocks(feedback: Feedback | None, now: datetime) -> str | None:
+    """Return the blocking reason, or None when the signal may proceed."""
+    if feedback is None or feedback.state == "accepted":
+        return None
+    if feedback.state == "snoozed":
+        return "snoozed" if _snoozed_until_future(feedback.until, now) else None
+    return FEEDBACK_REASONS.get(feedback.state)
+
+
 def score(signal: Signal, context: Context) -> Breakdown:
     severity = SEVERITY_POINTS.get(signal.severity, 5.0)
     due = _due_points(context.now, signal.due)
@@ -65,20 +118,33 @@ def score(signal: Signal, context: Context) -> Breakdown:
     return Breakdown(severity, due, confidence, interruption, learned, total)
 
 
-def _rank(severity: str) -> int:
-    return SEVERITY_RANK.get(severity, 9)
+def cost_of_waiting(signal: Signal, context: Context) -> float:
+    """Points at stake if the decision is silence. Zero without a deadline."""
+    factor = WAIT_FACTOR.get(signal.severity, 0.25)
+    return round(_due_points(context.now, signal.due) * factor, 2)
+
+
+def undo_hint(action: str, reversible: bool) -> str | None:
+    if action in {"notify", "ask"}:
+        return "withdraw"
+    if action == "act":
+        return "cancel" if reversible else None
+    return None
 
 
 def _decide_one(signal: Signal, context: Context, delivered: int) -> Decision:
     breakdown = score(signal, context)
-    delivered_now = delivered
+    blocked = _feedback_blocks(context.feedback.get(signal.id), context.now)
 
     action, reason, record, deliver = "notify", "notify", True, True
+    delivered_now = delivered
 
     if context.stopped:
         action, reason, record, deliver = "wait", "kill_switch", False, False
     elif signal.kind in context.muted_kinds:
         action, reason, record, deliver = "wait", "muted", False, False
+    elif blocked is not None:
+        action, reason, record, deliver = "wait", blocked, False, False
     elif signal.confidence < context.min_confidence:
         action, reason, record, deliver = "wait", "low_confidence", False, False
     elif _rank(signal.severity) > _rank(context.min_severity):
@@ -93,6 +159,10 @@ def _decide_one(signal: Signal, context: Context, delivered: int) -> Decision:
         hours = hours_until(context.now, signal.due)
         if hours is not None and -hours > context.escalate_after_hours:
             action, reason, record, deliver = "escalate", "overdue_escalation", True, True
+    elif context.allow_act and signal.intent is not None and signal.reversible:
+        # The app declared a reversible action it is prepared to take. The policy
+        # may execute it, or ask first when approval is required.
+        action, reason = ("ask", "ask_approval") if signal.requires_approval else ("act", "act")
     else:
         delivered_now += 1
 
@@ -108,6 +178,11 @@ def _decide_one(signal: Signal, context: Context, delivered: int) -> Decision:
         evidence_refs=signal.evidence_refs,
         breakdown=breakdown,
         trace_id=trace_id(signal, context.now, action),
+        intent=signal.intent if action in {"act", "ask"} else None,
+        escalation=signal.escalation if action == "escalate" else None,
+        cost_of_waiting=cost_of_waiting(signal, context),
+        reversible=signal.reversible,
+        undo_hint=undo_hint(action, signal.reversible),
     )
 
 

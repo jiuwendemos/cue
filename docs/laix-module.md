@@ -22,9 +22,10 @@ So the policy was moved into a package that does not know what the app is about.
 |---|---|
 | severity floor, quiet hours, digest hold | detecting risks (venue fit, power, weight, rights, assets, budget) |
 | per-day dedupe and interruption budget | reading and writing the show store |
-| kill switch and shadow/live mode | delivery channels and credentials |
+| kill switch, shadow/live mode and per-signal feedback (snooze, wrong, assigned) | delivery channels and credentials |
 | the score and its breakdown | notification copy and the readiness UI |
 | outcome labels, precision, hazard rate, calibration | approval and sign-off |
+| cost of waiting, undo hint, intent payload for an execution bridge | running the action |
 | digest selection order | the digest's wording |
 | trace ids | signed links |
 
@@ -113,7 +114,7 @@ Nothing in the package names CUE, so steps 1–4 are mechanical.
 
 ## Honest limits
 
-- The numbers are small: 12 contract vectors and 14 demo risks. It is a real
+- The numbers are small: 23 contract vectors, 12 bench cases and 14 demo risks. It is a real
   mechanism, not a benchmark.
 - `precision` here means "confirmed ÷ raised" from dismissals — self-reported
   labels, not a controlled study.

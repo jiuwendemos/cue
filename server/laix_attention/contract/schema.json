@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laix.example/attention.v1.schema.json",
+  "title": "LAIX attention contract",
+  "description": "Behavioural vectors. An implementation that satisfies every case is a valid attention runtime.",
+  "type": "object",
+  "required": ["contract", "version", "cases"],
+  "additionalProperties": true,
+  "properties": {
+    "contract": { "const": "laix-attention" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "note": { "type": "string" },
+    "cases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/case" } }
+  },
+  "$defs": {
+    "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+    "action": { "enum": ["wait", "notify", "ask", "act", "verify", "escalate"] },
+    "reason": {
+      "enum": [
+        "notify",
+        "kill_switch",
+        "muted",
+        "snoozed",
+        "wrong",
+        "assigned",
+        "dismissed",
+        "low_confidence",
+        "below_floor",
+        "already_sent",
+        "quiet_hours",
+        "budget",
+        "overdue_escalation",
+        "act",
+        "ask_approval"
+      ]
+    },
+    "feedbackState": { "enum": ["accepted", "dismissed", "snoozed", "wrong", "assigned"] },
+    "feedback": {
+      "type": "object",
+      "required": ["state"],
+      "additionalProperties": false,
+      "properties": {
+        "state": { "$ref": "#/$defs/feedbackState" },
+        "at": { "type": ["string", "null"] },
+        "until": { "type": ["string", "null"] },
+        "note": { "type": ["string", "null"] }
+      }
+    },
+    "context": {
+      "type": "object",
+      "required": ["now"],
+      "additionalProperties": false,
+      "properties": {
+        "now": { "type": "string" },
+        "quietHours": { "type": ["string", "null"] },
+        "mode": { "enum": ["shadow", "live"] },
+        "stopped": { "type": "boolean" },
+        "minSeverity": { "$ref": "#/$defs/severity" },
+        "minConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "mutedKinds": { "type": "array", "items": { "type": "string" } },
+        "interruptionBudget": { "type": ["integer", "null"], "minimum": 0 },
+        "sent": { "type": "array", "items": { "type": "string" } },
+        "feedback": { "type": "object", "additionalProperties": { "$ref": "#/$defs/feedback" } },
+        "escalateAfterHours": { "type": ["number", "null"] },
+        "learned": { "type": "object", "additionalProperties": { "type": "number" } },
+        "allowAct": { "type": "boolean" }
+      }
+    },
+    "signal": {
+      "type": "object",
+      "required": ["id", "kind", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string" },
+        "title": { "type": "string" },
+        "detail": { "type": "string" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "due": { "type": ["string", "null"] },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "groupKey": { "type": ["string", "null"] },
+        "interruptionCost": { "type": "number", "minimum": 0, "maximum": 1 },
+        "requiresApproval": { "type": "boolean" },
+        "reversible": { "type": "boolean" },
+        "intent": {
+          "type": ["object", "null"],
+          "required": ["capability"],
+          "additionalProperties": false,
+          "properties": {
+            "capability": { "type": "string" },
+            "args": { "type": "object" }
+          }
+        },
+        "escalation": {
+          "type": ["object", "null"],
+          "required": ["target"],
+          "additionalProperties": false,
+          "properties": {
+            "target": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "required": ["signalId", "action", "reason", "deliver", "record", "score"],
+      "additionalProperties": true,
+      "properties": {
+        "signalId": { "type": "string" },
+        "action": { "$ref": "#/$defs/action" },
+        "reason": { "$ref": "#/$defs/reason" },
+        "deliver": { "type": "boolean" },
+        "record": { "type": "boolean" },
+        "score": { "type": "number" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "required": ["id", "context", "signals", "expected"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" },
+        "context": { "$ref": "#/$defs/context" },
+        "signals": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/signal" } },
+        "expected": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/expected" } }
+      }
+    }
+  }
+}

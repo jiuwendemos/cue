@@ -1,7 +1,7 @@
 {
   "contract": "laix-attention",
-  "version": "1.0.0",
-  "note": "Behavioural contract. Any implementation that passes every case is a valid LAIX attention runtime. Scores are part of the contract in v1.0; changing a weight is a version bump.",
+  "version": "1.1.0",
+  "note": "Behavioural contract. Any implementation that passes every case is a valid LAIX attention runtime. Scores are part of the contract in v1; changing a weight is a major version.",
   "cases": [
     {
       "id": "critical_at_night_still_reaches_a_human",
@@ -190,6 +190,191 @@
       ],
       "expected": [
         { "signalId": "risk-12", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 71.0 }
+      ]
+    },
+    {
+      "id": "a_snooze_holds_until_it_expires",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": {
+          "risk-13": { "state": "snoozed", "at": "2026-10-30T09:00:00+02:00", "until": "2026-11-02T08:00:00+02:00" }
+        }
+      },
+      "signals": [
+        { "id": "risk-13", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-13", "action": "wait", "reason": "snoozed", "deliver": false, "record": false, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "an_expired_snooze_releases_the_signal",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": {
+          "risk-14": { "state": "snoozed", "until": "2026-10-31T08:00:00+02:00" }
+        }
+      },
+      "signals": [
+        { "id": "risk-14", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-14", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "a_signal_marked_wrong_never_repeats",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": { "risk-15": { "state": "wrong" } }
+      },
+      "signals": [
+        { "id": "risk-15", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-15", "action": "wait", "reason": "wrong", "deliver": false, "record": false, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "an_assigned_signal_is_someone_elses_job",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": { "risk-16": { "state": "assigned" } }
+      },
+      "signals": [
+        { "id": "risk-16", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-16", "action": "wait", "reason": "assigned", "deliver": false, "record": false, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "a_dismissed_signal_stays_dismissed",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": { "risk-17": { "state": "dismissed" } }
+      },
+      "signals": [
+        { "id": "risk-17", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-17", "action": "wait", "reason": "dismissed", "deliver": false, "record": false, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "an_accepted_signal_is_not_suppressed",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "feedback": { "risk-18": { "state": "accepted" } }
+      },
+      "signals": [
+        { "id": "risk-18", "kind": "glare", "severity": "high", "confidence": 0.8 }
+      ],
+      "expected": [
+        { "signalId": "risk-18", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 61.0 }
+      ]
+    },
+    {
+      "id": "a_reversible_intent_is_executed_when_act_is_allowed",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "allowAct": true
+      },
+      "signals": [
+        {
+          "id": "risk-19",
+          "kind": "power",
+          "severity": "high",
+          "confidence": 0.9,
+          "reversible": true,
+          "intent": { "capability": "apply_venue_variant", "args": { "variation": "foundry-cut" } }
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-19", "action": "act", "reason": "act", "deliver": true, "record": true, "score": 63.0 }
+      ]
+    },
+    {
+      "id": "an_action_that_needs_approval_asks_first",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null,
+        "allowAct": true
+      },
+      "signals": [
+        {
+          "id": "risk-20",
+          "kind": "rights",
+          "severity": "high",
+          "confidence": 0.9,
+          "reversible": true,
+          "requiresApproval": true,
+          "intent": { "capability": "extend_licence", "args": { "asset": "rain-02" } }
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-20", "action": "ask", "reason": "ask_approval", "deliver": true, "record": true, "score": 63.0 }
+      ]
+    },
+    {
+      "id": "an_intent_does_nothing_unless_act_is_allowed",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null
+      },
+      "signals": [
+        {
+          "id": "risk-21",
+          "kind": "power",
+          "severity": "high",
+          "confidence": 0.9,
+          "reversible": true,
+          "intent": { "capability": "apply_venue_variant", "args": {} }
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-21", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 63.0 }
+      ]
+    },
+    {
+      "id": "an_escalation_carries_its_target",
+      "context": {
+        "now": "2026-11-04T10:00:00+02:00",
+        "quietHours": "22:00-06:00",
+        "escalateAfterHours": 24
+      },
+      "signals": [
+        {
+          "id": "risk-22",
+          "kind": "safety",
+          "severity": "critical",
+          "confidence": 0.95,
+          "due": "2026-11-01T10:00:00+02:00",
+          "escalation": { "target": "tour_manager", "reason": "stop-work item unchanged for three days" }
+        }
+      ],
+      "expected": [
+        { "signalId": "risk-22", "action": "escalate", "reason": "overdue_escalation", "deliver": true, "record": true, "score": 109.0 }
+      ]
+    },
+    {
+      "id": "no_new_context_behaves_exactly_as_before",
+      "context": {
+        "now": "2026-11-01T10:00:00+02:00",
+        "quietHours": null
+      },
+      "signals": [
+        { "id": "risk-23", "kind": "budget", "severity": "high", "confidence": 0.9 }
+      ],
+      "expected": [
+        { "signalId": "risk-23", "action": "notify", "reason": "notify", "deliver": true, "record": true, "score": 63.0 }
       ]
     }
   ]

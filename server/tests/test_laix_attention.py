@@ -35,7 +35,7 @@ def at(hour: int, minute: int = 0, day: int = 1) -> datetime:
 def test_every_contract_vector_passes() -> None:
     problems = laix.run_vectors(VECTORS)
     assert problems == []
-    assert len(VECTORS["cases"]) >= 12
+    assert len(VECTORS["cases"]) >= 20
 
 
 def test_contract_version_is_declared() -> None:
@@ -167,3 +167,177 @@ def test_the_package_does_not_know_the_app() -> None:
 
 def test_the_contract_file_ships_with_the_package() -> None:
     assert (PACKAGE / "contract" / "attention.v1.json").is_file()
+    assert (PACKAGE / "contract" / "bench.v1.json").is_file()
+    assert (PACKAGE / "contract" / "schema.json").is_file()
+
+
+# --------------------------------------------------------------------------- feedback
+
+
+def test_a_snooze_holds_until_it_expires() -> None:
+    signal = Signal(id="s", kind="k", severity="high", confidence=0.9)
+    future = Context(now=at(10), quiet_hours=None, feedback={"s": laix.Feedback("snoozed", until="2026-11-02T08:00:00+02:00")})
+    past = Context(now=at(10), quiet_hours=None, feedback={"s": laix.Feedback("snoozed", until="2026-10-31T08:00:00+02:00")})
+    assert decide([signal], future)[0].reason == "snoozed"
+    assert decide([signal], past)[0].action == "notify"
+
+
+def test_a_snooze_without_an_expiry_stays_closed() -> None:
+    signal = Signal(id="s", kind="k", severity="high", confidence=0.9)
+    context = Context(now=at(10), quiet_hours=None, feedback={"s": laix.Feedback("snoozed")})
+    assert decide([signal], context)[0].reason == "snoozed"
+
+
+@pytest.mark.parametrize("state,reason", [("wrong", "wrong"), ("assigned", "assigned"), ("dismissed", "dismissed")])
+def test_negative_feedback_suppresses(state: str, reason: str) -> None:
+    signal = Signal(id="s", kind="k", severity="high", confidence=0.9)
+    context = Context(now=at(10), quiet_hours=None, feedback={"s": laix.Feedback(state)})
+    decision = decide([signal], context)[0]
+    assert (decision.action, decision.reason, decision.record) == ("wait", reason, False)
+
+
+def test_accepted_feedback_does_not_suppress() -> None:
+    signal = Signal(id="s", kind="k", severity="high", confidence=0.9)
+    context = Context(now=at(10), quiet_hours=None, feedback={"s": laix.Feedback("accepted")})
+    assert decide([signal], context)[0].action == "notify"
+
+
+# --------------------------------------------------------------------------- execution seam
+
+
+def intent_signal(**overrides) -> Signal:
+    base = {
+        "id": "s",
+        "kind": "k",
+        "severity": "high",
+        "confidence": 0.9,
+        "intent": laix.Intent("apply_variant", {"v": "b"}),
+        "reversible": True,
+    }
+    base.update(overrides)
+    return Signal(**base)
+
+
+def test_act_needs_an_explicit_opt_in() -> None:
+    signal = intent_signal()
+    off = decide([signal], Context(now=at(10), quiet_hours=None))[0]
+    on = decide([signal], Context(now=at(10), quiet_hours=None, allow_act=True))[0]
+    assert (off.action, off.intent) == ("notify", None)
+    assert on.action == "act" and on.intent is not None and on.intent.capability == "apply_variant"
+
+
+def test_an_irreversible_intent_is_only_notified() -> None:
+    signal = intent_signal(reversible=False)
+    decision = decide([signal], Context(now=at(10), quiet_hours=None, allow_act=True))[0]
+    assert decision.action == "notify"
+
+
+def test_approval_turns_act_into_ask() -> None:
+    signal = intent_signal(requires_approval=True)
+    decision = decide([signal], Context(now=at(10), quiet_hours=None, allow_act=True))[0]
+    assert (decision.action, decision.reason, decision.requires_approval) == ("ask", "ask_approval", True)
+
+
+def test_a_blocked_signal_never_acts() -> None:
+    signal = intent_signal()
+    context = Context(now=at(23, 30), quiet_hours=("22:00", "06:00"), allow_act=True)
+    assert decide([signal], context)[0].action == "wait"
+
+
+def test_escalation_is_carried_only_when_escalating() -> None:
+    signal = intent_signal(
+        severity="critical",
+        requires_approval=False,
+        intent=None,
+        reversible=False,
+        escalation=laix.Escalation("tour_manager", "stop-work"),
+    )
+    context = Context(now=at(10), quiet_hours=None, escalate_after_hours=24)
+    decision = decide([signal], context)[0]
+    assert decision.action == "notify" and decision.escalation is None
+
+    overdue = {"due": "2026-10-30T10:00:00+02:00"}
+    signal = intent_signal(severity="critical", intent=None, reversible=False, escalation=laix.Escalation("tour_manager", "stop-work"), **overdue)
+    decision = decide([signal], context)[0]
+    assert decision.action == "escalate" and decision.escalation is not None
+    assert decision.escalation.target == "tour_manager"
+
+
+# --------------------------------------------------------------------------- cost and undo
+
+
+def test_cost_of_waiting_scales_with_deadline_and_severity() -> None:
+    critical = Signal(id="a", kind="k", severity="critical", due="2026-11-02T09:00:00+02:00")
+    high = Signal(id="b", kind="k", severity="high", due="2026-11-02T09:00:00+02:00")
+    distant = Signal(id="c", kind="k", severity="critical", due="2026-12-01T09:00:00+02:00")
+    none = Signal(id="d", kind="k", severity="critical")
+    context = Context(now=at(10), quiet_hours=None)
+    assert laix.cost_of_waiting(critical, context) == pytest.approx(40.0)
+    assert laix.cost_of_waiting(high, context) == pytest.approx(30.0)
+    assert laix.cost_of_waiting(distant, context) == 0.0
+    assert laix.cost_of_waiting(none, context) == 0.0
+
+
+def test_undo_hint_matches_the_action() -> None:
+    assert laix.undo_hint("notify", False) == "withdraw"
+    assert laix.undo_hint("ask", False) == "withdraw"
+    assert laix.undo_hint("act", True) == "cancel"
+    assert laix.undo_hint("act", False) is None
+    assert laix.undo_hint("wait", True) is None
+    assert laix.undo_hint("escalate", True) is None
+
+
+def test_every_decision_carries_cost_and_undo() -> None:
+    signal = Signal(id="s", kind="k", severity="high", confidence=0.9, due="2026-11-02T09:00:00+02:00")
+    decision = decide([signal], Context(now=at(10), quiet_hours=None))[0]
+    assert decision.cost_of_waiting > 0
+    assert decision.undo_hint == "withdraw"
+    assert decision.as_dict()["cost_of_waiting"] == round(decision.cost_of_waiting, 2)
+
+
+# --------------------------------------------------------------------------- schema and bench
+
+
+def test_the_schema_and_the_module_agree() -> None:
+    import json
+
+    document = json.loads((PACKAGE / "contract" / "schema.json").read_text(encoding="utf-8"))
+    defs = document["$defs"]
+    assert tuple(defs["action"]["enum"]) == laix.ACTIONS
+    assert tuple(defs["reason"]["enum"]) == laix.REASONS
+    assert tuple(defs["feedbackState"]["enum"]) == laix.FEEDBACK_STATES
+    assert tuple(defs["severity"]["enum"]) == tuple(laix.SEVERITY_RANK)
+
+
+def test_validate_document_accepts_the_contract() -> None:
+    assert laix.validate_document(VECTORS) == []
+
+
+def test_validate_document_rejects_an_invented_action() -> None:
+    broken = {
+        "contract": "laix-attention",
+        "version": "1.1.0",
+        "cases": [
+            {
+                "id": "broken",
+                "context": {"now": "2026-11-01T10:00:00+02:00"},
+                "signals": [{"id": "s", "kind": "k", "severity": "high"}],
+                "expected": [{"action": "notify_now", "reason": "notify", "deliver": True, "record": True, "score": 1}],
+            }
+        ],
+    }
+    problems = laix.validate_document(broken)
+    assert any("unknown action" in problem for problem in problems)
+
+
+def test_the_bench_beats_both_baselines() -> None:
+    document = load_vectors(PACKAGE / "contract" / "bench.v1.json")
+    result = laix.benchmark(document)
+    rows = result["rows"]
+    assert result["cases"] == 12
+    assert rows["policy"]["precision"] > rows["severity_only"]["precision"]
+    assert rows["policy"]["precision"] > rows["always_notify"]["precision"]
+    assert rows["policy"]["hazard"] == 0.0
+    assert rows["always_notify"]["recall"] == 1.0
+    assert rows["policy"]["missed_helpful"] >= 1
+    assert rows["always_notify"]["raised"] == 12
