@@ -123,6 +123,6 @@ decisions and outcomes. This package decides; it does not execute.
 PYTHONPATH=. pytest -q tests/test_laix_attention.py tests/test_laix_attention_reuse.py
 ```
 
-Thirteen contract vectors, gate boundaries, score arithmetic, reason-code
+Twelve contract vectors, gate boundaries, score arithmetic, reason-code
 mapping, a second consumer in a different domain (study reminders), and a guard
 that fails if the package ever imports the app or reads the clock.

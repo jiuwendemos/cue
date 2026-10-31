@@ -113,7 +113,7 @@ Nothing in the package names CUE, so steps 1–4 are mechanical.
 
 ## Honest limits
 
-- The numbers are small: 13 contract vectors and 14 demo risks. It is a real
+- The numbers are small: 12 contract vectors and 14 demo risks. It is a real
   mechanism, not a benchmark.
 - `precision` here means "confirmed ÷ raised" from dismissals — self-reported
   labels, not a controlled study.

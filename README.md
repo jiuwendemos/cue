@@ -121,7 +121,7 @@ local scan and clearly labels it. Nothing is sent anywhere from the static demo.
 
 The *when to interrupt* part is not in the app any more. It is a dependency-free
 package, [`server/laix_attention/`](server/laix_attention/), with a written contract and
-13 behavioural vectors — extractable into LAIX as-is. See
+12 behavioural vectors — extractable into LAIX as-is. See
 [the module note](docs/laix-module.md).
 
 ### 3D previz
