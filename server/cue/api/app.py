@@ -23,7 +23,7 @@ from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
-from laix.attention import precision_recall
+from laix.core.attention import precision_recall
 
 from .. import config
 from ..agent.runtime import GUARDRAILS, AgentRuntime, AgentUnavailable

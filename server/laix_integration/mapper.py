@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Any
 
 from laix import Context, Feedback, Signal
-from laix.attention import SEVERITY_RANK, Escalation, Intent, parse_range
+from laix.core.attention import SEVERITY_RANK, Escalation, Intent, parse_range
 
 
 def _field(source: Any, name: str, default: Any = None) -> Any:

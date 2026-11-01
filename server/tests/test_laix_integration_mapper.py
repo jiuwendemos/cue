@@ -150,7 +150,7 @@ def test_context_passes_the_optional_limits_through() -> None:
 
 
 def test_an_unreadable_quiet_window_is_never_quiet() -> None:
-    from laix.attention import is_quiet
+    from laix.core.attention import is_quiet
 
     context = to_context({"quietHours": "not-a-window"}, NOW)
     assert is_quiet(NOW.replace(hour=23), context.quiet_hours) is False
@@ -194,7 +194,7 @@ def test_a_wait_decision_keeps_its_reason() -> None:
 
 def test_an_act_decision_carries_approval_and_intent() -> None:
     from laix import Context, Signal
-    from laix.attention import Intent
+    from laix.core.attention import Intent
 
     signal = Signal(
         id="s-3",
@@ -216,7 +216,7 @@ def test_an_act_decision_carries_approval_and_intent() -> None:
 
 def test_an_escalation_is_carried_through() -> None:
     from laix import Context, Signal
-    from laix.attention import Escalation
+    from laix.core.attention import Escalation
 
     signal = Signal(
         id="s-4",

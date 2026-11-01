@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from laix import DecisionRequest, Layer, Signal
-from laix.attention import SEVERITY_RANK, dedupe_key, rollup
+from laix.core.attention import SEVERITY_RANK, dedupe_key, rollup
 
 from laix_integration.mapper import to_context, to_cue_decision, to_signal
 

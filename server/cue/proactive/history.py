@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from laix.attention import HELPED, Outcome, OutcomeLog, result_for_reason
+from laix.core.attention import HELPED, Outcome, OutcomeLog, result_for_reason
 
 #: The six sentences the readiness UI writes into ``dismissedReason``.
 REASON_CODES: dict[str, str] = {

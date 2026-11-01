@@ -5,7 +5,7 @@ is now the decision layer, and CUE is an app that calls it.
 
 | | Before | Now |
 |---|---|---|
-| Decision engine | a package in this repository (now deleted) | `laix` v0.6.0 (pinned dependency) |
+| Decision engine | a package in this repository (now deleted) | `laix` v0.7.0 (pinned dependency) |
 | Call site | `decide()` imported from the local package | `Layer().decide(DecisionRequest(...))` in `cue/proactive/scanner.py` |
 | Adapter | none | `server/laix_integration/` |
 | Second path | shadow comparison behind a flag | none — one path |
@@ -24,7 +24,7 @@ replacement changed one function: where the decision comes from.
 ## Dependency
 
 ```toml
-"laix @ git+https://github.com/michaelatamuk/laix.git@v0.6.0#subdirectory=packages/python/laix"
+"laix @ git+https://github.com/michaelatamuk/laix.git@v0.7.0#subdirectory=packages/python/laix"
 ```
 
 ```powershell
