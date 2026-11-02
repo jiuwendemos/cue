@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Any
 
 from laix import Context, Feedback, Signal
-from laix.core.attention import SEVERITY_RANK, Escalation, Intent, parse_range
+from laix.core.engines.attention import SEVERITY_RANK, Intent, parse_range
 
 
 def _field(source: Any, name: str, default: Any = None) -> Any:
@@ -57,12 +57,16 @@ def _intent(value: Any) -> Intent | None:
     return Intent(str(getattr(value, "capability", "")), dict(getattr(value, "args", {}) or {}))
 
 
-def _escalation(value: Any) -> Escalation | None:
+def _handover(value: Any) -> Intent | None:
     if value is None:
         return None
     if isinstance(value, Mapping):
-        return Escalation(str(value.get("target", "")), str(value.get("reason", "")))
-    return Escalation(str(getattr(value, "target", "")), str(getattr(value, "reason", "")))
+        target = str(value.get("target", ""))
+        reason = str(value.get("reason", ""))
+    else:
+        target = str(getattr(value, "target", ""))
+        reason = str(getattr(value, "reason", ""))
+    return Intent("handover", {"target": target, "reason": reason})
 
 
 def to_signal(candidate: Any, now: datetime) -> Signal:
@@ -97,7 +101,7 @@ def to_signal(candidate: Any, now: datetime) -> Signal:
         requires_approval=bool(approval),
         intent=_intent(_field(candidate, "intent")),
         reversible=bool(_field(candidate, "reversible", False)),
-        escalation=_escalation(_field(candidate, "escalation")),
+        handover=_handover(_field(candidate, "escalation")),
     )
 
 
@@ -224,7 +228,7 @@ def to_cue_decision(decision: Any, signal_id: str = "") -> CueDecision:
         breakdown=_cue_breakdown(getattr(decision, "breakdown", None)),
         trace_id=str(getattr(decision, "trace_id", "") or ""),
         intent=getattr(decision, "intent", None),
-        escalation=getattr(decision, "escalation", None),
+        escalation=(getattr(decision, "intent", None) if verb == "escalate" else None),
         cost_of_waiting=float(getattr(decision, "cost_of_waiting", 0.0) or 0.0),
         reversible=bool(getattr(decision, "reversible", False)),
         undo_hint=getattr(decision, "undo_hint", None),

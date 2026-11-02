@@ -38,7 +38,7 @@ def test_resolved_counts_as_helped_and_dismissed_as_labeled() -> None:
     assert log.precision() == 1 / 3
     assert log.hazard_rate() == 1 / 3
     assert log.by_kind()["power"]["helped"] == 1
-    assert log.by_kind()["schedule"]["no_effect"] == 1
+    assert log.by_kind()["schedule"]["neutral"] == 1
 
 
 def test_learned_adjustment_is_negative_when_dismissals_dominate() -> None:

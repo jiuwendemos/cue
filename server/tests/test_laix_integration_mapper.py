@@ -49,8 +49,10 @@ def test_signal_preserves_every_modelled_field() -> None:
     assert signal.reversible is True
     assert signal.intent is not None and signal.intent.capability == "apply_venue_variant"
     assert signal.intent.args == {"variation": "foundry-cut"}
-    assert signal.escalation is not None and signal.escalation.target == "tour_manager"
-    assert signal.escalation.reason == "stop-work item"
+    assert signal.handover is not None
+    assert signal.handover.capability == "handover"
+    assert signal.handover.args["target"] == "tour_manager"
+    assert signal.handover.args["reason"] == "stop-work item"
 
 
 @pytest.mark.parametrize("level", ["critical", "high", "medium", "low", "info"])
@@ -79,7 +81,7 @@ def test_a_cue_scan_candidate_shape_is_understood() -> None:
     assert signal.requires_approval is False
     assert signal.reversible is False
     assert signal.intent is None
-    assert signal.escalation is None
+    assert signal.handover is None
 
 
 def test_snake_case_and_datetime_due_are_accepted() -> None:
@@ -150,7 +152,7 @@ def test_context_passes_the_optional_limits_through() -> None:
 
 
 def test_an_unreadable_quiet_window_is_never_quiet() -> None:
-    from laix.core.attention import is_quiet
+    from laix.core.engines.attention import is_quiet
 
     context = to_context({"quietHours": "not-a-window"}, NOW)
     assert is_quiet(NOW.replace(hour=23), context.quiet_hours) is False
@@ -194,7 +196,7 @@ def test_a_wait_decision_keeps_its_reason() -> None:
 
 def test_an_act_decision_carries_approval_and_intent() -> None:
     from laix import Context, Signal
-    from laix.core.attention import Intent
+    from laix.core.engines.attention import Intent
 
     signal = Signal(
         id="s-3",
@@ -215,8 +217,7 @@ def test_an_act_decision_carries_approval_and_intent() -> None:
 
 
 def test_an_escalation_is_carried_through() -> None:
-    from laix import Context, Signal
-    from laix.core.attention import Escalation
+    from laix import Context, Intent, Signal
 
     signal = Signal(
         id="s-4",
@@ -224,14 +225,14 @@ def test_an_escalation_is_carried_through() -> None:
         severity="critical",
         confidence=0.95,
         due="2026-10-30T10:00:00+00:00",
-        escalation=Escalation("tour_manager", "stop-work item"),
+        handover=Intent("handover", {"target": "tour_manager", "reason": "stop-work item"}),
     )
     decision = laix_decision([signal], Context(now=NOW, escalate_after_hours=24))[0]
     cue = to_cue_decision(decision, "s-4")
 
     assert cue.action == "escalate"
     assert cue.escalation is not None
-    assert cue.escalation.target == "tour_manager"
+    assert cue.escalation.args["target"] == "tour_manager"
     assert cue.cost_of_waiting > 0
 
 

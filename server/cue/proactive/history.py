@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from laix.core.attention import HELPED, Outcome, OutcomeLog, result_for_reason
+from laix.core.outcome_learning.attention import HELPED, AttentionOutcome as Outcome, OutcomeLog, result_for_reason
 
 #: The six sentences the readiness UI writes into ``dismissedReason``.
 REASON_CODES: dict[str, str] = {
@@ -50,7 +50,7 @@ def build_outcome_log(risks: list[dict[str, Any]]) -> OutcomeLog:
                 Outcome(
                     signal_id=str(risk.get("id", "")),
                     kind=str(risk.get("kind", "risk")),
-                    action="guide",
+                    verb="guide",
                     result=HELPED,
                     score=risk.get("score"),
                     at=str(risk.get("due") or "") or None,
@@ -64,7 +64,7 @@ def build_outcome_log(risks: list[dict[str, Any]]) -> OutcomeLog:
             Outcome(
                 signal_id=str(risk.get("id", "")),
                 kind=str(risk.get("kind", "risk")),
-                action="guide",
+                verb="guide",
                 result=result_for_reason(code),
                 reason_code=code,
                 score=risk.get("score"),
